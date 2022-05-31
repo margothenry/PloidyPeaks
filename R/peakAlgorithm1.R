@@ -215,7 +215,7 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
         singleData,
         singleDs2
       )
-      singleDataUpdated <- updatedMeans(singleData)
+      singleDataUpdated <- updatedMeans(singleData, flowDir, xVariable)
     }else{
       flaggedData <- rbind(
         flaggedData,

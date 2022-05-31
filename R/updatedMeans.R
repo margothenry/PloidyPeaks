@@ -5,14 +5,20 @@
 #' of 13 and so updatedMeans will find the peaks associated with the data at
 #' a smoothing factor of 5.
 #'
-#' @param flowDs The dataset that has a smoothing factor of 13.
+#' @param ds The dataset that has a smoothing factor of 13.
+#' @param flowDir The directory of the gated .fcs data
+#' @param xVariable The fluorescence channel on the x axis
 #' @export
 #'
 #' @examples
-#'updatedMeans(ds = singleData)
+#'updatedMeans(
+#' ds = singleData,
+#' flowDir = "FlowData/T10_FLC/gated_data",
+#' xVariable = "FITC-A"
+#' )
 
 
-updatedMeans = function(ds){
+updatedMeans = function(ds, flowDir, xVariable){
 
   flowNameDs <- ds$data
   singlePopUpdated <- c()
