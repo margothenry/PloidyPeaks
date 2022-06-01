@@ -28,8 +28,8 @@ popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
   )
 
   modelData01 <- modelData %>% dplyr::mutate(
-    sdG1Count <- G1Count_1*0.6,
-    sdG2Count <- G2Count_1*0.6
+    sdG1Count = G1Count_1*0.6,
+    sdG2Count = G2Count_1*0.6
   )
 
   flowNameDs <- unique(modelData01$data)
@@ -58,7 +58,9 @@ popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
   for(k in 1:length(flowNameDs)){
     flowName <- read.FCS( paste0(flowDir,"/",flowNameDs[k]), transformation=FALSE)
     flowData <- smoothData( flowName, xVariable, 5)
-    flowDataMeans <- modelData01[k,]
+    flowDataMeans <- modelData01%>% dplyr::filter(
+      data == flowNameDs[k]
+    )
 
     if(0 %in% flowData$x){
       flowData <- flowData %>% dplyr::filter(x != 0)
@@ -76,8 +78,8 @@ popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
       }
 
       #G1 standard deviation
-      g1LeftFlowData <- flowData[1:which(flowData$x == flowDataMeans$G1_1),]
-      g1RightFlowData <- flowData[which(flowData$x == flowDataMeans$G1_1):which(flowData$x == midPoint$x),]
+      g1LeftFlowData <- flowData[1:which(flowData$x == flowDataMeans$G1_1)-1,]
+      g1RightFlowData <- flowData[(which(flowData$x == flowDataMeans$G1_1)+1):which(flowData$x == midPoint$x)-1,]
 
       leftPeak1 <- g1LeftFlowData[
         which(
@@ -100,8 +102,8 @@ popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
       }
 
       #G2 standard deviation
-      g2LeftFlowData <- flowData[which(flowData$x == midPoint$x):which(flowData$x == flowDataMeans$G2_1),]
-      g2RightFlowData <- flowData[which(flowData$x == flowDataMeans$G2_1):nrow(flowData),]
+      g2LeftFlowData <- flowData[which(flowData$x == midPoint$x):which(flowData$x == flowDataMeans$G2_1)-1,]
+      g2RightFlowData <- flowData[(which(flowData$x == flowDataMeans$G2_1)+1):nrow(flowData),]
 
       leftPeak2 <- g2LeftFlowData[
         which(
@@ -148,8 +150,8 @@ popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
 
     }else{
       #G1 standard deviation
-      g1LeftFlowData <- flowData[1:which(flowData$x == flowDataMeans$G1_1),]
-      g1RightFlowData <- flowData[which(flowData$x == flowDataMeans$G1_1):nrow(flowData),]
+      g1LeftFlowData <- flowData[1:which(flowData$x == flowDataMeans$G1_1)-1,]
+      g1RightFlowData <- flowData[(which(flowData$x == flowDataMeans$G1_1)+1):nrow(flowData),]
 
       leftPeak1 <- g1LeftFlowData[
         which(

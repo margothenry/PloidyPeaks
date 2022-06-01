@@ -77,7 +77,9 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
   for(k in 1:length(flowNameDs)){
     flowName <- read.FCS( paste0(flowDir,"/",flowNameDs[k]), transformation=FALSE)
     flowData <- smoothData( flowName, xVariable, 5)
-    flowDataMeans <- modelData01[k,]
+    flowDataMeans <- modelData01%>% dplyr::filter(
+      data == flowNameDs[k]
+    )
 
     if(0 %in% flowData$x){
       flowData <- flowData %>% dplyr::filter(x != 0)

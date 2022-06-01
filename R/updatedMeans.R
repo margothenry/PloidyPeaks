@@ -67,19 +67,20 @@ updatedMeans = function(ds, flowDir, xVariable){
       }
 
       if(xPeak2+10 > nrow(flowData) & xPeak2-10 < 1){
-        peakRowSmoothedRange <- flowData[seq(1, nrow(flowData),1), ]
+        peakRowSmoothedRange <- flowData[seq(xPeak1, nrow(flowData),1), ]
       }else if(xPeak2+10 > nrow(flowData) & xPeak2-10 >= 1){
         peakRowSmoothedRange <- flowData[
           seq(xPeak2-10, nrow(flowData),1),
         ]
       }else if(xPeak2+10 <= nrow(flowData) & xPeak2-10 < 1){
-        peakRowSmoothedRange <- flowData[seq(1, xPeak2+10,1), ]
+        peakRowSmoothedRange <- flowData[seq(xPeak1, xPeak2+10,1), ]
       }else{
         peakRowSmoothedRange <- flowData[seq(xPeak2-10, xPeak2+10,1), ]
       }
 
       xPeak2Smoothed <- which(max(peakRowSmoothedRange$y) == flowData$y)
       if(length(xPeak2Smoothed) > 1){
+        xPeak2Smoothed =  xPeak2Smoothed[which(xPeak1Smoothed<xPeak2Smoothed)]
         xPeak2Smoothed <- xPeak2Smoothed[1]
       }
 
