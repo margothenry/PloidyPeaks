@@ -212,7 +212,9 @@ knitr::include_graphics(here("vignette/images/doublet.png"))
 
 `popConfidenceInitial` &  `popConfidenceDoublet`  
 
-This function creates a confidence term for the flow cytometry data. The Dean-Jett-Fox (DJF) cell cycle model is used to obtain a residual standard error(RSE). The model assumes the data only contains a single population, and we use the residual standard error to conclude if the data is in fact single (low RSE) or has multiple populations (high RSE). `popConfidenceInitial` gives a initial RSE value without incorporating doublets. If doublets are identified, `popConfidenceDoublet` finds a second RSE value. The $x_i$'s are represented by the means identified in our peak algorithm. The $\sigma_i$'s are estimated by    
+This function creates a confidence term for the flow cytometry data. The Dean-Jett-Fox (DJF) cell cycle model is used to obtain a residual standard error(RSE). The model assumes the data only contains a single population, and we use the residual standard error to conclude if the data is in fact single (low RSE) or has multiple populations (high RSE). `popConfidenceInitial` gives a initial RSE value without incorporating doublets. If doublets are identified, `popConfidenceDoublet` finds a second RSE value.  
+
+The $x_i$'s are represented by the means identified in our peak algorithm. The $\sigma_i$'s are calculated as the width of the distribution at 60% of each mean. I.e., if the G1 mean is 170, the standard deviation will be calculated where the height is 0.6*170 = 102 on either side of the peak. The $N_i$'s are calucalted by summing the cells within ($-\sigma_i$,$\sigma_i$).  
 
 Hypothesis:  
 
@@ -229,13 +231,9 @@ $$
 S phase between G1 and G2: 
 $$
 F_{s1} (x) = \sum_{j = x_1}^{x_2} f(x_j) \frac{1}{\sqrt{2\pi\sigma_1^2}\frac{x_j}{x_1} }exp[-\frac{(x-x_j)^2}{2(\sigma_1\frac{x_j}{x_1})^2}]
-$$
-$$
-f(x_j) = A + Bx_j + Cx_j^2
-$$    
-A, B and C are estimated using Nonlinear least squares
+$$  
 
-G1+G2 doublet:
+G1+G2 doublet:  
 
 $$
 F_3(x) = \frac{N_3}{\sqrt{2\pi\sigma_3^2} }exp[-\frac{(x-x_3)^2}{2\sigma_3^2}]
@@ -251,16 +249,26 @@ $$
 S phase between G1+G2 doublet and G2+G2 doublet:  
 $$
 F_{s3} (x) = \sum_{j = x_3}^{x_4} f(x_j) \frac{1}{\sqrt{2\pi\sigma_3^2}\frac{x_j}{x_3} }exp[-\frac{(x-x_j)^2}{2(\sigma_3\frac{x_j}{x_3})^2}]
+$$   
+
+
+
 $$
+f(x_j) = A + Bx_j + Cx_j^2
+$$   
 
-Therefore, the two curves that can be applied are:  
+A, B and C are estimated using Nonlinear least squares  
 
-For populations without doublets:  
+
+
+Therefore, the two curves that can be applied :  
+
+For populations without doublets (`popConfidenceInitial`):  
 $$
 F(x) = F_1(x) + F_2(x) + F_{s1}(x)
 $$  
 
-For populations with doublets:    
+For populations with doublets (`popConfidenceDoublet`):    
 $$
 F_d(x) = F_1(x) + F_2(x) + F_{s1}(x) + F_3(x) + F_{s2}(x) + F_4(x) + F_{s3}(x)
 $$    
