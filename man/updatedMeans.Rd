@@ -4,10 +4,14 @@
 \alias{updatedMeans}
 \title{updatedMeans}
 \usage{
-updatedMeans(ds)
+updatedMeans(ds, flowDir, xVariable)
 }
 \arguments{
-\item{flowDs}{The dataset that has a smoothing factor of 13.}
+\item{ds}{The dataset that has a smoothing factor of 13.}
+
+\item{flowDir}{The directory of the gated .fcs data}
+
+\item{xVariable}{The fluorescence channel on the x axis}
 }
 \description{
 A function that will update the peaks identified for the single populations
@@ -16,5 +20,9 @@ of 13 and so updatedMeans will find the peaks associated with the data at
 a smoothing factor of 5.
 }
 \examples{
-updatedMeans(ds = singleData)
+updatedMeans(
+ds = singleData,
+flowDir = "FlowData/T10_FLC/gated_data",
+xVariable = "FITC-A"
+)
 }
