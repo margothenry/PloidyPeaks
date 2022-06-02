@@ -45,7 +45,11 @@ rectGateFlowSet = function(
     raw_dir <- tclvalue(tkchooseDirectory())
   }
 
-  flow_set <- read.flowSet(path = raw_dir)
+  flow_set <- read.flowSet(
+    path = raw_dir,
+    transformation=FALSE,
+    truncate_max_range = TRUE
+    )
   #Progress bar iterations
   total <- length(flow_set)
   #Create progress bar

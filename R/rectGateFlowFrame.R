@@ -46,7 +46,11 @@ rectGateFlowFrame = function(
     raw_dir <- tclvalue(tkchooseDirectory())
   }
 
-  flow_data <- read.FCS( paste0(raw_dir,"/",flow_name), transformation=FALSE)
+  flow_data <- read.FCS(
+    paste0(raw_dir,"/",flow_name),
+    transformation=FALSE,
+    truncate_max_range = FALSE
+    )
 
   auto_gate <- paste0(
     'rectGate <- rectangleGate(
