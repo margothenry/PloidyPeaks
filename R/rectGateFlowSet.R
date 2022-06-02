@@ -57,12 +57,12 @@ rectGateFlowSet = function(
 
   setwd(raw_dir)
   subDir <- "gated_data"
-  dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
+  dir.create(file.path(dirname(raw_dir), subDir), showWarnings = FALSE)
 
   if(save_plot == TRUE){
     gate_plotDir <- "plotted_data"
-    dir.create(file.path(dirname(getwd()), gate_plotDir), showWarnings = FALSE)
-    plotOutFile <- file.path(dirname(getwd()),gate_plotDir)
+    dir.create(file.path(dirname(raw_dir), gate_plotDir), showWarnings = FALSE)
+    plotOutFile <- file.path(dirname(raw_dir),gate_plotDir)
   }
 
   GatedCellsOut <- data.frame(
@@ -103,7 +103,7 @@ rectGateFlowSet = function(
       GatedCellsFlow
     )
 
-    outFile <- file.path(dirname(getwd()),subDir, frame_name)
+    outFile <- file.path(dirname(raw_dir),subDir, frame_name)
     write.FCS(gated_flow_data, outFile)
 
     if(save_plot == TRUE){

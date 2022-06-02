@@ -493,9 +493,9 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
       plotDir <- "nlsGraphs"
       plotInitDir <- "NLSDoublet_graphs"
       dir.create(
-        file.path(dirname(getwd()),plotDir, plotInitDir), showWarnings = FALSE
+        file.path(dirname(flowDir),plotDir, plotInitDir), showWarnings = FALSE
         )
-      plotOutFile <- file.path(dirname(getwd()),plotDir,plotInitDir)
+      plotOutFile <- file.path(dirname(flowDir),plotDir,plotInitDir)
 
       png(
         paste0(plotOutFile,"/",flowNameDs[k],'.png'), width = 600, height = 400

@@ -71,16 +71,16 @@ rectGateFlowFrame = function(
   print( paste0(num_cells_gated_out,"% of the cells were gated out") )
   setwd(raw_dir)
   subDir <- "gated_data"
-  dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
+  dir.create(file.path(dirname(raw_dir), subDir), showWarnings = FALSE)
 
-  outFile <- file.path(dirname(getwd()),subDir, flow_name)
+  outFile <- file.path(dirname(raw_dir),subDir, flow_name)
   write.FCS(gated_flow_data, outFile)
 
   if(save_plot == TRUE){
 
     gate_plotDir <- "plotted_data"
-    dir.create(file.path(dirname(getwd()), gate_plotDir), showWarnings = FALSE)
-    plotOutFile <- file.path(dirname(getwd()),gate_plotDir)
+    dir.create(file.path(dirname(raw_dir), gate_plotDir), showWarnings = FALSE)
+    plotOutFile <- file.path(dirname(raw_dir),gate_plotDir)
 
     flow_data@description[["GUID"]] <- "Raw data"
     raw_data_plot <- autoplot(

@@ -92,11 +92,11 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
     #Getting RSE value
     #Testing hypothesis of a single population or multiple population
     initialRSE = popConfidenceInitial(
-      flowDir, ds = finalData3, xVariable, saveGraph = TRUE
+      flowDir, ds = finalData3, xVariable, saveGraph
       )
 
     doubletRSE = popConfidenceDoublet(
-      flowDir, ds = finalData3, xVariable, saveGraph = TRUE
+      flowDir, ds = finalData3, xVariable, saveGraph
       )
 
     finalData4 = sqldf(
@@ -254,11 +254,11 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
     #Getting RSE value
     #Testing hypothesis of a single population or multiple population
     initialRSE = popConfidenceInitial(
-      flowDir, ds = finalData3, xVariable, saveGraph = TRUE
+      flowDir, ds = finalData3, xVariable, saveGraph
       )
 
     doubletRSE = popConfidenceDoublet(
-      flowDir, ds = finalData3, xVariable, saveGraph = TRUE
+      flowDir, ds = finalData3, xVariable, saveGraph
       )
 
     finalData4 = sqldf(
@@ -439,11 +439,11 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
     #Getting RSE value
     #Testing hypothesis of a single population or multiple population
     initialRSE = popConfidenceInitial(
-      flowDir, ds = finalData3, xVariable, saveGraph = TRUE
+      flowDir, ds = finalData3, xVariable, saveGraph
       )
 
     doubletRSE = popConfidenceDoublet(
-      flowDir, ds = finalData3, xVariable, saveGraph = TRUE
+      flowDir, ds = finalData3, xVariable, saveGraph
       )
 
     finalData4 = sqldf(

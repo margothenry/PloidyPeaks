@@ -275,7 +275,7 @@ $$
 
 ##### Warnings:  
 
-
+`In nls(formula = y ~ (N1/(sqrt(2 * pi) * g1SD) * exp(-((x - g1Mean)^2)/(2 *  :step factor 0.000488281 reduced below 'minFactor' of 0.000976562`
 
 ### 3. Output  
 

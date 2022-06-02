@@ -195,10 +195,10 @@ popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
         theme(legend.title = element_blank())
 
       plotDir <- "nlsGraphs"
-      dir.create(file.path(dirname(getwd()), plotDir), showWarnings = FALSE)
+      dir.create(file.path(dirname(flowDir), plotDir), showWarnings = FALSE)
       plotInitDir <- "NLSInitial_graphs"
-      dir.create(file.path(dirname(getwd()),plotDir, plotInitDir), showWarnings = FALSE)
-      plotOutFile <- file.path(dirname(getwd()),plotDir,plotInitDir)
+      dir.create(file.path(dirname(flowDir),plotDir, plotInitDir), showWarnings = FALSE)
+      plotOutFile <- file.path(dirname(flowDir),plotDir,plotInitDir)
 
       png(paste0(plotOutFile,"/",flowNameDs[k],'.png'), width = 600, height = 400)
       print(nlsGraph)
