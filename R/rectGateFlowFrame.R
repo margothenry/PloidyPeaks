@@ -3,15 +3,15 @@
 #' This function will gate your raw .fcs file and save your gated data, a plot
 #' of your gated data, and a plot of the original data
 #'
-#' @param raw_dir The directory of the raw .fcs data
-#' @param flow_name The name of the .fcs file
-#' @param x_variable The fluorescence channel on the x axis - by default "FL1-A"
-#' @param y_variable The fluorescence channel on the y axis - by default "SSC-A"
-#' @param x_min_value The lower bound x value for the gate - by default 10000
-#' @param x_max_value The upper bound x value for the gate - by default 900000
-#' @param y_min_value The lower bound y value for the gate - by default 10000
-#' @param y_max_value The upper bound y value for the gate - by default 900000
-#' @param save_plot A side by side graph comparison the raw data and the gated
+#' @param rawDir The directory of the raw .fcs data
+#' @param flowName The name of the .fcs file
+#' @param xVariable The fluorescence channel on the x axis - by default "FL1-A"
+#' @param yVariable The fluorescence channel on the y axis - by default "SSC-A"
+#' @param xMinValue The lower bound x value for the gate - by default 10000
+#' @param xMaxValue The upper bound x value for the gate - by default 900000
+#' @param yMinValue The lower bound y value for the gate - by default 10000
+#' @param yMaxValue The upper bound y value for the gate - by default 900000
+#' @param savePlot A side by side graph comparison the raw data and the gated
 #'  data - by default TRUE
 #'
 #' @return A .fcs of the gated data
@@ -19,82 +19,82 @@
 #'
 #' @examples
 #' rectGateFlowFrame(
-#'  raw_dir = NA,
-#'  flow_name = "A10-t0.fcs",
-#'  x_variable = "FL1-A",
-#'  y_variable = "SSC-A",
-#'  x_min_value = 10000,
-#'  x_max_value = 900000,
-#'  y_min_value = 10000,
-#'  y_max_value = 900000,
-#'  save_plot = TRUE
+#'  rawDir = NA,
+#'  flowName = "A10-t0.fcs",
+#'  xVariable = "FL1-A",
+#'  yVariable = "SSC-A",
+#'  xMinValue = 10000,
+#'  xMaxValue = 900000,
+#'  yMinValue = 10000,
+#'  yMaxValue = 900000,
+#'  savePlot = TRUE
 #')
 #
 rectGateFlowFrame = function(
-  raw_dir = NA,
-  flow_name,
-  x_variable = "FL1-A",
-  y_variable = "SSC-A",
-  x_min_value = 10000,
-  x_max_value = 900000,
-  y_min_value = 10000,
-  y_max_value = 900000,
-  save_plot = TRUE
+  rawDir = NA,
+  flowName,
+  xVariable = "FL1-A",
+  yVariable = "SSC-A",
+  xMinValue = 10000,
+  xMaxValue = 900000,
+  yMinValue = 10000,
+  yMaxValue = 900000,
+  savePlot = TRUE
 ){
-  if(is.na(raw_dir)){
+  if(is.na(rawDir)){
     getwd()
-    raw_dir <- tclvalue(tkchooseDirectory())
+    rawDir <- tclvalue(tkchooseDirectory())
   }
 
-  flow_data <- read.FCS(
-    paste0(raw_dir,"/",flow_name),
+  flowData <- read.FCS(
+    paste0(rawDir,"/",flowName),
     transformation=FALSE,
     truncate_max_range = FALSE
     )
 
-  auto_gate <- paste0(
+  autoGate <- paste0(
     'rectGate <- rectangleGate(
           filterId=\"Fluorescence Region\",\"',
-    x_variable,'\" = c(',x_min_value,',', x_max_value,'),\"',
-    y_variable, '\" = c(',y_min_value,',', y_max_value,')
+    xVariable,'\" = c(',xMinValue,',', xMaxValue,'),\"',
+    yVariable, '\" = c(',yMinValue,',', yMaxValue,')
         )'
   )
 
-  eval(parse(text = auto_gate))
+  eval(parse(text = autoGate))
 
-  gated_flow_data <- Subset(flow_data, rectGate)
-  num_cells_gated_out <-  round(
+  gatedFlowData <- Subset(flowData, rectGate)
+  numCellsGatedOut <-  round(
     100 - (
-      length(gated_flow_data@exprs[,x_variable]) /
-      length(flow_data@exprs[,x_variable]))*100,1
+      length(gatedFlowData@exprs[,xVariable]) /
+      length(flowData@exprs[,xVariable]))*100,1
     )
-  print( paste0(num_cells_gated_out,"% of the cells were gated out") )
-  setwd(raw_dir)
+  print( paste0(numCellsGatedOut,"% of the cells were gated out") )
+  setwd(rawDir)
   subDir <- "gated_data"
-  dir.create(file.path(dirname(raw_dir), subDir), showWarnings = FALSE)
+  dir.create(file.path(dirname(rawDir), subDir), showWarnings = FALSE)
 
-  outFile <- file.path(dirname(raw_dir),subDir, flow_name)
-  write.FCS(gated_flow_data, outFile)
+  outFile <- file.path(dirname(rawDir),subDir, flowName)
+  write.FCS(gatedFlowData, outFile)
 
-  if(save_plot == TRUE){
+  if(savePlot == TRUE){
 
-    gate_plotDir <- "plotted_data"
-    dir.create(file.path(dirname(raw_dir), gate_plotDir), showWarnings = FALSE)
-    plotOutFile <- file.path(dirname(raw_dir),gate_plotDir)
+    gatePlotDir <- "plotted_data"
+    dir.create(file.path(dirname(rawDir), gatePlotDir), showWarnings = FALSE)
+    plotOutFile <- file.path(dirname(rawDir),gatePlotDir)
 
-    flow_data@description[["GUID"]] <- "Raw data"
-    raw_data_plot <- autoplot(
-      flow_data, x_variable, y_variable, bins = 64
+    flowData@description[["GUID"]] <- "Raw data"
+    rawDataPlot <- autoplot(
+      flowData, xVariable, yVariable, bins = 64
       ) + geom_gate(rectGate) + ggcyto_par_set(limits = "data")
-    gated_flow_data@description[["GUID"]] <- "Gated data"
-    gated_data_plot <- autoplot(
-      gated_flow_data, x_variable, y_variable,  bins = 64
+    gatedFlowData@description[["GUID"]] <- "Gated data"
+    gatedDataPlot <- autoplot(
+      gatedFlowData, xVariable, yVariable,  bins = 64
       ) + ggcyto_par_set(limits = "instrument")
-    combined_plot <- as.ggplot(raw_data_plot) + as.ggplot(gated_data_plot)
+    combinedPlot <- as.ggplot(rawDataPlot) + as.ggplot(gatedDataPlot)
 
-    gated_flow_data@description[["GUID"]] <- flow_name
-    png(paste0(plotOutFile,"/",flow_name,'.png'), width = 600, height = 400)
-    print(combined_plot)
+    gatedFlowData@description[["GUID"]] <- flowName
+    png(paste0(plotOutFile,"/",flowName,'.png'), width = 600, height = 400)
+    print(combinedPlot)
     dev.off()
 
   }
