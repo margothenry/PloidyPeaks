@@ -193,8 +193,9 @@ flowPeakDetection = function(xVariable, flowDir = NA, doublet = FALSE, saveGraph
     saveGraph
     )
   # update progress bar
-  print("Done! - Check 'analysis' folder for results")
   setTxtProgressBar(pb, 7)
+  print("Done! - Check 'analysis' folder for results")
+
   #Closing progress bar
   close(pb)
 
