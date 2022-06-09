@@ -5,35 +5,35 @@
 \title{rectGateFlowFrame}
 \usage{
 rectGateFlowFrame(
-  raw_dir = NA,
-  flow_name,
-  x_variable = "FL1-A",
-  y_variable = "SSC-A",
-  x_min_value = 10000,
-  x_max_value = 9e+05,
-  y_min_value = 10000,
-  y_max_value = 9e+05,
-  save_plot = TRUE
+  rawDir = NA,
+  flowName,
+  xVariable = "FL1-A",
+  yVariable = "SSC-A",
+  xMinValue = 10000,
+  xMaxValue = 9e+05,
+  yMinValue = 10000,
+  yMaxValue = 9e+05,
+  savePlot = TRUE
 )
 }
 \arguments{
-\item{raw_dir}{The directory of the raw .fcs data}
+\item{rawDir}{The directory of the raw .fcs data}
 
-\item{flow_name}{The name of the .fcs file}
+\item{flowName}{The name of the .fcs file}
 
-\item{x_variable}{The fluorescence channel on the x axis - by default "FL1-A"}
+\item{xVariable}{The fluorescence channel on the x axis - by default "FL1-A"}
 
-\item{y_variable}{The fluorescence channel on the y axis - by default "SSC-A"}
+\item{yVariable}{The fluorescence channel on the y axis - by default "SSC-A"}
 
-\item{x_min_value}{The lower bound x value for the gate - by default 10000}
+\item{xMinValue}{The lower bound x value for the gate - by default 10000}
 
-\item{x_max_value}{The upper bound x value for the gate - by default 900000}
+\item{xMaxValue}{The upper bound x value for the gate - by default 900000}
 
-\item{y_min_value}{The lower bound y value for the gate - by default 10000}
+\item{yMinValue}{The lower bound y value for the gate - by default 10000}
 
-\item{y_max_value}{The upper bound y value for the gate - by default 900000}
+\item{yMaxValue}{The upper bound y value for the gate - by default 900000}
 
-\item{save_plot}{A side by side graph comparison the raw data and the gated
+\item{savePlot}{A side by side graph comparison the raw data and the gated
 data - by default TRUE}
 }
 \value{
@@ -45,14 +45,14 @@ of your gated data, and a plot of the original data
 }
 \examples{
 rectGateFlowFrame(
- raw_dir = NA,
- flow_name = "A10-t0.fcs",
- x_variable = "FL1-A",
- y_variable = "SSC-A",
- x_min_value = 10000,
- x_max_value = 900000,
- y_min_value = 10000,
- y_max_value = 900000,
- save_plot = TRUE
+ rawDir = NA,
+ flowName = "A10-t0.fcs",
+ xVariable = "FL1-A",
+ yVariable = "SSC-A",
+ xMinValue = 10000,
+ xMaxValue = 900000,
+ yMinValue = 10000,
+ yMaxValue = 900000,
+ savePlot = TRUE
 )
 }
