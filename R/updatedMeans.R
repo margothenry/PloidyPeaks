@@ -24,7 +24,7 @@ updatedMeans = function(ds, flowDir, xVariable){
   singlePopUpdated <- c()
 
   for(k in 1:length(flowNameDs)){
-    flowName <- read.FCS(
+    flowName <- flowCore::read.FCS(
       paste0(flowDir,"/",flowNameDs[k]), transformation=FALSE
     )
 

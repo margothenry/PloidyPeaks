@@ -77,7 +77,7 @@ rectGateFlowSet = function(
     flowData <- flowSet[[i]]
 
     autoGate <- paste0(
-      'rectGate <- rectangleGate(
+      'rectGate <- flowCore::rectangleGate(
           filterId=\"Fluorescence Region\",\"',
       xVariable,'\" = c(',xMinValue,',', xMaxValue,'),\"',
       yVariable, '\" = c(',yMinValue,',', yMaxValue,')
