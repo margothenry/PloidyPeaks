@@ -54,7 +54,7 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
 
     #Removing the peaks that are identified at the base of the histogram
     possiblePeaks2 <- possiblePeaks[
-      which(possiblePeaks$y > quantile(flowData$y)[3]+10),
+      which(possiblePeaks$y > quantile(flowData$y)[3]+5),
       ]
     xVarMax <- max(flowData$x)
     #Removing the peaks that are identified at the extreme left side of the
