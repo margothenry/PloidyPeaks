@@ -14,7 +14,6 @@
 #'  data - by default TRUE
 #'
 #' @return A .fcs of the gated data
-#' @import ggcyto
 #' @import patchwork
 #' @import tcltk
 #' @export
@@ -51,7 +50,7 @@ rectGateFlowSet = function(
   flowSet <- read.flowSet(
     path = rawDir,
     transformation=FALSE,
-    truncate_max_range = TRUE
+    truncate_max_range = FALSE
     )
   #Progress bar iterations
   total <- length(flowSet)
@@ -112,14 +111,14 @@ rectGateFlowSet = function(
     if(savePlot == TRUE){
 
       flowData@description[["GUID"]] <- "Raw data"
-      rawDataPlot <- autoplot(
+      rawDataPlot <- ggcyto::autoplot(
         flowData, xVariable, yVariable, bins = 64
-        ) + geom_gate(rectGate) + ggcyto_par_set(limits = "data")
+        ) + ggcyto::geom_gate(rectGate) + ggcyto::ggcyto_par_set(limits = "data")
       gatedFlowData@description[["GUID"]] <- "Gated data"
-      gatedDataPlot <- autoplot(
+      gatedDataPlot <- ggcyto::autoplot(
         gatedFlowData, xVariable, yVariable,  bins = 64
-        ) + ggcyto_par_set(limits = "instrument")
-      combinedPlot <- as.ggplot(rawDataPlot) + as.ggplot(gatedDataPlot)
+        ) + ggcyto::ggcyto_par_set(limits = "instrument")
+      combinedPlot <- ggcyto::as.ggplot(rawDataPlot) + ggcyto::as.ggplot(gatedDataPlot)
       gatedFlowData@description[["GUID"]] <- frameName
       png(paste0(plotOutFile,"/",frameName,'.png'), width = 600, height = 400)
       print(combinedPlot)

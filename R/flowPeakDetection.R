@@ -19,7 +19,7 @@
 #' @import flowCore
 #' @import scorepeak
 #' @import data.table
-#' @import tidyverse
+#' @import dplyr
 #' @import tcltk
 #' @import ggplot2
 #' 

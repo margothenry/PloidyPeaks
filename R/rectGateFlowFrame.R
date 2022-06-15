@@ -16,7 +16,6 @@
 #'
 #' @return A .fcs of the gated data
 #' 
-#' @import ggcyto
 #' @import patchwork
 #' @import tcltk
 #' 
@@ -48,7 +47,7 @@ rectGateFlowFrame = function(
 ){
   if(is.na(rawDir)){
     getwd()
-    rawDir <- tcltk::tclvalue(tkchooseDirectory())
+    rawDir <- tclvalue(tkchooseDirectory())
   }
 
   flowData <- read.FCS(
@@ -88,14 +87,14 @@ rectGateFlowFrame = function(
     plotOutFile <- file.path(dirname(rawDir),gatePlotDir)
 
     flowData@description[["GUID"]] <- "Raw data"
-    rawDataPlot <- autoplot(
+    rawDataPlot <- ggcyto::autoplot(
       flowData, xVariable, yVariable, bins = 64
-      ) + geom_gate(rectGate) + ggcyto_par_set(limits = "data")
+      ) + ggcyto::geom_gate(rectGate) + ggcyto::ggcyto_par_set(limits = "data")
     gatedFlowData@description[["GUID"]] <- "Gated data"
-    gatedDataPlot <- autoplot(
+    gatedDataPlot <- ggcyto::autoplot(
       gatedFlowData, xVariable, yVariable,  bins = 64
-      ) + ggcyto_par_set(limits = "instrument")
-    combinedPlot <- as.ggplot(rawDataPlot) + as.ggplot(gatedDataPlot)
+      ) + ggcyto::ggcyto_par_set(limits = "instrument")
+    combinedPlot <- ggcyto::as.ggplot(rawDataPlot) + ggcyto::as.ggplot(gatedDataPlot)
 
     gatedFlowData@description[["GUID"]] <- flowName
     png(paste0(plotOutFile,"/",flowName,'.png'), width = 600, height = 400)
