@@ -10,6 +10,8 @@
 #' @param flowControl The control sample
 #' @param flowSamples The vector of samples
 #' @param xVariable The fluorescence channel you are interested in visualizing
+#' @import tcltk
+#' @import ggplot2
 #' @export
 #'
 #' @examples
@@ -25,7 +27,7 @@ flowLineGraph = function(flowDir = NA, flowControl, flowSamples, xVariable){
 
   if(is.na(flowDir)){
     getwd()
-    flowDir <- tcltk::tclvalue(tkchooseDirectory())
+    flowDir <- tclvalue(tkchooseDirectory())
   }
 
   #samples dataset
@@ -50,7 +52,7 @@ flowLineGraph = function(flowDir = NA, flowControl, flowSamples, xVariable){
   controlDs$Data <- flowNameControl@description[["GUID"]]
 
   #plotting
-  flowPlot <- ggplot2::ggplot() +
+  flowPlot <- ggplot() +
     geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
     geom_line(data=controlDs, aes(x=x, y=y, group=2), size = 1, color='black')+
     ylab("Counts")+

@@ -20,6 +20,8 @@
 #' @import scorepeak
 #' @import data.table
 #' @import tidyverse
+#' @import tcltk
+#' @import ggplot2
 #' 
 #' @export
 #'
@@ -45,7 +47,7 @@ flowPeakDetection = function(xVariable, flowDir = NA, doublet = FALSE, saveGraph
   #This should be where the data is located
   if(is.na(flowDir)){
     getwd()
-    flowDir <- tcltk::tclvalue(tkchooseDirectory())
+    flowDir <- tclvalue(tkchooseDirectory())
   }
 
   flowSet <- list.files(flowDir)

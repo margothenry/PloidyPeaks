@@ -16,6 +16,7 @@
 #' @return A .fcs of the gated data
 #' @import ggcyto
 #' @import patchwork
+#' @import tcltk
 #' @export
 #'
 #' @examples
