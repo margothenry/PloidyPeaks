@@ -106,7 +106,7 @@ rectGateFlowSet = function(
     )
 
     outFile <- file.path(dirname(rawDir),subDir, frameName)
-    write.FCS(gatedFlowData, outFile)
+    flowCore::write.FCS(gatedFlowData, outFile)
 
     if(savePlot == TRUE){
 

@@ -78,7 +78,7 @@ rectGateFlowFrame = function(
   dir.create(file.path(dirname(rawDir), subDir), showWarnings = FALSE)
 
   outFile <- file.path(dirname(rawDir),subDir, flowName)
-  write.FCS(gatedFlowData, outFile)
+  flowCore::write.FCS(gatedFlowData, outFile)
 
   if(savePlot == TRUE){
 
