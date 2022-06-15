@@ -25,7 +25,7 @@ flowLineGraph = function(flowDir = NA, flowControl, flowSamples, xVariable){
 
   if(is.na(flowDir)){
     getwd()
-    flowDir <- tclvalue(tkchooseDirectory())
+    flowDir <- tcltk::tclvalue(tkchooseDirectory())
   }
 
   #samples dataset
@@ -50,7 +50,7 @@ flowLineGraph = function(flowDir = NA, flowControl, flowSamples, xVariable){
   controlDs$Data <- flowNameControl@description[["GUID"]]
 
   #plotting
-  flowPlot <- ggplot() +
+  flowPlot <- ggplot2::ggplot() +
     geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
     geom_line(data=controlDs, aes(x=x, y=y, group=2), size = 1, color='black')+
     ylab("Counts")+
