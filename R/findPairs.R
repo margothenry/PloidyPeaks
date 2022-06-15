@@ -35,7 +35,7 @@ findPairs = function(ds, LL, UL){
       possible_ <- possible_[1]
     }
 
-    if(!is_empty(possible_)){
+    if(!purrr::is_empty(possible_)){
       if(possible_ != i) {
         maxPossible_ <- findingPairsDs[possible_,]
         maxPossibleRows <- maxPossible_[

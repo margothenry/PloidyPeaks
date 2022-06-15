@@ -33,7 +33,7 @@ flowLineGraph = function(flowDir = NA, flowControl, flowSamples, xVariable){
   #samples dataset
   sampleDs <- c()
   for(k in 1:length(flowSamples)){
-    flowName <- read.FCS(
+    flowName <- flowCore::read.FCS(
       paste0(flowDir,"/",flowSamples[k]), transformation=FALSE
       )
     ds <- smoothData( flowName, xVariable, 5)
@@ -45,7 +45,7 @@ flowLineGraph = function(flowDir = NA, flowControl, flowSamples, xVariable){
   }
 
   #control dataset
-  flowNameControl <- read.FCS(
+  flowNameControl <- flowCore::read.FCS(
     paste0(flowDir,"/",flowControl), transformation=FALSE
     )
   controlDs <- smoothData(flowNameControl, xVariable, 5)

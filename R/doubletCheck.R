@@ -42,7 +42,7 @@ doubletCheck = function(doubletCheckDs, peaks, g1G2Range, g2G2Range){
       possible_ <- possible_[1]
     }
 
-    if(!is_empty(possible_)){
+    if(!purrr::is_empty(possible_)){
       if(possible_ != i) {
         #If there are more than one peak identified, we pick the tallest of those peaks
         maxPossible_ <- peaks[possible_,]
@@ -71,7 +71,7 @@ doubletCheck = function(doubletCheckDs, peaks, g1G2Range, g2G2Range){
       possible_ <- possible_[1]
     }
 
-    if(!is_empty(possible_)){
+    if(!purrr::is_empty(possible_)){
       if(possible_ != i) {
         maxPossible_ <- peaks[possible_,]
         maxPossibleRows <- maxPossible_[

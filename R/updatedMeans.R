@@ -84,12 +84,12 @@ updatedMeans = function(ds, flowDir, xVariable){
         xPeak2Smoothed <- xPeak2Smoothed[1]
       }
 
-      singlePop02 <- singlePop01 %>% mutate(
+      singlePop02 <- singlePop01 %>% dplyr::mutate(
         x = flowData[xPeak1Smoothed,]$x,
         y = flowData[xPeak1Smoothed,]$y,
         possiblePairX = flowData[xPeak2Smoothed,]$x,
         possiblePairY = flowData[xPeak2Smoothed,]$y
-      ) %>% select(
+      ) %>% dplyr::select(
         data,
         x,
         y,
@@ -106,12 +106,12 @@ updatedMeans = function(ds, flowDir, xVariable){
       )
     }else{
 
-      singlePop02 <- singlePop01 %>% mutate(
+      singlePop02 <- singlePop01 %>% dplyr::mutate(
         x = flowData[xPeak1Smoothed,]$x,
         y = flowData[xPeak1Smoothed,]$y,
         possiblePairX = possiblePairXOld,
         possiblePairY = possiblePairYOld
-      ) %>% select(
+      ) %>% dplyr::select(
         data,
         x,
         y,

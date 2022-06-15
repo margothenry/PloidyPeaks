@@ -38,7 +38,7 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
   #Looping through each flow frame
   for(k in 1:length(flowSet)){
     #Reading in and smoothing data
-    flowName <- read.FCS( paste0(flowDir,"/",flowSet[k]), transformation=FALSE)
+    flowName <- flowCore::read.FCS( paste0(flowDir,"/",flowSet[k]), transformation=FALSE)
     flowData <- smoothData( flowName, xVariable, 13)
 
     logFlow[1, ] <- c(algorithmNum, flowName@description[["GUID"]], 0)
@@ -63,7 +63,7 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
 
     if(nrow(possiblePeaks2) == 0){
       possiblePeaks2 <- possiblePeaks[
-        which(possiblePeaks$y > quantile(flowData$y)[3]+10),
+        which(possiblePeaks$y > quantile(flowData$y)[3]+5),
         ]
     }
 
@@ -164,7 +164,7 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
 
     #Finding the are to the right of the G2 peak
     peaksFix <- peaksFix[order(peaksFix$x, decreasing = FALSE),]
-    peaksFix <- peaksFix %>% distinct()
+    peaksFix <- peaksFix %>% dplyr::distinct()
 
     #Finding the distance between the G1 and G2 peak
     #

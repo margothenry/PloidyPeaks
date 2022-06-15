@@ -38,7 +38,7 @@ peakAlgorithm3 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
   algorithmNum <- 3
 
   for(k in 1:length(flowNameDs)){
-    flowName <- read.FCS(
+    flowName <- flowCore::read.FCS(
       paste0(flowDir,"/",flowNameDs[k]), transformation=FALSE
       )
     flowData <- smoothData( flowName, xVariable, 5)
@@ -68,7 +68,7 @@ peakAlgorithm3 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
     possiblePeaks4 <- findPairs(possiblePeaks3, 1.7, 2.3)
 
     possiblePeaks5 <- possiblePeaks4 %>%
-      drop_na() %>%
+      tidyr::drop_na() %>%
       dplyr::filter(
         y > quantile(flowData$y)[4]-15 &
           possiblePairY > quantile(flowData$y)[3]+10
@@ -122,7 +122,7 @@ peakAlgorithm3 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
       }
 
       peakRow <- peakRow %>%
-        distinct() %>% drop_na()
+        dplyr::distinct() %>% tidyr::drop_na()
 
       cellsUsed <- c()
 
@@ -221,7 +221,7 @@ peakAlgorithm3 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
       !is.na(possiblePeaks8$propCellsUsed[1])
       ){
 
-      possiblePeaks9 <- possiblePeaks8 %>% mutate(
+      possiblePeaks9 <- possiblePeaks8 %>% dplyr::mutate(
         data = flowName@description[["GUID"]]
       )
 

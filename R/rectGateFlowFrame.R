@@ -50,7 +50,7 @@ rectGateFlowFrame = function(
     rawDir <- tclvalue(tkchooseDirectory())
   }
 
-  flowData <- read.FCS(
+  flowData <- flowCore::read.FCS(
     paste0(rawDir,"/",flowName),
     transformation=FALSE,
     truncate_max_range = FALSE
@@ -66,7 +66,7 @@ rectGateFlowFrame = function(
 
   eval(parse(text = autoGate))
 
-  gatedFlowData <- Subset(flowData, rectGate)
+  gatedFlowData <- flowCore::Subset(flowData, rectGate)
   numCellsGatedOut <-  round(
     100 - (
       length(gatedFlowData@exprs[,xVariable]) /

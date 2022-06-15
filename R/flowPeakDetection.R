@@ -16,10 +16,8 @@
 #' @param usedCellsThreshold threshold for classifying multiple populations
 #' 
 #' @import magrittr
-#' @import flowCore
 #' @import scorepeak
 #' @import data.table
-#' @import dplyr
 #' @import tcltk
 #' @import ggplot2
 #' 

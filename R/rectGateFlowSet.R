@@ -44,10 +44,10 @@ rectGateFlowSet = function(
 
   if(is.na(rawDir)){
     getwd()
-    rawDir <- tcltk::tclvalue(tkchooseDirectory())
+    rawDir <- tclvalue(tkchooseDirectory())
   }
 
-  flowSet <- read.flowSet(
+  flowSet <- flowCore::read.flowSet(
     path = rawDir,
     transformation=FALSE,
     truncate_max_range = FALSE
@@ -86,7 +86,7 @@ rectGateFlowSet = function(
 
     eval(parse(text = autoGate))
 
-    gatedFlowData <- Subset(flowData, rectGate)
+    gatedFlowData <- flowCore::Subset(flowData, rectGate)
     frameName <- gatedFlowData@description[["GUID"]]
     numCellsGatedOut <- round(
       100 - (

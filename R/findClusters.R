@@ -38,8 +38,8 @@ findClusters = function(ds, clusterDist, maxXValue){
   #If clusters have more than one peak identified, the tallest peak will be
   #selected as the peak in that cluster
   tempDs <- tempDs %>%
-    group_by(cluster) %>%
-    slice(which.max(y))
+    dplyr::group_by(cluster) %>%
+    dplyr::slice(which.max(y))
 
   return(tempDs)
 
