@@ -10,6 +10,7 @@ Description: PloidyPeaks is a package to quantify population-level genome size v
 Imports: data.table,
     flowCore,
     ggcyto,
+    magrittr,
     patchwork,
     scorepeak,
     sqldf,

@@ -14,6 +14,8 @@
 #'  data - by default TRUE
 #'
 #' @return A .fcs of the gated data
+#' @import ggcyto
+#' @import patchwork
 #' @export
 #'
 #' @examples
@@ -42,7 +44,7 @@ rectGateFlowSet = function(
 
   if(is.na(rawDir)){
     getwd()
-    rawDir <- tclvalue(tkchooseDirectory())
+    rawDir <- tcltk::tclvalue(tkchooseDirectory())
   }
 
   flowSet <- read.flowSet(

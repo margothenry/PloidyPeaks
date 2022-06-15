@@ -20,7 +20,7 @@ smoothData = function(flowDs, xVariable, smoothLevel){
   #Data that will be smoothed
   data <- histData$counts
   #Apply smoothing to the counts with 'smoothLevel'
-  smoothedDs <- rollmean(data, k = smoothLevel, fill = 0)
+  smoothedDs <- zoo::rollmean(data, k = smoothLevel, fill = 0)
 
   #Create data frame with smoothed data
   ds <- data.frame(

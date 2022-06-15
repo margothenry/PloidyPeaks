@@ -14,7 +14,13 @@
 #' @param saveGraph T/F for saving the graphs as an output of the NLS
 #' @param singleThreshold threshold for classifying single populations
 #' @param usedCellsThreshold threshold for classifying multiple populations
-#'
+#' 
+#' @import magrittr
+#' @import flowCore
+#' @import scorepeak
+#' @import data.table
+#' @import tidyverse
+#' 
 #' @export
 #'
 #' @examples
@@ -39,7 +45,7 @@ flowPeakDetection = function(xVariable, flowDir = NA, doublet = FALSE, saveGraph
   #This should be where the data is located
   if(is.na(flowDir)){
     getwd()
-    flowDir <- tclvalue(tkchooseDirectory())
+    flowDir <- tcltk::tclvalue(tkchooseDirectory())
   }
 
   flowSet <- list.files(flowDir)
@@ -142,7 +148,7 @@ flowPeakDetection = function(xVariable, flowDir = NA, doublet = FALSE, saveGraph
       )
     flaggedData <- as.data.frame(peakAlg4[[1]])
     messyDataNoNA <- flaggedData %>% dplyr::filter(!is.na(x))
-    messyDataNoNA <- messyDataNoNA %>% select(-propCellsUsed)
+    messyDataNoNA <- messyDataNoNA %>% dplyr::select(-propCellsUsed)
     finishedData <- peakAlg4[2]
     # update progress bar
     setTxtProgressBar(pb, 4)
