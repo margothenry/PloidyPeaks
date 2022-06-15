@@ -61,7 +61,7 @@ The flow cytometer laser records everything that passes through the machine, whi
 There are two gating functions: `rectGateFlowFrame` and `rectGateFlowSet`. `rectGateFlowFrame` applies the gate on a single flow frame (.fcs), while `rectGateFlowSet` applies the gate to a flow set, a series of multiple flow frames. Combined they apply a rectangular gate to the particles and save the cells within the rectangular boundary as a .fcs file in a folder that is created called ‘gated_data’ for downstream analysis. The gate has a default value of x = (90000,900000) and y = (90000,900000), but the user has the option to input their own rectangular boundaries. `rectGateFlowFrame` is used for testing, the user can see how the data looks on a single flow frame, adapt the gating boundaries if needed, and once satisfied, apply the gate to the whole flow set with `rectGateFlowSet`. 
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignette/images/gating.png"))
+knitr::include_graphics(here("vignettes/images/gating.png"))
 ```  
 
 
@@ -73,39 +73,41 @@ Example of different minimum values for the same flow frame.
 
 ```{r, warning = FALSE, eval=FALSE, echo=TRUE}
 rectGateFlowFrame(
-  raw_dir = NA,
-  flow_name = "V2",
-  x_variable = "FL1-A",
-  y_variable = "SSC-A",
-  x_min_value = 20000,
-  x_max_value = 950000,
-  y_min_value = 10000,
-  y_max_value = 950000,
-  save_plot = TRUE
+  rawDir = NA,
+  flowName = "V2",
+  xVariable = "FL1-A",
+  yVariable = "SSC-A",
+  xMinValue = 20000,
+  xMaxValue = 950000,
+  yMinValue = 10000,
+  yMaxValue = 950000,
+  savePlot = TRUE
 )
 ```  
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignette/images/V2_gated1.png"))
+knitr::include_graphics(here("vignettes/images/V2_gated1.png"))
 ```  
 
 ```{r, warning = FALSE, eval=FALSE, echo=TRUE}
 rectGateFlowFrame(
-  raw_dir = NA,
-  flow_name = "V2",
-  x_variable = "FL1-A",
-  y_variable = "SSC-A",
-  x_min_value = 30000,
-  x_max_value = 700000,
-  y_min_value = 30000,
-  y_max_value = 750000,
-  save_plot = TRUE
+  rawDir = NA,
+  flowName = "V2",
+  xVariable = "FL1-A",
+  yVariable = "SSC-A",
+  xMinValue = 30000,
+  xMaxValue = 700000,
+  yMinValue = 30000,
+  yMaxValue = 750000,
+  savePlot = TRUE
 )
+
+
 ```  
 
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignette/images/V2_gated2.png"))
+knitr::include_graphics(here("vignettes/images/V2_gated2.png"))
 ``` 
 
 
@@ -126,7 +128,7 @@ The raw data can be visualized as a histogram using `flowLineGraph`. This functi
 
 ```{r}
  flowLineGraph(
-  flowDir = here("vignette/data/gated_data"),
+  flowDir = here("vignettes/data/gated_data"),
   flowControl = "V2",
   flowSamples = c("V3","V5", "V7"),
   xVariable = "FL1-A"
@@ -135,7 +137,7 @@ The raw data can be visualized as a histogram using `flowLineGraph`. This functi
 
 ```{r}
 flowLineGraph(
-  flowDir = here("vignette/data/gated_data"),
+  flowDir = here("vignettes/data/gated_data"),
   flowControl = "V23",
   flowSamples = c("V11", "V9", "V20", "V21", "V22", "V24", "V18"),
   xVariable = "FL1-A"
@@ -153,7 +155,7 @@ The core of the package is the peak detection analysis, with the goal of properl
 `peakAlgorithm1` is the first branching point to identify samples with single populations (which contain only two peaks and can be easily analysed) and to flag everything else. The algorithm will smooth the data with a smoothing level of 13 with the `smoothData` function. Then it finds a single G1 and G2 pairing. If there are more than two peaks identified, the algorithm will consider the G1/G2 pairing that is furthermost left on the x-axis to be the single population. With that population, a boundary is set to the right of the G2 peak and the ratio of cells in that area are calculated. If this ratio is within a certain threshold, the population is marked as a single population. If the ratio exceeds the threshold, the population is flagged to pass to the next algorithm, `peakAlgorithm2.` A default threshold of 8% was established by looking at the ratio of cells after the G2 peak from 500 known control populations composed of known *Candida albicans* single populations. But it is straightforward for researchers to infer an appropriate threshold from their data.  
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignette/images/PA1.png"))
+knitr::include_graphics(here("vignettes/images/PA1.png"))
 ```   
 
 **Figure 4: peakAlgorithm1 looks at the ratio of cells to the right of the G2 peak. A) An example of data from a single population sample, with a low ratio of 5.5% of cells to the right. B) An example of a population that would be flagged where the ratio of cells (32.4%) exceeds the set threshold.**   
@@ -163,7 +165,7 @@ knitr::include_graphics(here("vignette/images/PA1.png"))
 `smoothData` reads in the gated data and applies a smoothing factor to the data. Different smoothing factors are applied throughout the functions.  
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignette/images/smoothing.png"))
+knitr::include_graphics(here("vignettes/images/smoothing.png"))
 ```   
 
 **Figure 5: This is an example of the outcome of the `smoothData` function. The raw data (A) gets read into the function and a smoothing factor gets applies to eliminate every small spike getting identified as a peak. The smoothed data has a smoothing factor of 3 (B), 5 (C), and 13 (D).**  
@@ -177,7 +179,7 @@ The second branching point is in `peakAlgorithm2`, which seeks to identify all p
 While The algorithm identifies peaks that represent both peaks of interest (i.e., peaks that correspond to true G1 and G2 populations) as well as peaks that arise in the data due to spikes or abnormalities in the histogram. `findClusters` is used to differentiate between the two types of peaks and to remove the unnecessary peaks. This function will start by assuming each peak is its own cluster, then if two clusters are too close together, they will get combined and only one peak can be identified per cluster. In Figure 6C, we see that three peaks are identified, and that peaks 2 and 3 are very close together. This function will group together cluster two and three to become a single cluster (6D).    
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignette/images/findCluster.png"))
+knitr::include_graphics(here("vignettes/images/findCluster.png"))
 ```   
 
 **Figure 6: A) The raw data that gets read into the algorithm. B) The data is smoothed by a smoothing factor of five. C) The peak detection algorithm identifies all clusters. D) The `findCluster` function will group together clusters in close proximity.**  
@@ -186,7 +188,7 @@ knitr::include_graphics(here("vignette/images/findCluster.png"))
 For all the peaks that have currently been identified, `findPairs`, assumes that each peak is a possible G1 and will try and find their subpopulation pairing. The algorithm finds a lower and upper limit for each possible G1 peak. This is done by taking into account that for every true G1 peak (i.e., genome size prior to replication), there should be a corresponding G2 peak (genome size after DNA replication before division) ~2 larger (in practice, it is typically 1.8-2.1x the G1 peak). Therefore, our lower limit is 1.8xG1 peak and our upper limit is 2.1xG1 peak. For each possible G1 peak, `findPairs` looks at peaks identified in this range, and if there is more than one peak identified, it will look at the tallest of those identified peaks to pair up with the G1 peak. If no peaks have been identified in this range, the algorithm will assume that this peak is not a G1 peak and remove from our dataset. In Figure 7, four peak have been identified as possible G1 peaks. The algorithm found a G2 pairing for the first two peaks and the remaining two are removed from the dataset.    
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignette/images/findPairs.png"))
+knitr::include_graphics(here("vignettes/images/findPairs.png"))
 ```  
 
 **Figure 7: Sub population pairings from `findPairs.` The G1 peak located x = 170, has a corresponding G2 peak located at x = 355 (2.1xG1). The second subpopulation has a G1 peak at x = 355 and a G2 at x= 675 (1.9xG1).**  
@@ -194,7 +196,7 @@ knitr::include_graphics(here("vignette/images/findPairs.png"))
 Once all sub population peaks are identified, the proportion of cells that are being used is calculated (Figure 8). If the proportion of cells used (cellProp) is under our threshold of 87%, that sample will be flagged for further analysis. Currently, the threshold has been determined by looking at the cellProp from known control populations composed of known *Candida albicans* single populations. But there is an option for researchers to infer an appropriate threshold from their data.  
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignette/images/findPairs_cellProp.png"))
+knitr::include_graphics(here("vignettes/images/findPairs_cellProp.png"))
 ```  
 **Figure 8: The shaded area in red is the cells being used in the subpopulation pairings, while the area in white is the cells not being used. CellProp is calculated by the number of cells in the red area divided by the total number of cells.**  
 
@@ -205,7 +207,7 @@ Flagged populations from `peakAlgorithm2` are passed on to `peakAlgorithm3.` The
 For single populations, `doubletCheck` is used to identify doublets. Doublets are an excess of cells around the G1+G2 range. The doublet peak will not belong to any sub population as they do not fall within the proper range, and so the proportion of cells that are not part of any subpopulation is higher which will cause our peak algorithms to fail. This function is applied to each peakAlgorithm function prior to their branching point.   
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignette/images/doublet.png"))
+knitr::include_graphics(here("vignettes/images/doublet.png"))
 ```   
 
 **Figure 9: An example of a doublet, which is found approximately at the G1 + G2 location on the x-axis. A) Prior to the identification of the doublet, only 80% of cells were accounted for, which would fail our algorithm. B) After the identification of the doublet, the peak gets counted towards cellProp and 92% of cells are accounted for, which would pass the algorithm.**   
@@ -296,15 +298,15 @@ Step 1: Gating the data
 
 #Now I'm going to use rectGateFlowFrame() to test out which values to use to gate out the debris
 rectGateFlowFrame(
-  raw_dir = here("vignette/data/raw"),
-  flow_name = "V2",
-  x_variable = "FL1-A",
-  y_variable = "SSC-A",
-  x_min_value = 30000,
-  x_max_value = 700000,
-  y_min_value = 30000,
-  y_max_value = 750000,
-  save_plot = TRUE
+  rawDir = here("vignettes/data/raw"),
+  flowName = "V2",
+  xVariable = "FL1-A",
+  yVariable = "SSC-A",
+  xMinValue = 30000,
+  xMaxValue = 700000,
+  yMinValue = 30000,
+  yMaxValue = 750000,
+  savePlot = TRUE
 )
 
 #A folder called 'plotted_data' will be created with visual outputs of the gate. From there we can see if we like the gate we applied.  
@@ -312,7 +314,7 @@ rectGateFlowFrame(
 ```  
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignette/images/V2_gated2.png"))
+knitr::include_graphics(here("vignettes/images/V2_gated2.png"))
 ```   
 
 This looks like we over gated our data, let's try other values    
@@ -320,35 +322,34 @@ This looks like we over gated our data, let's try other values
 ```{r, warning = FALSE, eval=FALSE, echo=TRUE}
 
 rectGateFlowFrame(
-  raw_dir = here("vignette/data/raw"),
-  flow_name = "V2",
-  x_variable = "FL1-A",
-  y_variable = "SSC-A",
-  x_min_value = 20000,
-  x_max_value = 950000,
-  y_min_value = 10000,
-  y_max_value = 950000,
-  save_plot = TRUE
+  rawDir = here("vignettes/data/raw"),
+  flowName = "V2",
+  xVariable = "FL1-A",
+  yVariable = "SSC-A",
+  xMinValue = 20000,
+  xMaxValue = 950000,
+  yMinValue = 10000,
+  yMaxValue = 950000,
+  savePlot = TRUE
 )
 
 ```    
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignette/images/V2_gated1.png"))
+knitr::include_graphics(here("vignettes/images/V2_gated1.png"))
 ```    
 
 This looks pretty good, now let's apply it to our whole flow set.  
 ```{r, warning = FALSE, eval=FALSE, echo=TRUE}
-
 rectGateFlowSet(
-  raw_dir = here("vignette/data/raw"),
-  x_variable = "FL1-A",
-  y_variable = "SSC-A",
-  x_min_value = 20000,
-  x_max_value = 950000,
-  y_min_value = 10000,
-  y_max_value = 950000,
-  save_plot = TRUE
+  rawDir = here("vignettes/data/raw"),
+  xVariable = "FL1-A",
+  yVariable = "SSC-A",
+  xMinValue = 20000,
+  xMaxValue = 950000,
+  yMinValue = 10000,
+  yMaxValue = 950000,
+  savePlot = TRUE
 )
 
 ```   
@@ -360,7 +361,7 @@ Step 2: Peak detection Analysis
 ```{r, warning = FALSE, eval=FALSE, echo=TRUE}
 
 flowPeakDetection(
-  flowDir = here("vignette/data/gated_data"),
+  flowDir = here("vignettes/data/gated_data"),
   xVariable = "FL1-A",
   doublet = FALSE,
   saveGraph = TRUE,
