@@ -93,7 +93,7 @@ peakAlgorithm3 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
         )
     }else{
       possiblePeaks8 <- possiblePeaks7 %>%
-        mutate(
+        dplyr::mutate(
           g3LL = NA,
           g3UL = NA,
           g4LL = NA,
