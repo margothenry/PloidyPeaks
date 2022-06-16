@@ -124,7 +124,7 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
     #adding which algorithm analyzed the flow frame
     logDs2 = logDs %>% 
       dplyr::select(-Success) %>% 
-      mutate(Algorithm = as.numeric(Algorithm))
+      dplyr::mutate(Algorithm = as.numeric(Algorithm))
     
     logDs3 = logDs2 %>%
       dplyr::mutate(id = rowid(Data)) %>%
@@ -291,7 +291,7 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
     #adding which algorithm analyzed the flow frame
     logDs2 = logDs %>% 
       dplyr::select(-Success) %>% 
-      mutate(Algorithm = as.numeric(Algorithm))
+      dplyr::mutate(Algorithm = as.numeric(Algorithm))
     
     logDs3 = logDs2 %>%
       dplyr::mutate(id = rowid(Data)) %>%
@@ -479,7 +479,7 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
     #adding which algorithm analyzed the flow frame
     logDs2 = logDs %>% 
       dplyr::select(-Success) %>% 
-      mutate(Algorithm = as.numeric(Algorithm))
+      dplyr::mutate(Algorithm = as.numeric(Algorithm))
 
     logDs3 = logDs2 %>%
     dplyr::mutate(id = rowid(Data)) %>%
