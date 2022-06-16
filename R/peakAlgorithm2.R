@@ -66,7 +66,7 @@ peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold =
     possiblePeaks4 <- possiblePeaks4 %>%
       tidyr::drop_na() %>%
       dplyr::filter(
-        y > quantile(flowData$y)[4] & possiblePairY > quantile(flowData$y)[3]+7
+        y > quantile(flowData$y)[4]+5 & possiblePairY > quantile(flowData$y)[3]+7
         )
     possiblePeaks5 <- possiblePeaks4[!duplicated(possiblePeaks4$possiblePairY),]
 

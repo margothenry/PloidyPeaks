@@ -27,7 +27,7 @@
 
 outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doubletFlag, saveGraph){
   #If the algorithm classified each sub population in the first algorithm
-  if(is.na(finishedDs) & is.na(messyDs) ){
+  if(purrr::is_empty(finishedDs) & purrr::is_empty(messyDs) ){
     #Formatting the diploid data from the first peak algorithm
     finalPart1 = singleDs %>% data.frame() %>%
       select(-c("g3LL","g3UL","g4LL","g4UL")) %>%
@@ -111,26 +111,31 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
     )
 
     finalData5 = finalData4 %>% dplyr::mutate(
-      finalRSE = ifelse(!is.na(residualDoublet), residualDoublet, residual)
+      finalResidual = do.call(
+        pmin, 
+        c(subset(., select = c(residual, residualDoublet)), na.rm=T))
     ) %>% dplyr::rename(
       initialRSE = residual
     ) %>% dplyr::select(
       -residualDoublet
     )
+    
 
     #adding which algorithm analyzed the flow frame
-    logDs2 = logDs %>% dplyr::select(-Success)
-
+    logDs2 = logDs %>% 
+      dplyr::select(-Success) %>% 
+      mutate(Algorithm = as.numeric(Algorithm))
+    
     logDs3 = logDs2 %>%
       dplyr::mutate(id = rowid(Data)) %>%
       tidyr::pivot_wider(names_from = id, values_from = c(Algorithm))
-
+    
     logDs4 = logDs3 %>% dplyr::mutate(
-      Algorithm = ifelse( !is.na(`3`), "PA3",
-                         ifelse( !is.na(`2`), "PA2", "PA1")
-                         )
+      Algorithm = do.call(
+        pmax, 
+        c(subset(., select = 2:ncol(logDs3)), na.rm=T))
     )
-
+    
     logDs5 = logDs4 %>%
       dplyr::select(Data, Algorithm) %>%
       dplyr::rename(data=Data)
@@ -160,7 +165,7 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
       paste0(file.path(dirname(getwd()), subDir),"/flow_analysis.csv")
       )
 
-  }else if(is.na(messyDs)){
+  }else if(purrr::is_empty(messyDs)){
     #If the algorithm classified each sub population before prior the 4th
     #algorithm
 
@@ -273,27 +278,30 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
     )
 
     finalData5 = finalData4 %>% dplyr::mutate(
-      finalRSE = ifelse(!is.na(residualDoublet), residualDoublet, residual)
+      finalResidual = do.call(
+        pmin, 
+        c(subset(., select = c(residual, residualDoublet)), na.rm=T))
     ) %>% dplyr::rename(
       initialRSE = residual
     ) %>% dplyr::select(
       -residualDoublet
     )
+    
 
     #adding which algorithm analyzed the flow frame
-    logDs2 = logDs %>% dplyr::select(-Success)
-
+    logDs2 = logDs %>% 
+      dplyr::select(-Success) %>% 
+      mutate(Algorithm = as.numeric(Algorithm))
+    
     logDs3 = logDs2 %>%
       dplyr::mutate(id = rowid(Data)) %>%
       tidyr::pivot_wider(names_from = id, values_from = c(Algorithm))
-
+    
     logDs4 = logDs3 %>% dplyr::mutate(
-      Algorithm = ifelse( !is.na(`4`), "PA4",
-                                  ifelse( !is.na(`3`), "PA3",
-                                          ifelse( !is.na(`2`), "PA2", "PA1")
-                                  )
-                          )
-      )
+      Algorithm = do.call(
+        pmax, 
+        c(subset(., select = 2:ncol(logDs3)), na.rm=T))
+    )
 
     logDs5 = logDs4 %>%
       dplyr::select(Data, Algorithm) %>%
@@ -456,32 +464,33 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
       left join doubletRSE ds3
         on ds.data = ds3.data"
     )
-
+    
     finalData5 = finalData4 %>% dplyr::mutate(
-      finalRSE = ifelse(!is.na(residualDoublet), residualDoublet, residual)
+      finalResidual = do.call(
+        pmin, 
+        c(subset(., select = c(residual, residualDoublet)), na.rm=T))
     ) %>% dplyr::rename(
       initialRSE = residual
     ) %>% dplyr::select(
       -residualDoublet
     )
+    
 
     #adding which algorithm analyzed the flow frame
-    logDs2 = logDs %>% dplyr::select(-Success)
+    logDs2 = logDs %>% 
+      dplyr::select(-Success) %>% 
+      mutate(Algorithm = as.numeric(Algorithm))
 
     logDs3 = logDs2 %>%
     dplyr::mutate(id = rowid(Data)) %>%
     tidyr::pivot_wider(names_from = id, values_from = c(Algorithm))
 
     logDs4 = logDs3 %>% dplyr::mutate(
-      Algorithm = ifelse( !is.na(`5`), "PA5",
-                          ifelse( !is.na(`4`), "PA4",
-                                  ifelse( !is.na(`3`), "PA3",
-                                          ifelse( !is.na(`2`), "PA2", "PA1")
-                                          )
-                                  )
-                  )
+      Algorithm = do.call(
+        pmax, 
+        c(subset(., select = 2:ncol(logDs3)), na.rm=T))
     )
-
+    
     logDs5 = logDs4 %>%
       dplyr::select(Data, Algorithm) %>%
       dplyr::rename(data=Data)
