@@ -23,7 +23,7 @@
 #'  )
 
 
-flowLineGraph = function(flowDir = NA, flowControl, flowSamples, xVariable){
+flowLineGraph = function(flowDir = NA, flowControl = NA, flowSamples, xVariable){
 
   if(is.na(flowDir)){
     getwd()
@@ -45,20 +45,30 @@ flowLineGraph = function(flowDir = NA, flowControl, flowSamples, xVariable){
   }
 
   #control dataset
-  flowNameControl <- flowCore::read.FCS(
-    paste0(flowDir,"/",flowControl), transformation=FALSE
+  if(!is.na(flowControl)){
+    flowNameControl <- flowCore::read.FCS(
+      paste0(flowDir,"/",flowControl), transformation=FALSE
     )
-  controlDs <- smoothData(flowNameControl, xVariable, 5)
-  controlDs$Data <- flowNameControl@description[["GUID"]]
-
-  #plotting
-  flowPlot <- ggplot() +
-    geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
-    geom_line(data=controlDs, aes(x=x, y=y, group=2), size = 1, color='black')+
-    ylab("Counts")+
-    xlab(xVariable)+
-    theme_bw()
-
+    controlDs <- smoothData(flowNameControl, xVariable, 5)
+    controlDs$Data <- flowNameControl@description[["GUID"]]
+    
+    #plotting
+    flowPlot <- ggplot() +
+      geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
+      geom_line(data=controlDs, aes(x=x, y=y, group=2), size = 1, color='black')+
+      ylab("Counts")+
+      xlab(xVariable)+
+      theme_bw()
+    
+  }else{
+    #plotting
+    flowPlot <- ggplot() +
+      geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
+      ylab("Counts")+
+      xlab(xVariable)+
+      theme_bw()
+  }
+  
   return(flowPlot)
 }
 
