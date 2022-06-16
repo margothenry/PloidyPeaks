@@ -50,7 +50,7 @@ rectGateFlowSet = function(
   flowSet <- flowCore::read.flowSet(
     path = rawDir,
     transformation=FALSE,
-    truncate_max_range = FALSE
+    truncate_max_range = TRUE
     )
   #Progress bar iterations
   total <- length(flowSet)

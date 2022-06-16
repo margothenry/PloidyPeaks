@@ -53,7 +53,7 @@ rectGateFlowFrame = function(
   flowData <- flowCore::read.FCS(
     paste0(rawDir,"/",flowName),
     transformation=FALSE,
-    truncate_max_range = FALSE
+    truncate_max_range = TRUE
     )
 
   autoGate <- paste0(
