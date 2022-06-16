@@ -31,7 +31,7 @@ updatedMeans = function(ds, flowDir, xVariable){
     flowData <- smoothData( flowName, xVariable, 5)
     singlePop01 <- ds %>% dplyr::filter(
       data == flowNameDs[k]
-    ) %>% rename(
+    ) %>% dplyr::rename(
       xOld = x,
       yOld = y,
       possiblePairXOld = possiblePairX,
