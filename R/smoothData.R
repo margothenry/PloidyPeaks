@@ -14,18 +14,18 @@
 
 smoothData = function(flowDs, xVariable, smoothLevel){
 
-  #Get counts and breaks from histogram
-  histData <- hist(flowDs@exprs[,xVariable], breaks = 256, plot = FALSE)
+  ##Get counts and breaks from histogram
+  histData <- hist(flowDs@exprs[, xVariable], breaks=256, plot=FALSE)
 
-  #Data that will be smoothed
+  ##Data that will be smoothed
   data <- histData$counts
-  #Apply smoothing to the counts with 'smoothLevel'
-  smoothedDs <- zoo::rollmean(data, k = smoothLevel, fill = 0)
+  ##Apply smoothing to the counts with 'smoothLevel'
+  smoothedDs <- zoo::rollmean(data, k=smoothLevel, fill=0)
 
-  #Create data frame with smoothed data
+  ##Create data frame with smoothed data
   ds <- data.frame(
-    x = histData$breaks,
-    y = c(0,smoothedDs)
+    x=histData$breaks,
+    y=c(0, smoothedDs)
   )
   return(ds)
 

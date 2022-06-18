@@ -26,20 +26,20 @@
 #'  )
 
 outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doubletFlag, saveGraph){
-  #If the algorithm classified each sub population in the first algorithm
-  if(purrr::is_empty(finishedDs) & purrr::is_empty(messyDs) ){
-    #Formatting the diploid data from the first peak algorithm
-    finalPart1 = singleDs %>% data.frame() %>%
-      select(-c("g3LL","g3UL","g4LL","g4UL")) %>%
+  ##If the algorithm classified each sub population in the first algorithm
+  if(purrr::is_empty(finishedDs) & purrr::is_empty(messyDs)){
+    ##Formatting the diploid data from the first peak algorithm
+    finalPart1=singleDs %>% data.frame() %>%
+      select(-c("g3LL", "g3UL", "g4LL", "g4UL")) %>%
       dplyr::mutate(
-        messy = 0,
-        G1 = x,
-        G1Count = y,
-        G2 = possiblePairX,
-        G2Count = possiblePairY
+        messy=0,
+        G1=x,
+        G1Count=y,
+        G2=possiblePairX,
+        G2Count=possiblePairY
       )
 
-    finalData = finalPart1 %>% dplyr::select(
+    finalData=finalPart1 %>% dplyr::select(
       c(
         "data",
         "G1",
@@ -54,52 +54,52 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
       )
     )
 
-    finalData$data = factor(finalData$data)
-    finalData = finalData[order(finalData$data),]
+    finalData$data=factor(finalData$data)
+    finalData=finalData[order(finalData$data), ]
 
-    #Creating the doublet indicator
-    finalData$doublet = 0
-    finalData$doublet[!is.na(finalData$g1G2Doublet)] = 1
-    finalData$g2G2Doublet[finalData$doublet == 0] = NA
-    finalData$g2G2DoubletCount[finalData$doublet == 0] = NA
+    ##Creating the doublet indicator
+    finalData$doublet=0
+    finalData$doublet[!is.na(finalData$g1G2Doublet)]=1
+    finalData$g2G2Doublet[finalData$doublet == 0]=NA
+    finalData$g2G2DoubletCount[finalData$doublet == 0]=NA
 
-    #Turning the long dataset into a wide dataset
-    #Selection the variables that need to be transformed from long to wide
-    finalDataG1G2 = finalData %>%
+    ##Turning the long dataset into a wide dataset
+    ##Selection the variables that need to be transformed from long to wide
+    finalDataG1G2=finalData %>%
       dplyr::select(data, G1, G1Count, G2, G2Count)
-    #Selection the variables that do not need to change
-    finalDataFlags = finalData %>%
+    ##Selection the variables that do not need to change
+    finalDataFlags=finalData %>%
       dplyr::select(-c(G1, G1Count, G2, G2Count))
 
-    finalDataFlags = finalDataFlags[!duplicated(finalDataFlags$data),]
+    finalDataFlags=finalDataFlags[!duplicated(finalDataFlags$data), ]
 
-    #Making wide dataset
-    finalData2 = finalDataG1G2 %>%
-      dplyr::mutate(id = rowid(data)) %>%
-      tidyr::pivot_wider(names_from = id, values_from = c(G1, G1Count, G2, G2Count))
+    ##Making wide dataset
+    finalData2=finalDataG1G2 %>%
+      dplyr::mutate(id=rowid(data)) %>%
+      tidyr::pivot_wider(names_from=id, values_from=c(G1, G1Count, G2, G2Count))
 
-    #Merging data together
-    finalData3 = merge(finalData2, finalDataFlags, by = "data")
+    ##Merging data together
+    finalData3=merge(finalData2, finalDataFlags, by="data")
 
-    finalData3 = finalData3 %>%
+    finalData3=finalData3 %>%
       dplyr::rename(
-        `doublet G1+G2` = g1G2Doublet,
-        `doublet G1+G2 count` = g1G2DoubletCount,
-        `doublet G2+G2` = g2G2Doublet,
-        `doublet G2+G2 count` = g2G2DoubletCount
+        `doublet G1+G2`=g1G2Doublet,
+        `doublet G1+G2 count`=g1G2DoubletCount,
+        `doublet G2+G2`=g2G2Doublet,
+        `doublet G2+G2 count`=g2G2DoubletCount
       )
 
-    #Getting RSE value
-    #Testing hypothesis of a single population or multiple population
-    initialRSE = popConfidenceInitial(
-      flowDir, ds = finalData3, xVariable, saveGraph
+    ##Getting RSE value
+    ##Testing hypothesis of a single population or multiple population
+    initialRSE=popConfidenceInitial(
+      flowDir, ds=finalData3, xVariable, saveGraph
       )
 
-    doubletRSE = popConfidenceDoublet(
-      flowDir, ds = finalData3, xVariable, saveGraph
+    doubletRSE=popConfidenceDoublet(
+      flowDir, ds=finalData3, xVariable, saveGraph
       )
 
-    finalData4 = sqldf::sqldf(
+    finalData4=sqldf::sqldf(
       "select ds.*,
               ds2.residual,
               ds3.residualDoublet
@@ -110,42 +110,42 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
         on ds.data = ds3.data"
     )
 
-    finalData5 = finalData4 %>% dplyr::mutate(
-      finalResidual = do.call(
+    finalData5=finalData4 %>% dplyr::mutate(
+      finalResidual=do.call(
         pmin, 
-        c(subset(., select = c(residual, residualDoublet)), na.rm=T))
+        c(subset(., select = c(residual, residualDoublet)), na.rm=TRUE))
     ) %>% dplyr::rename(
-      initialRSE = residual
+      initialRSE=residual
     ) %>% dplyr::select(
       -residualDoublet
     )
     
 
-    #adding which algorithm analyzed the flow frame
-    logDs2 = logDs %>% 
+    ##adding which algorithm analyzed the flow frame
+    logDs2=logDs %>% 
       dplyr::select(-Success) %>% 
-      dplyr::mutate(Algorithm = as.numeric(Algorithm))
+      dplyr::mutate(Algorithm=as.numeric(Algorithm))
     
-    logDs3 = logDs2 %>%
-      dplyr::mutate(id = rowid(Data)) %>%
-      tidyr::pivot_wider(names_from = id, values_from = c(Algorithm))
+    logDs3=logDs2 %>%
+      dplyr::mutate(id=rowid(Data)) %>%
+      tidyr::pivot_wider(names_from=id, values_from=c(Algorithm))
     
-    logDs4 = logDs3 %>% dplyr::mutate(
-      Algorithm = do.call(
+    logDs4=logDs3 %>% dplyr::mutate(
+      Algorithm=do.call(
         pmax, 
-        c(subset(., select = 2:ncol(logDs3)), na.rm=T))
+        c(subset(., select=2:ncol(logDs3)), na.rm=TRUE))
     )
     
-    logDs5 = logDs4 %>%
+    logDs5=logDs4 %>%
       dplyr::select(Data, Algorithm) %>%
       dplyr::rename(data=Data)
 
-    #merging the algortihmn used with the final dataset
-    finalData6 = merge(finalData5, logDs5, by = "data")
+    ##merging the algorithm used with the final dataset
+    finalData6=merge(finalData5, logDs5, by="data")
 
-    #If doublet = FALSE, remove doublet information
+    ##If doublet = FALSE, remove doublet information
     if(doubletFlag == FALSE){
-      finalData6 = finalData6 %>%
+      finalData6=finalData6 %>%
         dplyr::select(
           -c(
             `doublet G1+G2`,
@@ -156,32 +156,32 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
         )
     }
 
-    #Creating a folder called analysis where the dataset will be saved
+    ##Creating a folder called analysis where the dataset will be saved
     setwd(flowDir)
     subDir <- "analysis"
-    dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
+    dir.create(file.path(dirname(getwd()), subDir), showWarnings=FALSE)
     write.csv(
       finalData6,
-      paste0(file.path(dirname(getwd()), subDir),"/flow_analysis.csv")
+      paste0(file.path(dirname(getwd()), subDir), "/flow_analysis.csv")
       )
 
   }else if(purrr::is_empty(messyDs)){
-    #If the algorithm classified each sub population before prior the 4th
-    #algorithm
+    ##If the algorithm classified each sub population before prior the 4th
+    ##algorithm
 
-    #Formatting the diploid data from the first peak algorithm
-    finalPart1 = singleDs %>% data.frame() %>%
-      dplyr::select(-c("g3LL","g3UL","g4LL","g4UL")) %>%
+    ##Formatting the diploid data from the first peak algorithm
+    finalPart1=singleDs %>% data.frame() %>%
+      dplyr::select(-c("g3LL", "g3UL", "g4LL", "g4UL")) %>%
       dplyr::mutate(
-        messy = 0,
-        G1 = x,
-        G1Count = y,
-        G2 = possiblePairX,
-        G2Count = possiblePairY
+        messy=0,
+        G1=x,
+        G1Count=y,
+        G2=possiblePairX,
+        G2Count=possiblePairY
       )
 
-    #Formatting the data from the other peak algorithms
-    finalPart2 = finishedDs %>% data.frame() %>%
+    ##Formatting the data from the other peak algorithms
+    finalPart2=finishedDs %>% data.frame() %>%
       dplyr::select(
         -c(
           "g3LL",
@@ -196,15 +196,15 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
           )
         ) %>%
       dplyr::mutate(
-        messy = 0,
-        G1 = x,
-        G1Count = y,
-        G2 = possiblePairX,
-        G2Count = possiblePairY
+        messy=0,
+        G1=x,
+        G1Count=y,
+        G2=possiblePairX,
+        G2Count=possiblePairY
       )
 
-    #Merging the two datasets
-    finalData = rbind(
+    ##Merging the two datasets
+    finalData=rbind(
       finalPart1,
       finalPart2
     ) %>% dplyr::select(
@@ -222,51 +222,51 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
       )
     )
 
-    finalData$data = factor(finalData$data)
-    finalData = finalData[order(finalData$data),]
+    finalData$data=factor(finalData$data)
+    finalData=finalData[order(finalData$data), ]
 
-    #Creating the doublet indicator
-    finalData$doublet = 0
-    finalData$doublet[!is.na(finalData$g1G2Doublet)] = 1
-    finalData$g2G2Doublet[finalData$doublet == 0] = NA
-    finalData$g2G2DoubletCount[finalData$doublet == 0] = NA
+    ##Creating the doublet indicator
+    finalData$doublet=0
+    finalData$doublet[!is.na(finalData$g1G2Doublet)]=1
+    finalData$g2G2Doublet[finalData$doublet == 0]=NA
+    finalData$g2G2DoubletCount[finalData$doublet == 0]=NA
 
-    #Turning the long dataset into a wide dataset
-    #Selection the variables that need to be transformed from long to wide
-    finalDataG1G2 = finalData %>%
+    ##Turning the long dataset into a wide dataset
+    ##Selection the variables that need to be transformed from long to wide
+    finalDataG1G2=finalData %>%
       dplyr::select(data, G1, G1Count, G2, G2Count)
-    #Selection the variables that do not need to change
-    finalDataFlags = finalData %>%
+    ##Selection the variables that do not need to change
+    finalDataFlags=finalData %>%
       dplyr::select(-c(G1, G1Count, G2, G2Count))
 
-    finalDataFlags = finalDataFlags[!duplicated(finalDataFlags$data),]
+    finalDataFlags=finalDataFlags[!duplicated(finalDataFlags$data), ]
 
-    #Making wide dataset
-    finalData2 = finalDataG1G2 %>%
-      dplyr::mutate(id = rowid(data)) %>%
-      tidyr::pivot_wider(names_from = id, values_from = c(G1, G1Count, G2, G2Count))
+    ##Making wide dataset
+    finalData2=finalDataG1G2 %>%
+      dplyr::mutate(id=rowid(data)) %>%
+      tidyr::pivot_wider(names_from=id, values_from=c(G1, G1Count, G2, G2Count))
 
-    #Merging data together
-    finalData3 = merge(finalData2, finalDataFlags, by = "data")
-    finalData3 = finalData3 %>%
+    ##Merging data together
+    finalData3=merge(finalData2, finalDataFlags, by="data")
+    finalData3=finalData3 %>%
       dplyr::rename(
-        `doublet G1+G2` = g1G2Doublet,
-        `doublet G1+G2 count` = g1G2DoubletCount,
-        `doublet G2+G2` = g2G2Doublet,
-        `doublet G2+G2 count` = g2G2DoubletCount
+        `doublet G1+G2`=g1G2Doublet,
+        `doublet G1+G2 count`=g1G2DoubletCount,
+        `doublet G2+G2`=g2G2Doublet,
+        `doublet G2+G2 count`=g2G2DoubletCount
       )
 
-    #Getting RSE value
-    #Testing hypothesis of a single population or multiple population
-    initialRSE = popConfidenceInitial(
-      flowDir, ds = finalData3, xVariable, saveGraph
+    ##Getting RSE value
+    ##Testing hypothesis of a single population or multiple population
+    initialRSE=popConfidenceInitial(
+      flowDir, ds=finalData3, xVariable, saveGraph
       )
 
-    doubletRSE = popConfidenceDoublet(
-      flowDir, ds = finalData3, xVariable, saveGraph
+    doubletRSE=popConfidenceDoublet(
+      flowDir, ds=finalData3, xVariable, saveGraph
       )
 
-    finalData4 = sqldf::sqldf(
+    finalData4=sqldf::sqldf(
       "select ds.*,
               ds2.residual,
               ds3.residualDoublet
@@ -277,42 +277,42 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
         on ds.data = ds3.data"
     )
 
-    finalData5 = finalData4 %>% dplyr::mutate(
-      finalResidual = do.call(
+    finalData5=finalData4 %>% dplyr::mutate(
+      finalResidual=do.call(
         pmin, 
-        c(subset(., select = c(residual, residualDoublet)), na.rm=T))
+        c(subset(., select=c(residual, residualDoublet)), na.rm=TRUE))
     ) %>% dplyr::rename(
-      initialRSE = residual
+      initialRSE=residual
     ) %>% dplyr::select(
       -residualDoublet
     )
     
 
-    #adding which algorithm analyzed the flow frame
-    logDs2 = logDs %>% 
+    ##adding which algorithm analyzed the flow frame
+    logDs2=logDs %>% 
       dplyr::select(-Success) %>% 
-      dplyr::mutate(Algorithm = as.numeric(Algorithm))
+      dplyr::mutate(Algorithm=as.numeric(Algorithm))
     
-    logDs3 = logDs2 %>%
-      dplyr::mutate(id = rowid(Data)) %>%
-      tidyr::pivot_wider(names_from = id, values_from = c(Algorithm))
+    logDs3=logDs2 %>%
+      dplyr::mutate(id=rowid(Data)) %>%
+      tidyr::pivot_wider(names_from=id, values_from=c(Algorithm))
     
-    logDs4 = logDs3 %>% dplyr::mutate(
-      Algorithm = do.call(
+    logDs4=logDs3 %>% dplyr::mutate(
+      Algorithm=do.call(
         pmax, 
-        c(subset(., select = 2:ncol(logDs3)), na.rm=T))
+        c(subset(., select=2:ncol(logDs3)), na.rm=TRUE))
     )
 
-    logDs5 = logDs4 %>%
+    logDs5=logDs4 %>%
       dplyr::select(Data, Algorithm) %>%
       dplyr::rename(data=Data)
 
-    #merging the algorithm used with the final dataset
-    finalData6 = merge(finalData5, logDs5, by = "data")
+    ##merging the algorithm used with the final dataset
+    finalData6=merge(finalData5, logDs5, by="data")
 
-    #If doublet = FALSE, remove doublet information
+    ##If doublet = FALSE, remove doublet information
     if(doubletFlag == FALSE){
-      finalData6 = finalData6 %>%
+      finalData6=finalData6 %>%
         dplyr::select(
           -c(
             `doublet G1+G2`,
@@ -323,30 +323,30 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
         )
     }
 
-    #Creating a folder called analysis where the dataset will be saved
+    ##Creating a folder called analysis where the dataset will be saved
     setwd(flowDir)
     subDir <- "analysis"
     dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
     write.csv(
       finalData6,
-      paste0(file.path(dirname(getwd()), subDir),"/flow_analysis.csv"
+      paste0(file.path(dirname(getwd()), subDir), "/flow_analysis.csv"
              )
       )
 
   }else{
-    #Formatting the diploid data from the first peak algorithm
-    finalPart1 = singleDs %>% data.frame() %>%
-      dplyr::select(-c("g3LL","g3UL","g4LL","g4UL")) %>%
+    ##Formatting the diploid data from the first peak algorithm
+    finalPart1=singleDs %>% data.frame() %>%
+      dplyr::select(-c("g3LL", "g3UL", "g4LL", "g4UL")) %>%
       dplyr::mutate(
-        messy = 0,
-        G1 = x,
-        G1Count = y,
-        G2 = possiblePairX,
-        G2Count = possiblePairY
+        messy=0,
+        G1=x,
+        G1Count=y,
+        G2=possiblePairX,
+        G2Count=possiblePairY
       )
 
-    #Formatting the data from peak algorithm 2-4
-    finalPart2 = finishedDs %>% data.frame() %>%
+    ##Formatting the data from peak algorithm 2-4
+    finalPart2=finishedDs %>% data.frame() %>%
       dplyr::select(
         -c(
           "g3LL",
@@ -361,15 +361,15 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
           )
         ) %>%
       dplyr::mutate(
-        messy = 0,
-        G1 = x,
-        G1Count = y,
-        G2 = possiblePairX,
-        G2Count = possiblePairY
+        messy=0,
+        G1=x,
+        G1Count=y,
+        G2=possiblePairX,
+        G2Count=possiblePairY
       )
 
-    #Formatting the data from the last peak algorthm
-    finalPart3 = messyDs %>% data.frame() %>%
+    ##Formatting the data from the last peak algorthm
+    finalPart3=messyDs %>% data.frame() %>%
       dplyr::select(
         -c(
           "g3LL",
@@ -383,14 +383,14 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
           )
         ) %>%
       dplyr::mutate(
-        G1 = x,
-        G1Count = y,
-        G2 = possiblePairX,
-        G2Count = possiblePairY
+        G1=x,
+        G1Count=y,
+        G2=possiblePairX,
+        G2Count=possiblePairY
       )
 
-    #Merging the three datasets
-    finalData = rbind(
+    ##Merging the three datasets
+    finalData=rbind(
       finalPart1,
       finalPart2,
       finalPart3
@@ -409,52 +409,52 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
       )
     )
 
-    finalData$data = factor(finalData$data)
-    finalData = finalData[order(finalData$data),]
+    finalData$data=factor(finalData$data)
+    finalData=finalData[order(finalData$data), ]
 
-    #Creating the doublet indicator
-    finalData$doublet = 0
-    finalData$doublet[!is.na(finalData$g1G2Doublet)] = 1
-    finalData$g2G2Doublet[finalData$doublet == 0] = NA
-    finalData$g2G2DoubletCount[finalData$doublet == 0] = NA
+    ##Creating the doublet indicator
+    finalData$doublet=0
+    finalData$doublet[!is.na(finalData$g1G2Doublet)]=1
+    finalData$g2G2Doublet[finalData$doublet == 0]=NA
+    finalData$g2G2DoubletCount[finalData$doublet == 0]=NA
 
-    #Turning the long dataset into a wide dataset
-    #Selection the variables that need to be transformed from long to wide
-    finalDataG1G2 = finalData %>%
-      dplyr::select(data, G1, G2,G1Count, G2Count)
-    #Selection the variables that do not need to change
-    finalDataFlags = finalData %>%
+    ##Turning the long dataset into a wide dataset
+    ##Selection the variables that need to be transformed from long to wide
+    finalDataG1G2=finalData %>%
+      dplyr::select(data, G1, G2, G1Count, G2Count)
+    ##Selection the variables that do not need to change
+    finalDataFlags=finalData %>%
       dplyr::select(-c(G1, G2,G1Count, G2Count))
 
-    finalDataFlags = finalDataFlags[!duplicated(finalDataFlags$data),]
+    finalDataFlags=finalDataFlags[!duplicated(finalDataFlags$data), ]
 
-    #Making wide dataset
-    finalData2 = finalDataG1G2 %>%
-      dplyr::mutate(id = rowid(data)) %>%
-      tidyr::pivot_wider(names_from = id, values_from = c(G1, G2,G1Count, G2Count))
+    ##Making wide dataset
+    finalData2=finalDataG1G2 %>%
+      dplyr::mutate(id=rowid(data)) %>%
+      tidyr::pivot_wider(names_from=id, values_from=c(G1, G2,G1Count, G2Count))
 
-    #Merging data together
-    finalData3 = merge(finalData2, finalDataFlags, by = "data")
+    ##Merging data together
+    finalData3=merge(finalData2, finalDataFlags, by="data")
 
-    finalData3 = finalData3 %>%
+    finalData3=finalData3 %>%
       dplyr::rename(
-        `doublet G1+G2` = g1G2Doublet,
-        `doublet G1+G2 count` = g1G2DoubletCount,
-        `doublet G2+G2` = g2G2Doublet,
-        `doublet G2+G2 count` = g2G2DoubletCount
+        `doublet G1+G2`=g1G2Doublet,
+        `doublet G1+G2 count`=g1G2DoubletCount,
+        `doublet G2+G2`=g2G2Doublet,
+        `doublet G2+G2 count`=g2G2DoubletCount
       )
 
-    #Getting RSE value
-    #Testing hypothesis of a single population or multiple population
-    initialRSE = popConfidenceInitial(
-      flowDir, ds = finalData3, xVariable, saveGraph
+    ##Getting RSE value
+    ##Testing hypothesis of a single population or multiple population
+    initialRSE=popConfidenceInitial(
+      flowDir, ds=finalData3, xVariable, saveGraph
       )
 
-    doubletRSE = popConfidenceDoublet(
-      flowDir, ds = finalData3, xVariable, saveGraph
+    doubletRSE=popConfidenceDoublet(
+      flowDir, ds=finalData3, xVariable, saveGraph
       )
 
-    finalData4 = sqldf::sqldf(
+    finalData4=sqldf::sqldf(
       "select ds.*,
               ds2.residual,
               ds3.residualDoublet
@@ -465,42 +465,42 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
         on ds.data = ds3.data"
     )
     
-    finalData5 = finalData4 %>% dplyr::mutate(
-      finalResidual = do.call(
+    finalData5=finalData4 %>% dplyr::mutate(
+      finalResidual=do.call(
         pmin, 
-        c(subset(., select = c(residual, residualDoublet)), na.rm=T))
+        c(subset(., select=c(residual, residualDoublet)), na.rm=TRUE))
     ) %>% dplyr::rename(
-      initialRSE = residual
+      initialRSE=residual
     ) %>% dplyr::select(
       -residualDoublet
     )
     
 
-    #adding which algorithm analyzed the flow frame
-    logDs2 = logDs %>% 
+    ##adding which algorithm analyzed the flow frame
+    logDs2=logDs %>% 
       dplyr::select(-Success) %>% 
-      dplyr::mutate(Algorithm = as.numeric(Algorithm))
+      dplyr::mutate(Algorithm=as.numeric(Algorithm))
 
-    logDs3 = logDs2 %>%
-    dplyr::mutate(id = rowid(Data)) %>%
-    tidyr::pivot_wider(names_from = id, values_from = c(Algorithm))
+    logDs3=logDs2 %>%
+    dplyr::mutate(id=rowid(Data)) %>%
+    tidyr::pivot_wider(names_from=id, values_from=c(Algorithm))
 
-    logDs4 = logDs3 %>% dplyr::mutate(
-      Algorithm = do.call(
+    logDs4=logDs3 %>% dplyr::mutate(
+      Algorithm=do.call(
         pmax, 
-        c(subset(., select = 2:ncol(logDs3)), na.rm=T))
+        c(subset(., select=2:ncol(logDs3)), na.rm=TRUE))
     )
     
-    logDs5 = logDs4 %>%
+    logDs5=logDs4 %>%
       dplyr::select(Data, Algorithm) %>%
       dplyr::rename(data=Data)
 
-    #merging the algortihmn used with the final dataset
-    finalData6 = merge(finalData5, logDs5, by = "data")
+    ##merging the algorithm used with the final dataset
+    finalData6=merge(finalData5, logDs5, by="data")
 
-    #If doublet = FALSE, remove doublet information
+    ##If doublet = FALSE, remove doublet information
     if(doubletFlag == FALSE){
-      finalData6 = finalData6 %>%
+      finalData6=finalData6 %>%
         dplyr::select(
           -c(
             `doublet G1+G2`,
@@ -512,13 +512,13 @@ outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doublet
     }
 
 
-    #Creating a folder called analysis where the dataset will be saved
+    ##Creating a folder called analysis where the dataset will be saved
     setwd(flowDir)
     subDir <- "analysis"
-    dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
+    dir.create(file.path(dirname(getwd()), subDir), showWarnings=FALSE)
     write.csv(
       finalData6,
-      paste0(file.path(dirname(getwd()), subDir),"/flow_analysis.csv")
+      paste0(file.path(dirname(getwd()), subDir), "/flow_analysis.csv")
       )
 
   }

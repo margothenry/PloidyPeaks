@@ -35,7 +35,7 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
   flaggedData <- c()
 
   logFlow <- data.frame(
-    matrix(nrow = 0, ncol = 3)
+    matrix(nrow=0, ncol=3)
   )
   colnames(logFlow) <- c("Algorithm", "Data", "Success")
 
@@ -43,8 +43,14 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
 
   for(k in 1:length(flowNameDs)){
     flowName <- flowCore::read.FCS(
-      paste0(flowDir,"/",flowNameDs[k]), transformation=FALSE
+      paste0(flowDir, "/", flowNameDs[k]), transformation=FALSE
       )
+    
+    if(!xVariable %in% flowName@parameters@data$name){
+      stop("Your X variable is not in the dataset")
+    }
+    
+    
     flowData <- smoothData( flowName, xVariable, 4)
 
     logFlow[1, ] <- c(algorithmNum, flowName@description[["GUID"]], 0)
@@ -54,8 +60,8 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
       logFlow
     )
 
-    localPeaks <- detect_localmaxima(flowData$y,3)
-    possiblePeaks <- flowData[localPeaks,]
+    localPeaks <- detect_localmaxima(flowData$y, 3)
+    possiblePeaks <- flowData[localPeaks, ]
 
     possiblePeaks2 <- possiblePeaks[
       which(possiblePeaks$y > quantile(flowData$y)[3]+5),
@@ -76,7 +82,7 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
       dplyr::filter(
         y > quantile(flowData$y)[4]-15 & possiblePairY > quantile(flowData$y)[3]
         )
-    possiblePeaks6 <- possiblePeaks5[!duplicated(possiblePeaks5$possiblePairY),]
+    possiblePeaks6 <- possiblePeaks5[!duplicated(possiblePeaks5$possiblePairY), ]
 
 
     if(nrow(possiblePeaks6) > 1){
@@ -86,7 +92,7 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
     }
 
     if(nrow(possiblePeaks7) == 1){
-      rangeLength <- nchar(format(xVarMax, scientific=F))
+      rangeLength <- nchar(format(xVarMax, scientific=FALSE))
       multiplier <- 10^(rangeLength-3)
       possiblePeaks8 <- doubletCheck(
         possiblePeaks7,
@@ -97,21 +103,21 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
     }else{
       possiblePeaks8 <- possiblePeaks7 %>%
         dplyr::mutate(
-          g3LL = NA,
-          g3UL = NA,
-          g4LL = NA,
-          g4UL = NA,
-          g1G2Doublet = NA,
-          g1G2DoubletCount = NA,
-          g2G2Doublet = NA,
-          g2G2DoubletCount = NA
+          g3LL=NA,
+          g3UL=NA,
+          g4LL=NA,
+          g4UL=NA,
+          g1G2Doublet=NA,
+          g1G2DoubletCount=NA,
+          g2G2Doublet=NA,
+          g2G2DoubletCount=NA
         )
     }
 
     if(nrow(possiblePeaks8) != 0){
       if(!is.na(possiblePeaks8$g1G2Doublet[1])){
         peakRow <- data.frame(
-          peaks = c(
+          peaks=c(
             possiblePeaks8$x,
             possiblePeaks8$possiblePairX,
             possiblePeaks8$g1G2Doublet,
@@ -120,7 +126,7 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
           )
       }else{
         peakRow <- data.frame(
-          peaks = c(possiblePeaks8$x, possiblePeaks8$possiblePairX)
+          peaks=c(possiblePeaks8$x, possiblePeaks8$possiblePairX)
           )
       }
 
@@ -137,15 +143,15 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
         }
 
         if(xPeak+10 > nrow(smoothedData) & xPeak-10 < 1){
-          peakRowSmoothedRange <- smoothedData[seq(1, nrow(smoothedData),1), ]
+          peakRowSmoothedRange <- smoothedData[seq(1, nrow(smoothedData), 1), ]
         }else if(xPeak+10 > nrow(smoothedData) & xPeak-10 >= 1){
           peakRowSmoothedRange <- smoothedData[
-            seq(xPeak-10, nrow(smoothedData),1),
+            seq(xPeak-10, nrow(smoothedData), 1),
             ]
         }else if(xPeak+10 <= nrow(smoothedData) & xPeak-10 < 1){
-          peakRowSmoothedRange <- smoothedData[seq(1, xPeak+10,1), ]
+          peakRowSmoothedRange <- smoothedData[seq(1, xPeak+10, 1), ]
         }else{
-          peakRowSmoothedRange <- smoothedData[seq(xPeak-10, xPeak+10,1), ]
+          peakRowSmoothedRange <- smoothedData[seq(xPeak-10, xPeak+10, 1), ]
         }
 
         xPeakSmoothed <- which(max(peakRowSmoothedRange$y) == smoothedData$y)
@@ -185,8 +191,8 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
           keep == TRUE
         )
 
-        xEpsilonRight <- which(flowData$x==intPeak$x[3])
-        xEpsilonLeft <- which(flowData$x==intPeak$x[1])
+        xEpsilonRight <- which(flowData$x == intPeak$x[3])
+        xEpsilonLeft <- which(flowData$x == intPeak$x[1])
         peakCount <- flowData$y[c(xEpsilonLeft:xEpsilonRight)]
         peakCount01 <- sum(peakCount)
         peakCount01[j] <- peakCount01
@@ -199,21 +205,21 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
 
       cellsUsed01 <- sum(cellsUsed)
       totalCellCount <- sum(smoothedData$y)
-      propCellsUsed <- round((cellsUsed01/totalCellCount)*100,2)
+      propCellsUsed <- round((cellsUsed01/totalCellCount)*100, 2)
       possiblePeaks8$propCellsUsed <- propCellsUsed
 
     }else{
       possiblePeaks8 <- data.frame(
-        x = NA,
-        y = NA,
-        cluster = NA,
-        distToNext = NA,
-        LL = NA,
-        UL = NA,
-        possiblePairX= NA,
-        possiblePairY= NA,
-        data = flowName@description[["GUID"]],
-        propCellsUsed = NA
+        x=NA,
+        y=NA,
+        cluster=NA,
+        distToNext=NA,
+        LL=NA,
+        UL=NA,
+        possiblePairX=NA,
+        possiblePairY=NA,
+        data=flowName@description[["GUID"]],
+        propCellsUsed=NA
       )
     }
 
@@ -225,7 +231,7 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
       ){
 
       possiblePeaks9 <- possiblePeaks8 %>% dplyr::mutate(
-        data = flowName@description[["GUID"]]
+        data=flowName@description[["GUID"]]
       )
 
       appendData <- rbind(
@@ -236,8 +242,8 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
     }else{
 
       possiblePeaks9 <- possiblePeaks8 %>% dplyr::mutate(
-        data = flowName@description[["GUID"]],
-        messy = 1
+        data=flowName@description[["GUID"]],
+        messy=1
       )
 
       flaggedData <- rbind(
@@ -247,10 +253,10 @@ peakAlgorithm4 = function(flowDir, flaggedData_, xVariable, appendData, usedCell
 
 
     }
-    .GlobalEnv$logDs[nrow(.GlobalEnv$logDs),]$Success <- 1
+    .GlobalEnv$logDs[nrow(.GlobalEnv$logDs), ]$Success <- 1
   }
 
-  returnedList <- list(flaggedData,appendData)
+  returnedList <- list(flaggedData, appendData)
 
   return(returnedList)
 

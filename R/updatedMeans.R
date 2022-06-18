@@ -25,17 +25,17 @@ updatedMeans = function(ds, flowDir, xVariable){
 
   for(k in 1:length(flowNameDs)){
     flowName <- flowCore::read.FCS(
-      paste0(flowDir,"/",flowNameDs[k]), transformation=FALSE
+      paste0(flowDir, "/", flowNameDs[k]), transformation=FALSE
     )
 
     flowData <- smoothData( flowName, xVariable, 5)
     singlePop01 <- ds %>% dplyr::filter(
       data == flowNameDs[k]
     ) %>% dplyr::rename(
-      xOld = x,
-      yOld = y,
-      possiblePairXOld = possiblePairX,
-      possiblePairYOld = possiblePairY
+      xOld=x,
+      yOld=y,
+      possiblePairXOld=possiblePairX,
+      possiblePairYOld=possiblePairY
     )
 
     xPeak1 <- which(flowData$x == singlePop01$xOld)
@@ -44,15 +44,15 @@ updatedMeans = function(ds, flowDir, xVariable){
     }
 
     if(xPeak1+10 > nrow(flowData) & xPeak1-10 < 1){
-      peakRowSmoothedRange <- flowData[seq(1, nrow(flowData),1), ]
+      peakRowSmoothedRange <- flowData[seq(1, nrow(flowData), 1), ]
     }else if(xPeak1+10 > nrow(flowData) & xPeak1-10 >= 1){
       peakRowSmoothedRange <- flowData[
-        seq(xPeak1-10, nrow(flowData),1),
+        seq(xPeak1-10, nrow(flowData), 1),
       ]
     }else if(xPeak1+10 <= nrow(flowData) & xPeak1-10 < 1){
-      peakRowSmoothedRange <- flowData[seq(1, xPeak1+10,1), ]
-    }else{
-      peakRowSmoothedRange <- flowData[seq(xPeak1-10, xPeak1+10,1), ]
+      peakRowSmoothedRange <- flowData[seq(1, xPeak1+10, 1), ]
+    }else{ 
+      peakRowSmoothedRange <- flowData[seq(xPeak1-10, xPeak1+10, 1), ]
     }
 
     xPeak1Smoothed <- which(max(peakRowSmoothedRange$y) == flowData$y)
@@ -67,28 +67,28 @@ updatedMeans = function(ds, flowDir, xVariable){
       }
 
       if(xPeak2+10 > nrow(flowData) & xPeak2-10 < 1){
-        peakRowSmoothedRange <- flowData[seq(xPeak1, nrow(flowData),1), ]
+        peakRowSmoothedRange <- flowData[seq(xPeak1, nrow(flowData), 1), ]
       }else if(xPeak2+10 > nrow(flowData) & xPeak2-10 >= 1){
         peakRowSmoothedRange <- flowData[
-          seq(xPeak2-10, nrow(flowData),1),
+          seq(xPeak2-10, nrow(flowData), 1),
         ]
       }else if(xPeak2+10 <= nrow(flowData) & xPeak2-10 < 1){
-        peakRowSmoothedRange <- flowData[seq(xPeak1, xPeak2+10,1), ]
+        peakRowSmoothedRange <- flowData[seq(xPeak1, xPeak2+10, 1), ]
       }else{
-        peakRowSmoothedRange <- flowData[seq(xPeak2-10, xPeak2+10,1), ]
+        peakRowSmoothedRange <- flowData[seq(xPeak2-10, xPeak2+10, 1), ]
       }
 
       xPeak2Smoothed <- which(max(peakRowSmoothedRange$y) == flowData$y)
       if(length(xPeak2Smoothed) > 1){
-        xPeak2Smoothed =  xPeak2Smoothed[which(xPeak1Smoothed<xPeak2Smoothed)]
+        xPeak2Smoothed <- xPeak2Smoothed[which(xPeak1Smoothed<xPeak2Smoothed)]
         xPeak2Smoothed <- xPeak2Smoothed[1]
       }
 
       singlePop02 <- singlePop01 %>% dplyr::mutate(
-        x = flowData[xPeak1Smoothed,]$x,
-        y = flowData[xPeak1Smoothed,]$y,
-        possiblePairX = flowData[xPeak2Smoothed,]$x,
-        possiblePairY = flowData[xPeak2Smoothed,]$y
+        x=flowData[xPeak1Smoothed, ]$x,
+        y=flowData[xPeak1Smoothed, ]$y,
+        possiblePairX=flowData[xPeak2Smoothed, ]$x,
+        possiblePairY=flowData[xPeak2Smoothed, ]$y
       ) %>% dplyr::select(
         data,
         x,
@@ -107,10 +107,10 @@ updatedMeans = function(ds, flowDir, xVariable){
     }else{
 
       singlePop02 <- singlePop01 %>% dplyr::mutate(
-        x = flowData[xPeak1Smoothed,]$x,
-        y = flowData[xPeak1Smoothed,]$y,
-        possiblePairX = possiblePairXOld,
-        possiblePairY = possiblePairYOld
+        x=flowData[xPeak1Smoothed, ]$x,
+        y=flowData[xPeak1Smoothed, ]$y,
+        possiblePairX=possiblePairXOld,
+        possiblePairY=possiblePairYOld
       ) %>% dplyr::select(
         data,
         x,

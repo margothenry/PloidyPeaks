@@ -15,14 +15,14 @@
 #')
 
 findPairs = function(ds, LL, UL){
-  #creating upper and lowed bounds that are read into the function
+  ##creating upper and lowed bounds that are read into the function
   findingPairsDs <- ds %>% dplyr::mutate(
     LL = x*LL,
     UL = x*UL
   )
-  #Finding the peaks that are in the in (LL, UL)
-  #These are the possible peaks that will be considered for their G1/G2 pairing.
-  #If there is more than one peak identified, we pick the tallest of those peaks
+  ##Finding the peaks that are in the in (LL, UL)
+  ##These are the possible peaks that will be considered for their G1/G2 pairing.
+  ##If there is more than one peak identified, we pick the tallest of those peaks
   findingPairsDs$possiblePairX <- NA
   findingPairsDs$possiblePairY <- NA
   for( i in 1:nrow(findingPairsDs)){
@@ -37,7 +37,7 @@ findPairs = function(ds, LL, UL){
 
     if(!purrr::is_empty(possible_)){
       if(possible_ != i) {
-        maxPossible_ <- findingPairsDs[possible_,]
+        maxPossible_ <- findingPairsDs[possible_, ]
         maxPossibleRows <- maxPossible_[
           order(maxPossible_$y, decreasing = TRUE),
           ][1,]

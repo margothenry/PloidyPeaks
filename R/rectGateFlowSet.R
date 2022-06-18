@@ -46,36 +46,70 @@ rectGateFlowSet = function(
     getwd()
     rawDir <- tclvalue(tkchooseDirectory())
   }
-
-  flowSet <- flowCore::read.flowSet(
-    path = rawDir,
-    transformation=FALSE,
-    truncate_max_range = TRUE
+  
+  if(purrr::is_empty(rawDir)){
+    stop("Your directory is empty")
+  }
+  
+  xpectr::suppress_mw(
+    flowSet <- flowCore::read.flowSet(
+      path=rawDir,
+      transformation=FALSE,
+      truncate_max_range=TRUE
     )
+  )
+  
   #Progress bar iterations
   total <- length(flowSet)
   #Create progress bar
-  pb <- txtProgressBar(min = 0, max = total, style = 3)
+  pb <- txtProgressBar(min=0, max=total, style=3)
 
   setwd(rawDir)
   subDir <- "gated_data"
-  dir.create(file.path(dirname(rawDir), subDir), showWarnings = FALSE)
+  dir.create(file.path(dirname(rawDir), subDir), showWarnings=FALSE)
 
   if(savePlot == TRUE){
     gatePlotDir <- "plotted_data"
-    dir.create(file.path(dirname(rawDir), gatePlotDir), showWarnings = FALSE)
-    plotOutFile <- file.path(dirname(rawDir),gatePlotDir)
+    dir.create(file.path(dirname(rawDir), gatePlotDir), showWarnings=FALSE)
+    plotOutFile <- file.path(dirname(rawDir), gatePlotDir)
   }
 
   gatedCellsOut <- data.frame(
-    matrix(nrow = 0, ncol = 2)
+    matrix(nrow=0, ncol=2)
   )
   colnames(gatedCellsOut) <- c("Data", "% of cells gated out")
 
   for(i in 1:length(flowSet)){
 
     flowData <- flowSet[[i]]
-
+    
+    ##Checking to see if the user input the correct X and Y variable
+    if(!xVariable %in% flowData@parameters@data$name){
+      stop("Your X variable is not in the dataset")
+    }
+    
+    if(!yVariable %in% flowData@parameters@data$name){
+      stop("Your Y variable is not in the dataset")
+    }
+    
+    ##Checking the gating parameters are in the dataset
+    if(xMaxValue > flowData@parameters@data[["maxRange"]][1]){
+      stop("Your xMaxValue exceeds the range of the flow frame, consider a new value")
+    }
+    
+    if(xMinValue < flowData@parameters@data[["minRange"]][1]){
+      stop("Your xMinValue exceeds the range of the flow frame, consider a new value")
+    }
+    
+    if(yMaxValue > flowData@parameters@data[["maxRange"]][1]){
+      stop("Your yMaxValue exceeds the range of the flow frame, consider a new value")
+    }
+    
+    if(yMinValue < flowData@parameters@data[["minRange"]][1]){
+      stop("Your yMinValue exceeds the range of the flow frame, consider a new value")
+    }
+    
+    ##Creating the gate
     autoGate <- paste0(
       'rectGate <- flowCore::rectangleGate(
           filterId=\"Fluorescence Region\",\"',
@@ -84,19 +118,20 @@ rectGateFlowSet = function(
         )'
     )
 
-    eval(parse(text = autoGate))
-
+    eval(parse(text=autoGate))
+    ##Subsetting the data that is in the gate
     gatedFlowData <- flowCore::Subset(flowData, rectGate)
+    ##Finding the % of cells gated out
     frameName <- gatedFlowData@description[["GUID"]]
     numCellsGatedOut <- round(
       100 - (
-        length(gatedFlowData@exprs[,xVariable])/
-        length(flowData@exprs[,xVariable])
+        length(gatedFlowData@exprs[, xVariable])/
+        length(flowData@exprs[, xVariable])
         )*100,1
       )
 
     gatedCellsFlow <- data.frame(
-      matrix(nrow = 0, ncol = 2)
+      matrix(nrow=0, ncol=2)
     )
     colnames(gatedCellsFlow) <- c("Data", "% of cells gated out")
     gatedCellsFlow[1, ] <- c(frameName, numCellsGatedOut)
@@ -104,23 +139,25 @@ rectGateFlowSet = function(
       gatedCellsOut,
       gatedCellsFlow
     )
-
-    outFile <- file.path(dirname(rawDir),subDir, frameName)
+    ##Saving the gated data intob a folder
+    outFile <- file.path(dirname(rawDir), subDir, frameName)
     flowCore::write.FCS(gatedFlowData, outFile)
-
+    ##If TRUE plots will be created for the user and saved in a folder
     if(savePlot == TRUE){
 
       flowData@description[["GUID"]] <- "Raw data"
       rawDataPlot <- ggcyto::autoplot(
-        flowData, xVariable, yVariable, bins = 64
-        ) + ggcyto::geom_gate(rectGate) + ggcyto::ggcyto_par_set(limits = "data")
+        flowData, xVariable, yVariable, bins=64
+        ) + ggcyto::geom_gate(rectGate) + ggcyto::ggcyto_par_set(limits="data")
       gatedFlowData@description[["GUID"]] <- "Gated data"
-      gatedDataPlot <- ggcyto::autoplot(
-        gatedFlowData, xVariable, yVariable,  bins = 64
-        ) + ggcyto::ggcyto_par_set(limits = "instrument")
+      gatedDataPlot <- xpectr::suppress_mw(
+        ggcyto::autoplot(
+          gatedFlowData, xVariable, yVariable,  bins=64
+        ) + ggcyto::ggcyto_par_set(limits="instrument")
+      )
       combinedPlot <- ggcyto::as.ggplot(rawDataPlot) + ggcyto::as.ggplot(gatedDataPlot)
       gatedFlowData@description[["GUID"]] <- frameName
-      png(paste0(plotOutFile,"/",frameName,'.png'), width = 600, height = 400)
+      png(paste0(plotOutFile, "/", frameName, '.png'), width=600, height=400)
       print(combinedPlot)
       dev.off()
 
@@ -128,7 +165,7 @@ rectGateFlowSet = function(
     setTxtProgressBar(pb, i)
   }
   write.csv(
-    gatedCellsOut, paste0(dirname(getwd()),"/ProportionOfCellsGatedOut.csv")
+    gatedCellsOut, paste0(dirname(getwd()), "/ProportionOfCellsGatedOut.csv")
     )
   close(pb)
 }

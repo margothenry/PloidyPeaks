@@ -29,7 +29,7 @@ peakAlgorithm5 = function(flowDir, flaggedData_, xVariable, appendData){
   flowNameDs <- unique(naDs$data)
 
   logFlow <- data.frame(
-    matrix(nrow = 0, ncol = 3)
+    matrix(nrow=0, ncol=3)
   )
   colnames(logFlow) <- c("Algorithm", "Data", "Success")
 
@@ -37,8 +37,14 @@ peakAlgorithm5 = function(flowDir, flaggedData_, xVariable, appendData){
 
   for(k in 1:length(flowNameDs)){
     flowName <- flowCore::read.FCS(
-      paste0(flowDir,"/",flowNameDs[k]), transformation=FALSE
+      paste0(flowDir, "/", flowNameDs[k]), transformation=FALSE
       )
+    
+    if(!xVariable %in% flowName@parameters@data$name){
+      stop("Your X variable is not in the dataset")
+    }
+    
+    
     flowData <- smoothData( flowName, xVariable, 5)
 
     logFlow[1, ] <- c(algorithmNum, flowName@description[["GUID"]], 0)
@@ -48,8 +54,8 @@ peakAlgorithm5 = function(flowDir, flaggedData_, xVariable, appendData){
       logFlow
     )
 
-    localPeaks <- detect_localmaxima(flowData$y,3)
-    possiblePeaks <- flowData[localPeaks,]
+    localPeaks <- detect_localmaxima(flowData$y, 3)
+    possiblePeaks <- flowData[localPeaks, ]
 
     possiblePeaks2 = possiblePeaks[
       which(possiblePeaks$y > quantile(flowData$y)[3]),
@@ -64,13 +70,13 @@ peakAlgorithm5 = function(flowDir, flaggedData_, xVariable, appendData){
     possiblePeaks3 <- findClusters(possiblePeaks2, 30, xVarMax)
 
     possiblePeaks4 <- possiblePeaks3[
-      order(possiblePeaks3$x, decreasing = FALSE),
+      order(possiblePeaks3$x, decreasing=FALSE),
       ]
     possiblePeaks4 <- possiblePeaks4[
       which(possiblePeaks4$x < quantile(flowData$x)[4]),
       ]
     peaksFix <- possiblePeaks4
-    firstPeak <- possiblePeaks4[1,1:2]
+    firstPeak <- possiblePeaks4[1, 1:2]
 
     if(nrow(possiblePeaks4) == 1){
 
@@ -82,11 +88,11 @@ peakAlgorithm5 = function(flowDir, flaggedData_, xVariable, appendData){
         g2PeakRadiusLL < possiblePeaks$x & possiblePeaks$x < g2PeakRadiusUL &
         possiblePeaks$x < quantile(flowData$x)[4]
         )
-      g2ToTestDs3 <- possiblePeaks[g2ToTestDs2,]
+      g2ToTestDs3 <- possiblePeaks[g2ToTestDs2, ]
       if(nrow(g2ToTestDs3) == 0){
         g2ToTestDs3 <- data.frame(
-          x = 0,
-          y = 0
+          x=0,
+          y=0
         )
       }
       #the peak is G2 missing G1
@@ -95,23 +101,23 @@ peakAlgorithm5 = function(flowDir, flaggedData_, xVariable, appendData){
       g1ToTestDs2 <- which(
         g1PeakRadiusLL < possiblePeaks$x & possiblePeaks$x < g1PeakRadiusUL
         )
-      g1ToTestDs3 <- possiblePeaks[g1ToTestDs2,]
+      g1ToTestDs3 <- possiblePeaks[g1ToTestDs2, ]
       if(nrow(g1ToTestDs3) == 0){
         g1ToTestDs3 <- data.frame(
-          x = 0,
-          y = 0
+          x=0,
+          y=0
         )
       }
 
       if(g2ToTestDs3$y[1] < g1ToTestDs3$y[1]){
-        peak2 <- g1ToTestDs3[1,]
+        peak2 <- g1ToTestDs3[1, ]
         peak1 <- initialPeak
         peaksFix <- rbind(
           peak1,
           peak2
         )
       }else{
-        peak2 <- g2ToTestDs3[1,]
+        peak2 <- g2ToTestDs3[1, ]
         peak1 <- initialPeak
         peaksFix <- rbind(
           peak1,
@@ -127,34 +133,34 @@ peakAlgorithm5 = function(flowDir, flaggedData_, xVariable, appendData){
       dplyr::filter(
         y > quantile(flowData$y)[3] & possiblePairY > quantile(flowData$y)[3]
         )
-    possiblePeaks6 <- possiblePeaks5[!duplicated(possiblePeaks5$possiblePairY),]
+    possiblePeaks6 <- possiblePeaks5[!duplicated(possiblePeaks5$possiblePairY), ]
 
     if(nrow(possiblePeaks6) > 1){
       possiblePeaks7 <- findClusters(possiblePeaks6, 30, xVarMax)
     }else{
       possiblePeaks7 <- possiblePeaks6 %>% dplyr::mutate(
-        cluster = 1,
-        distToNext = 0
+        cluster=1,
+        distToNext=0
       )
     }
 
     if(nrow(possiblePeaks7) == 0){
-      maxPeaksFix <- peaksFix[which(max(peaksFix$y) == peaksFix$y),]
+      maxPeaksFix <- peaksFix[which(max(peaksFix$y) == peaksFix$y), ]
       possiblePeaks7 <- data.frame(
-        x = maxPeaksFix$x,
-        y = maxPeaksFix$y,
-        cluster = 1,
-        distToNext = 0,
-        LL = NA,
-        UL = NA,
-        possiblePairX = 0,
-        possiblePairY = 0
+        x=maxPeaksFix$x,
+        y=maxPeaksFix$y,
+        cluster=1,
+        distToNext=0,
+        LL=NA,
+        UL=NA,
+        possiblePairX=0,
+        possiblePairY=0
       )
 
     }
 
     if(nrow(possiblePeaks7) == 1){
-      rangeLength <- nchar(format(xVarMax, scientific=F))
+      rangeLength <- nchar(format(xVarMax, scientific=FALSE))
       multiplier <- 10^(rangeLength-3)
       possiblePeaks8 <- doubletCheck(
         possiblePeaks7,
@@ -165,20 +171,20 @@ peakAlgorithm5 = function(flowDir, flaggedData_, xVariable, appendData){
     }else{
       possiblePeaks8 <- possiblePeaks7 %>%
         dplyr::mutate(
-          g3LL = NA,
-          g3UL = NA,
-          g4LL = NA,
-          g4UL = NA,
-          g1G2Doublet = NA,
-          g1G2DoubletCount = NA,
-          g2G2Doublet = NA,
-          g2G2DoubletCount = NA
+          g3LL=NA,
+          g3UL=NA,
+          g4LL=NA,
+          g4UL=NA,
+          g1G2Doublet=NA,
+          g1G2DoubletCount=NA,
+          g2G2Doublet=NA,
+          g2G2DoubletCount=NA
         )
     }
 
     possiblePeaks9 <- possiblePeaks8 %>% dplyr::mutate(
-      data = flowName@description[["GUID"]],
-      messy = 1
+      data=flowName@description[["GUID"]],
+      messy=1
     )
 
     appendData <- rbind(
@@ -186,7 +192,7 @@ peakAlgorithm5 = function(flowDir, flaggedData_, xVariable, appendData){
       possiblePeaks9
     )
 
-    .GlobalEnv$logDs[nrow(.GlobalEnv$logDs),]$Success <- 1
+    .GlobalEnv$logDs[nrow(.GlobalEnv$logDs), ]$Success <- 1
   }
 
   returnedList <- list(appendData)

@@ -1,6 +1,6 @@
 Package: PloidyPeaks
 Title: Peak Detection Algorithm For Flow Cytometry Data
-Version: 0.0.26
+Version: 0.0.27
 Authors@R: 
     person("Margot", "Henry", , "henrym3@myumanitoba.ca", role = c("aut", "cre"))
 Description: PloidyPeaks is a package to quantify population-level genome size variation from flow cytometry data without requiring user input.
@@ -8,6 +8,7 @@ Description: PloidyPeaks is a package to quantify population-level genome size v
 	The workflow is separated into three parts: 1) gating and 2) peak detection, 3) dataset output.
 	Built-in visualizations options are included throughout.
 Imports: data.table,
+    xpectr,
     flowCore,
     ggcyto,
     magrittr,

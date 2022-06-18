@@ -49,13 +49,52 @@ rectGateFlowFrame = function(
     getwd()
     rawDir <- tclvalue(tkchooseDirectory())
   }
-
-  flowData <- flowCore::read.FCS(
-    paste0(rawDir,"/",flowName),
-    transformation=FALSE,
-    truncate_max_range = TRUE
-    )
-
+  
+  #Checking if the folder they selected is empty
+  if(purrr::is_empty(rawDir)){
+    stop("Your directory is empty")
+  }
+  
+  if(!flowName %in% list.files(rawDir)){
+    stop("The flow frame you selected is not in the folder, check on the spelling of flowName and/or make sure you selected the proper folder")
+  }
+  
+  ##Reading in flow data
+  xpectr::suppress_mw(
+    flowData <- flowCore::read.FCS(
+      paste0(rawDir,"/",flowName),
+      transformation=FALSE,
+      truncate_max_range TRUE
+    ) 
+  )
+  ##Checking to see if the user input the correct X and Y variable
+  if(!xVariable %in% flowData@parameters@data$name){
+    stop("Your X variable is not in the dataset")
+  }
+  
+  if(!yVariable %in% flowData@parameters@data$name){
+    stop("Your Y variable is not in the dataset")
+  }
+  
+  ##Checking the gating parameters are in the dataset
+  if(xMaxValue > flowData@parameters@data[["maxRange"]][1]){
+    stop("Your xMaxValue exceeds the range of the flow frame, consider a new value")
+  }
+  
+  if(xMinValue < flowData@parameters@data[["minRange"]][1]){
+    stop("Your xMinValue exceeds the range of the flow frame, consider a new value")
+  }
+  
+  if(yMaxValue > flowData@parameters@data[["maxRange"]][1]){
+    stop("Your yMaxValue exceeds the range of the flow frame, consider a new value")
+  }
+  
+  if(yMinValue < flowData@parameters@data[["minRange"]][1]){
+    stop("Your yMinValue exceeds the range of the flow frame, consider a new value")
+  }
+  
+  
+  ##Creating the gate
   autoGate <- paste0(
     'rectGate <- flowCore::rectangleGate(
           filterId=\"Fluorescence Region\",\"',
@@ -64,40 +103,45 @@ rectGateFlowFrame = function(
         )'
   )
 
-  eval(parse(text = autoGate))
-
+  eval(parse(text=autoGate))
+  
+  ##Subsetting the data that is in the gate
   gatedFlowData <- flowCore::Subset(flowData, rectGate)
+  ##Finding the % of cells gated out
   numCellsGatedOut <-  round(
     100 - (
-      length(gatedFlowData@exprs[,xVariable]) /
-      length(flowData@exprs[,xVariable]))*100,1
+      length(gatedFlowData@exprs[, xVariable]) /
+      length(flowData@exprs[, xVariable]))*100, 1
     )
-  print( paste0(numCellsGatedOut,"% of the cells were gated out") )
+  print( paste0(numCellsGatedOut, "% of the cells were gated out") )
+  ##Creating directories to save the data
   setwd(rawDir)
   subDir <- "gated_data"
-  dir.create(file.path(dirname(rawDir), subDir), showWarnings = FALSE)
-
-  outFile <- file.path(dirname(rawDir),subDir, flowName)
+  dir.create(file.path(dirname(rawDir), subDir), showWarnings=FALSE)
+  ##Saving the gated data intob a folder
+  outFile <- file.path(dirname(rawDir), subDir, flowName)
   flowCore::write.FCS(gatedFlowData, outFile)
-
+  ##If TRUE plots will be created for the user and saved in a folder
   if(savePlot == TRUE){
 
     gatePlotDir <- "plotted_data"
-    dir.create(file.path(dirname(rawDir), gatePlotDir), showWarnings = FALSE)
-    plotOutFile <- file.path(dirname(rawDir),gatePlotDir)
+    dir.create(file.path(dirname(rawDir), gatePlotDir), showWarnings=FALSE)
+    plotOutFile <- file.path(dirname(rawDir), gatePlotDir)
 
     flowData@description[["GUID"]] <- "Raw data"
     rawDataPlot <- ggcyto::autoplot(
-      flowData, xVariable, yVariable, bins = 64
-      ) + ggcyto::geom_gate(rectGate) + ggcyto::ggcyto_par_set(limits = "data")
+      flowData, xVariable, yVariable, bins=64
+      ) + ggcyto::geom_gate(rectGate) + ggcyto::ggcyto_par_set(limits="data")
     gatedFlowData@description[["GUID"]] <- "Gated data"
-    gatedDataPlot <- ggcyto::autoplot(
-      gatedFlowData, xVariable, yVariable,  bins = 64
-      ) + ggcyto::ggcyto_par_set(limits = "instrument")
+    gatedDataPlot <- xpectr::suppress_mw(
+      ggcyto::autoplot(
+        gatedFlowData, xVariable, yVariable,  bins=64
+      ) + ggcyto::ggcyto_par_set(limits="instrument")
+    )
     combinedPlot <- ggcyto::as.ggplot(rawDataPlot) + ggcyto::as.ggplot(gatedDataPlot)
 
     gatedFlowData@description[["GUID"]] <- flowName
-    png(paste0(plotOutFile,"/",flowName,'.png'), width = 600, height = 400)
+    png(paste0(plotOutFile, "/", flowName, '.png'), width=600, height=400)
     print(combinedPlot)
     dev.off()
 

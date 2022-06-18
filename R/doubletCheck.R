@@ -21,15 +21,15 @@
 
 doubletCheck = function(doubletCheckDs, peaks, g1G2Range, g2G2Range){
 
-  #creating lower bounds and upper bounds for peaks that could be classified as doublets
+  ##creating lower bounds and upper bounds for peaks that could be classified as doublets
   doubletCheckDs2 <- doubletCheckDs %>% dplyr::mutate(
-    g3LL = x + possiblePairX - g1G2Range,
-    g3UL = x + possiblePairX + g1G2Range,
-    g4LL = possiblePairX + possiblePairX - g2G2Range,
-    g4UL = possiblePairX + possiblePairX + g2G2Range
+    g3LL=x + possiblePairX - g1G2Range,
+    g3UL=x + possiblePairX + g1G2Range,
+    g4LL=possiblePairX + possiblePairX - g2G2Range,
+    g4UL=possiblePairX + possiblePairX + g2G2Range
   )
 
-  #finding the peaks that are in the G1+G2 range
+  ##finding the peaks that are in the G1+G2 range
   doubletCheckDs2$g1G2Doublet <- NA
   doubletCheckDs2$g1G2DoubletCount <- NA
   for( i in 1:nrow(doubletCheckDs2)){
@@ -44,11 +44,11 @@ doubletCheck = function(doubletCheckDs, peaks, g1G2Range, g2G2Range){
 
     if(!purrr::is_empty(possible_)){
       if(possible_ != i) {
-        #If there are more than one peak identified, we pick the tallest of those peaks
-        maxPossible_ <- peaks[possible_,]
+        ##If there are more than one peak identified, we pick the tallest of those peaks
+        maxPossible_ <- peaks[possible_, ]
         maxPossibleRows <- maxPossible_[
           order(maxPossible_$y, decreasing = TRUE),
-          ][1,]
+          ][1, ]
 
         doubletCheckDs2$g1G2Doublet[i] <- maxPossibleRows$x
         doubletCheckDs2$g1G2DoubletCount[i] <- maxPossibleRows$y
@@ -58,8 +58,8 @@ doubletCheck = function(doubletCheckDs, peaks, g1G2Range, g2G2Range){
     }
   }
 
-  #similarly for G2+G2
-  #finding the peaks that are in the G2+G2 range
+  ##similarly for G2+G2
+  ##finding the peaks that are in the G2+G2 range
   doubletCheckDs2$g2G2Doublet <- NA
   doubletCheckDs2$g2G2DoubletCount <- NA
   for( i in 1:nrow(doubletCheckDs2)){
@@ -76,7 +76,7 @@ doubletCheck = function(doubletCheckDs, peaks, g1G2Range, g2G2Range){
         maxPossible_ <- peaks[possible_,]
         maxPossibleRows <- maxPossible_[
           order(maxPossible_$y, decreasing = TRUE),
-          ][1,]
+          ][1, ]
 
         doubletCheckDs2$g2G2Doublet[i] <- maxPossibleRows$x
         doubletCheckDs2$g2G2DoubletCount[i] <- maxPossibleRows$y

@@ -30,11 +30,11 @@ flowLineGraph = function(flowDir = NA, flowControl = NA, flowSamples, xVariable)
     flowDir <- tclvalue(tkchooseDirectory())
   }
 
-  #samples dataset
+  ##samples dataset
   sampleDs <- c()
   for(k in 1:length(flowSamples)){
     flowName <- flowCore::read.FCS(
-      paste0(flowDir,"/",flowSamples[k]), transformation=FALSE
+      paste0(flowDir, "/", flowSamples[k]), transformation=FALSE
       )
     ds <- smoothData( flowName, xVariable, 5)
     ds$Data <- flowName@description[["GUID"]]
@@ -44,15 +44,16 @@ flowLineGraph = function(flowDir = NA, flowControl = NA, flowSamples, xVariable)
     )
   }
 
-  #control dataset
+
   if(!is.na(flowControl)){
+    ##control dataset
     flowNameControl <- flowCore::read.FCS(
-      paste0(flowDir,"/",flowControl), transformation=FALSE
+      paste0(flowDir, "/", flowControl), transformation=FALSE
     )
     controlDs <- smoothData(flowNameControl, xVariable, 5)
     controlDs$Data <- flowNameControl@description[["GUID"]]
     
-    #plotting
+    ##plotting
     flowPlot <- ggplot() +
       geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
       geom_line(data=controlDs, aes(x=x, y=y, group=2), size = 1, color='black')+
@@ -61,7 +62,7 @@ flowLineGraph = function(flowDir = NA, flowControl = NA, flowSamples, xVariable)
       theme_bw()
     
   }else{
-    #plotting
+    ##plotting
     flowPlot <- ggplot() +
       geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
       ylab("Counts")+

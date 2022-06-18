@@ -28,15 +28,20 @@ peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold =
   flaggedData <- c()
 
   logFlow <- data.frame(
-    matrix(nrow = 0, ncol = 3)
+    matrix(nrow=0, ncol=3)
   )
   colnames(logFlow) <- c("Algorithm", "Data", "Success")
   algorithmNum <- 2
 
   for(k in 1:length(flowNameDs)){
     flowName <- flowCore::read.FCS(
-      paste0(flowDir,"/",flowNameDs[k]), transformation=FALSE
+      paste0(flowDir, "/", flowNameDs[k]), transformation=FALSE
       )
+    
+    if(!xVariable %in% flowName@parameters@data$name){
+      stop("Your X variable is not in the dataset")
+    }
+    
     flowData <- smoothData( flowName, xVariable, 5)
 
     logFlow[1, ] <- c(algorithmNum, flowName@description[["GUID"]], 0)
@@ -46,8 +51,8 @@ peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold =
       logFlow
     )
 
-    localPeaks <- detect_localmaxima(flowData$y,3)
-    possiblePeaks <- flowData[localPeaks,]
+    localPeaks <- detect_localmaxima(flowData$y, 3)
+    possiblePeaks <- flowData[localPeaks, ]
 
     possiblePeaks2 <- possiblePeaks[
       which(possiblePeaks$y > quantile(flowData$y)[3]+5),
@@ -68,10 +73,10 @@ peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold =
       dplyr::filter(
         y > quantile(flowData$y)[4]+5 & possiblePairY > quantile(flowData$y)[3]+7
         )
-    possiblePeaks5 <- possiblePeaks4[!duplicated(possiblePeaks4$possiblePairY),]
+    possiblePeaks5 <- possiblePeaks4[!duplicated(possiblePeaks4$possiblePairY), ]
 
     if(nrow(possiblePeaks5) == 1){
-      rangeLength <- nchar(format(xVarMax, scientific=F))
+      rangeLength <- nchar(format(xVarMax, scientific=FALSE))
       multiplier <- 10^(rangeLength-3)
       possiblePeaks6 <- doubletCheck(
         possiblePeaks5,
@@ -82,20 +87,20 @@ peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold =
     }else{
       possiblePeaks6 <- possiblePeaks5 %>%
         dplyr::mutate(
-          g3LL = NA,
-          g3UL = NA,
-          g4LL = NA,
-          g4UL = NA,
-          g1G2Doublet = NA,
-          g1G2DoubletCount = NA,
-          g2G2Doublet = NA,
-          g2G2DoubletCount = NA
+          g3LL=NA,
+          g3UL=NA,
+          g4LL=NA,
+          g4UL=NA,
+          g1G2Doublet=NA,
+          g1G2DoubletCount=NA,
+          g2G2Doublet=NA,
+          g2G2DoubletCount=NA
         )
     }
 
 
     if(nrow(possiblePeaks6) != 0){
-      #function start
+
       if(!is.na(possiblePeaks6$g1G2Doublet[1])){
         peakRow <- data.frame(
           peaks = c(
@@ -107,7 +112,7 @@ peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold =
           )
       }else{
         peakRow <- data.frame(
-          peaks = c(
+          peaks=c(
             possiblePeaks6$x,
             possiblePeaks6$possiblePairX
             )
@@ -127,7 +132,7 @@ peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold =
         flowData$keep <- FALSE
         flowData$keep[xPeak] <- TRUE
 
-        #Forwards
+        ##Forwards
         for(i in xPeak:nrow(flowData)){
           if(i == nrow(flowData)){
             flowData$keep[nrow(flowData)] <- TRUE
@@ -140,7 +145,7 @@ peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold =
           }
         }
 
-        #Backwards
+        ##Backwards
         for(i in xPeak:1){
           if(i == 1){
             flowData$keep[1] <- TRUE
@@ -157,8 +162,8 @@ peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold =
           keep == TRUE
         )
 
-        xEpsilonRight <- which(flowData$x==intPeak$x[3])
-        xEpsilonLeft <- which(flowData$x==intPeak$x[1])
+        xEpsilonRight <- which(flowData$x == intPeak$x[3])
+        xEpsilonLeft <- which(flowData$x == intPeak$x[1])
         peakCount <- flowData$y[c(xEpsilonLeft:xEpsilonRight)]
         peakCount01 <- sum(peakCount)
         peakCount01[j] <- peakCount01
@@ -171,20 +176,20 @@ peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold =
 
       cellsUsed01 <- sum(cellsUsed)
       totalCellCount <- sum(flowData$y)
-      propCellsUsed <- round((cellsUsed01/totalCellCount)*100,2)
+      propCellsUsed <- round((cellsUsed01/totalCellCount)*100, 2)
       possiblePeaks6$propCellsUsed <- propCellsUsed
 
     }else{
       possiblePeaks6 <- data.frame(
-        x = NA,
-        y = NA,
-        cluster = NA,
-        LL = NA,
-        UL = NA,
-        possiblePairX= NA,
-        possiblePairY= NA,
-        data = flowName@description[["GUID"]],
-        propCellsUsed = NA
+        x=NA,
+        y=NA,
+        cluster=NA,
+        LL=NA,
+        UL=NA,
+        possiblePairX=NA,
+        possiblePairY=NA,
+        data=flowName@description[["GUID"]],
+        propCellsUsed=NA
       )
     }
 
@@ -194,7 +199,7 @@ peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold =
       ){
 
       possiblePeaks7 <- possiblePeaks6 %>% dplyr::mutate(
-        data = flowName@description[["GUID"]]
+        data=flowName@description[["GUID"]]
       )
 
       finishedData <- rbind(
@@ -210,10 +215,10 @@ peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold =
       )
 
     }
-    .GlobalEnv$logDs[nrow(.GlobalEnv$logDs),]$Success <- 1
+    .GlobalEnv$logDs[nrow(.GlobalEnv$logDs), ]$Success <- 1
   }
 
-  returnedList <- list(flaggedData,finishedData)
+  returnedList <- list(flaggedData, finishedData)
 
   return(returnedList)
 

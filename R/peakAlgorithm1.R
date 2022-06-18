@@ -28,17 +28,24 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
   singleData <- c()
   flaggedData <- c()
 
-  #Adding flow frame to log
+  ##Adding flow frame to log
   logFlow <- data.frame(
-    matrix(nrow = 0, ncol = 3)
+    matrix(nrow=0, ncol=3)
   )
   colnames(logFlow) <- c("Algorithm", "Data", "Success")
   algorithmNum <- 1
 
-  #Looping through each flow frame
+  ##Looping through each flow frame
   for(k in 1:length(flowSet)){
-    #Reading in and smoothing data
-    flowName <- flowCore::read.FCS( paste0(flowDir,"/",flowSet[k]), transformation=FALSE)
+    ##Reading in and smoothing data
+    flowName <- flowCore::read.FCS(
+      paste0(flowDir, "/", flowSet[k]), transformation=FALSE
+      )
+    
+    if(!xVariable %in% flowName@parameters@data$name){
+      stop("Your X variable is not in the dataset")
+    }
+    
     flowData <- smoothData( flowName, xVariable, 13)
 
     logFlow[1, ] <- c(algorithmNum, flowName@description[["GUID"]], 0)
@@ -48,17 +55,17 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
       logFlow
     )
 
-    #Finding local peaks
-    localPeaks <- detect_localmaxima(flowData$y,5)
-    possiblePeaks <- flowData[localPeaks,]
+    ##Finding local peaks
+    localPeaks <- detect_localmaxima(flowData$y, 5)
+    possiblePeaks <- flowData[localPeaks, ]
 
-    #Removing the peaks that are identified at the base of the histogram
+    ##Removing the peaks that are identified at the base of the histogram
     possiblePeaks2 <- possiblePeaks[
       which(possiblePeaks$y > quantile(flowData$y)[3]+5),
       ]
     xVarMax <- max(flowData$x)
-    #Removing the peaks that are identified at the extreme left side of the
-    #Histogram that could be caused by debris/improper gating
+    ##Removing the peaks that are identified at the extreme left side of the
+    ##Histogram that could be caused by debris/improper gating
     possiblePeaks2 <- possiblePeaks2[which(possiblePeaks2$x > xVarMax/9.5), ]
 
     if(nrow(possiblePeaks2) == 0){
@@ -69,21 +76,21 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
 
     possiblePeaks3 <- findClusters(possiblePeaks2, 40, xVarMax)
 
-    #Ordering the peaks
-    possiblePeaks4 <- possiblePeaks3[order(possiblePeaks3$x, decreasing=FALSE),]
-    #Removing the peaks that are identified at the extreme right side of the
-    #Histogram
+    ##Ordering the peaks
+    possiblePeaks4 <- possiblePeaks3[order(possiblePeaks3$x, decreasing=FALSE), ]
+    ##Removing the peaks that are identified at the extreme right side of the
+    ##Histogram
     possiblePeaks4 <- possiblePeaks4[
       which(possiblePeaks4$x < quantile(flowData$x)[4]),
       ]
     peaksFix <- possiblePeaks4
-    #Identifying the first peak in the dataset
-    firstPeak <- possiblePeaks4[1,1:2]
-    #If there is only one peak identified, try to identify the pair for this peak
+    ##Identifying the first peak in the dataset
+    firstPeak <- possiblePeaks4[1, 1:2]
+    ##If there is only one peak identified, try to identify the pair for this peak
     if(nrow(possiblePeaks4) == 1){
 
       initialPeak <- firstPeak
-      #The peak is G1 and G2 is missing
+      ##The peak is G1 and G2 is missing
       g2PeakRadiusUL <- initialPeak$x*2.2 + 1
       g2PeakRadiusLL <- initialPeak$x*1.75 - 1
       g2ToTestDs2 <- which(
@@ -93,8 +100,8 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
       g2ToTestDs3 <- possiblePeaks[g2ToTestDs2,]
       if(nrow(g2ToTestDs3) == 0){
         g2ToTestDs3 <- data.frame(
-          x = 0,
-          y = 0
+          x=0,
+          y=0
         )
       }
       #The peak is G2 and G1 is missing
@@ -106,8 +113,8 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
       g1ToTestDs3 <- possiblePeaks[g1ToTestDs2,]
       if(nrow(g1ToTestDs3) == 0){
         g1ToTestDs3 <- data.frame(
-          x = 0,
-          y = 0
+          x=0,
+          y=0
         )
       }
 
@@ -129,31 +136,31 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
 
     }
 
-    #checking if we have the proper G1 peak
-    peaksFix <- peaksFix[order(peaksFix$x, decreasing = FALSE),]
-    firstPeak <- peaksFix[1,1:2]
-    if(firstPeak$x > xVarMax/3.1 | firstPeak$x < xVarMax/6 ){
+    ##checking if we have the proper G1 peak
+    peaksFix <- peaksFix[order(peaksFix$x, decreasing=FALSE), ]
+    firstPeak <- peaksFix[1, 1:2]
+    if(firstPeak$x > xVarMax/3.1 | firstPeak$x < xVarMax/6){
 
       initialPeak <- firstPeak
-      otherPeak <- peaksFix[-1,1:2]
+      otherPeak <- peaksFix[-1, 1:2]
 
-      #the peak is G2 missing G1
+      ##the peak is G2 missing G1
       g1PeakRadiusLL <- initialPeak$x/2.3 - 1
       g1PeakRadiusUL <- initialPeak$x/1.7 + 1
       g1ToTestDs2 <- which(
         g1PeakRadiusLL <= possiblePeaks$x & possiblePeaks$x <= g1PeakRadiusUL
         )
-      g1ToTestDs3 <- possiblePeaks[g1ToTestDs2,]
+      g1ToTestDs3 <- possiblePeaks[g1ToTestDs2, ]
 
       if(nrow(g1ToTestDs3) == 0){
         g1ToTestDs2 <- which(
           g1PeakRadiusLL <= flowData$x & flowData$x <= g1PeakRadiusUL
           )
-        g1ToTestDs3 <- flowData[g1ToTestDs2,]
+        g1ToTestDs3 <- flowData[g1ToTestDs2, ]
       }
-      g1ToTestDs3 <- g1ToTestDs3[order(g1ToTestDs3$y, decreasing = TRUE),]
-      g1ToTestDs3 <- g1ToTestDs3[which(g1ToTestDs3$y > quantile(flowData$y)[2]),]
-      peak2 <- g1ToTestDs3[1,]
+      g1ToTestDs3 <- g1ToTestDs3[order(g1ToTestDs3$y, decreasing=TRUE), ]
+      g1ToTestDs3 <- g1ToTestDs3[which(g1ToTestDs3$y > quantile(flowData$y)[2]), ]
+      peak2 <- g1ToTestDs3[1, ]
       peak1 <- initialPeak
       peaksFix <- rbind(
         peak1,
@@ -162,18 +169,18 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
       )
     }
 
-    #Finding the are to the right of the G2 peak
-    peaksFix <- peaksFix[order(peaksFix$x, decreasing = FALSE),]
+    ##Finding the are to the right of the G2 peak
+    peaksFix <- peaksFix[order(peaksFix$x, decreasing=FALSE), ]
     peaksFix <- peaksFix %>% dplyr::distinct()
 
-    #Finding the distance between the G1 and G2 peak
-    #
+    ##Finding the distance between the G1 and G2 peak
+    
     epsilon <- abs((peaksFix$x[2] - peaksFix$x[1])/2)
     epsilonLeft <- peaksFix$x[2] - epsilon
     epsilonRight <- peaksFix$x[2] + epsilon
 
     xEpsilon <- which(
-      abs(flowData$x-epsilonRight)==min(abs(flowData$x-epsilonRight))
+      abs(flowData$x-epsilonRight) == min(abs(flowData$x-epsilonRight))
       )
     if(length(xEpsilon)>1){
       xEpsilon <- xEpsilon[1]
@@ -183,26 +190,26 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
     cellCountPreEpsilon <- sum(preEpsilon)
     cellCountPostEpsilon <- sum(postEpsilon)
     totalCellCount <- sum(flowData$y)
-    #Proportion of cells that are to the right of the G2 peak
-    detect <- round((cellCountPostEpsilon/totalCellCount)*100,4)
+    ##Proportion of cells that are to the right of the G2 peak
+    detect <- round((cellCountPostEpsilon/totalCellCount)*100, 4)
 
     if(detect <= singleThreshold){
 
       if(peaksFix$x[1] == 0){
-        peaksFix[1,] <- peaksFix[2,]
+        peaksFix[1, ] <- peaksFix[2, ]
         peaksFix$x[2] <- 0
         peaksFix$y[2] <- 0
       }
 
       singleDs <- data.frame(
-        data = flowName@description[["GUID"]],
-        x = peaksFix$x[1],
-        y = peaksFix$y[1],
-        possiblePairX = peaksFix$x[2],
-        possiblePairY = peaksFix$y[2]
+        data=flowName@description[["GUID"]],
+        x=peaksFix$x[1],
+        y=peaksFix$y[1],
+        possiblePairX=peaksFix$x[2],
+        possiblePairY=peaksFix$y[2]
       )
 
-      rangeLength <- nchar(format(xVarMax, scientific=F))
+      rangeLength <- nchar(format(xVarMax, scientific=FALSE))
       multiplier <- 10^(rangeLength-3)
       singleDs2 <- doubletCheck(
         singleDs,
@@ -223,11 +230,11 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
       )
     }
 
-    .GlobalEnv$logDs[nrow(.GlobalEnv$logDs),]$Success <- 1
+    .GlobalEnv$logDs[nrow(.GlobalEnv$logDs), ]$Success <- 1
 
   }
 
-  returnedList <- list(flaggedData,singleDataUpdated)
+  returnedList <- list(flaggedData, singleDataUpdated)
 
   return(returnedList)
 }
