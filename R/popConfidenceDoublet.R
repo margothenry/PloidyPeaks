@@ -343,14 +343,21 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
 
         singlePopNLS <- nls(
           formula = y ~ (
-            N1/(sqrt(2 * pi) * g1SD) * exp(-((x - g1Mean)^2)/(2 *g1SD^2))
-            ) +
-            (A1 + B1*x + C1*(x^2))*(1/(sqrt(2 * pi) * g1SD * (x/g1Mean)) * exp(-((x - g1Mean)^2)/(2 *(g1SD* (x/g1Mean))^2)))+
+            N1/(sqrt(2*pi) * g1SD) * exp(-((x-g1Mean)^2)/(2 *g1SD^2))) +
+            (A1 + B1*x + C1*(x^2))*
+            (1/(sqrt(2 * pi) * g1SD * (x/g1Mean)) * exp(-((x - g1Mean)^2)/
+              (2 *(g1SD* (x/g1Mean))^2)))+
             (N2/(sqrt(2 * pi) * g2SD) * exp(-((x - g2Mean)^2)/(2 *g2SD^2)))+
-            (A2 + B2*x + C2*(x^2))*(1/(sqrt(2 * pi) * g2SD * (x/g2Mean)) * exp(-((x - g2Mean)^2)/(2 *(g2SD* (x/g2Mean))^2)))+
-            (numDoublet1/(sqrt(2 * pi) * G1g2SD) * exp(-((x - G1G2Mean)^2)/(2 *G1g2SD^2)))+
-            (A3 + B3*x + C3*(x^2))*(1/(sqrt(2 * pi) * G1g2SD * (x/G1G2Mean)) * exp(-((x - G1G2Mean)^2)/(2 *(G1g2SD* (x/G1G2Mean))^2)))+
-            (numDoublet2/(sqrt(2 * pi) * G2g2SD) * exp(-((x - G2G2Mean)^2)/(2 *G2g2SD^2))),
+            (A2 + B2*x + C2*(x^2))*
+            (1/(sqrt(2 * pi) * g2SD * (x/g2Mean)) * exp(-((x - g2Mean)^2)/
+              (2 *(g2SD* (x/g2Mean))^2)))+
+            (numDoublet1/(sqrt(2*pi)*G1g2SD)*exp(-((x-G1G2Mean)^2)/
+              (2*G1g2SD^2)))+
+            (A3 + B3*x + C3*(x^2))*
+            (1/(sqrt(2*pi)*G1g2SD*(x/G1G2Mean))*exp(-((x-G1G2Mean)^2)/
+              (2*(G1g2SD*(x/G1G2Mean))^2)))+
+            (numDoublet2/(sqrt(2*pi)*G2g2SD)*exp(-((x-G2G2Mean)^2)/
+              (2 *G2g2SD^2))),
           data=flowData,
           start=c(
             N1=flowDataMeans01$numG1,
@@ -422,11 +429,16 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
 
 
         singlePopNLS <- nls(
-          formula = y ~ (N1/(sqrt(2 * pi) * g1SD) * exp(-((x - g1Mean)^2)/(2 *g1SD^2))) +
-            (A1 + B1*x + C1*(x^2))*(1/(sqrt(2 * pi) * g1SD * (x/g1Mean)) * exp(-((x - g1Mean)^2)/(2 *(g1SD* (x/g1Mean))^2)))+
-            (N2/(sqrt(2 * pi) * g2SD) * exp(-((x - g2Mean)^2)/(2 *g2SD^2)))+
-            (A2 + B2*x + C2*(x^2))*(1/(sqrt(2 * pi) * g2SD * (x/g2Mean)) * exp(-((x - g2Mean)^2)/(2 *(g2SD* (x/g2Mean))^2)))+
-            (numDoublet1/(sqrt(2 * pi) * G1g2SD) * exp(-((x - G1G2Mean)^2)/(2 *G1g2SD^2))),
+          formula=y ~ (N1/(sqrt(2*pi)*g1SD)*exp(-((x-g1Mean)^2)/(2*g1SD^2))) +
+            (A1 + B1*x + C1*(x^2))*
+            (1/(sqrt(2*pi)*g1SD*(x/g1Mean))*exp(-((x-g1Mean)^2)/
+              (2*(g1SD*(x/g1Mean))^2)))+
+            (N2/(sqrt(2*pi)*g2SD)*exp(-((x-g2Mean)^2)/(2*g2SD^2)))+
+            (A2 + B2*x + C2*(x^2))*
+            (1/(sqrt(2*pi)*g2SD*(x/g2Mean))*exp(-((x-g2Mean)^2)/
+              (2*(g2SD*(x/g2Mean))^2)))+
+            (numDoublet1/(sqrt(2*pi)*G1g2SD)*exp(-((x-G1G2Mean)^2)/
+              (2*G1g2SD^2))),
           data=flowData,
           start=c(
             N1=flowDataMeans01$numG1,
@@ -480,7 +492,8 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
             flowData$x-mean(c(flowDataMeans$`doublet G1+G2`, flowDataMeans$G1_1))
             ) == min(
               abs(
-                flowData$x-mean(c(flowDataMeans$`doublet G1+G2`, flowDataMeans$G1_1))
+                flowData$x-mean(
+                  c(flowDataMeans$`doublet G1+G2`, flowDataMeans$G1_1))
                 )
             )
         ),
@@ -632,13 +645,17 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
 
 
         singlePopNLS <- nls(
-          formula = y ~ (
-            N1/(sqrt(2 * pi) * g1SD) * exp(-((x - g1Mean)^2)/(2 *g1SD^2))
-            ) +
-            (A1 + B1*x + C1*(x^2))*(1/(sqrt(2 * pi) * g1SD * (x/g1Mean)) * exp(-((x - g1Mean)^2)/(2 *(g1SD* (x/g1Mean))^2)))+
-            (numDoublet1/(sqrt(2 * pi) * G1g2SD) * exp(-((x - G1G2Mean)^2)/(2 *G1g2SD^2)))+
-            (A2 + B2*x + C2*(x^2))*(1/(sqrt(2 * pi) * G1g2SD * (x/G1G2Mean)) * exp(-((x - G1G2Mean)^2)/(2 *(G1g2SD* (x/G1G2Mean))^2)))+
-            (numDoublet2/(sqrt(2 * pi) * G2g2SD) * exp(-((x - G2G2Mean)^2)/(2 *G2g2SD^2))),
+          formula = y ~ (N1/(sqrt(2*pi)*g1SD)*exp(-((x-g1Mean)^2)/(2*g1SD^2)))+
+            (A1 + B1*x + C1*(x^2))*
+            (1/(sqrt(2*pi)*g1SD*(x/g1Mean))*exp(-((x - g1Mean)^2)/
+              (2*(g1SD*(x/g1Mean))^2)))+
+            (numDoublet1/(sqrt(2*pi)*G1g2SD)*exp(-((x-G1G2Mean)^2)/
+              (2*G1g2SD^2)))+
+            (A2 + B2*x + C2*(x^2))*
+            (1/(sqrt(2*pi)*G1g2SD*(x/G1G2Mean))*exp(-((x-G1G2Mean)^2)/
+              (2*(G1g2SD*(x/G1G2Mean))^2)))+
+            (numDoublet2/(sqrt(2*pi)*G2g2SD)*exp(-((x-G2G2Mean)^2)/
+              (2*G2g2SD^2))),
           data=flowData,
           start=c(
             N1=flowDataMeans01$numG1,
@@ -692,9 +709,12 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
 
 
         singlePopNLS <- nls(
-          formula = y ~ (N1/(sqrt(2 * pi) * g1SD) * exp(-((x - g1Mean)^2)/(2 *g1SD^2))) +
-            (A1 + B1*x + C1*(x^2))*(1/(sqrt(2 * pi) * g1SD * (x/g1Mean)) * exp(-((x - g1Mean)^2)/(2 *(g1SD* (x/g1Mean))^2)))+
-            (numDoublet1/(sqrt(2 * pi) * G1g2SD) * exp(-((x - G1G2Mean)^2)/(2 *G1g2SD^2))),
+          formula = y ~ (N1/(sqrt(2*pi)*g1SD)*exp(-((x-g1Mean)^2)/(2*g1SD^2))) +
+            (A1 + B1*x + C1*(x^2))*
+            (1/(sqrt(2*pi)*g1SD*(x/g1Mean))*exp(-((x-g1Mean)^2)/
+              (2*(g1SD*(x/g1Mean))^2)))+
+            (numDoublet1/(sqrt(2*pi)*G1g2SD)*exp(-((x-G1G2Mean)^2)/
+              (2*G1g2SD^2))),
           data=flowData,
           start=c(
             N1=flowDataMeans01$numG1,
@@ -723,7 +743,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
       plotOutFile <- file.path(dirname(flowDir), plotDir, plotInitDir)
 
       png(
-        paste0(plotOutFile, "/", flowNameDs[k], '.png'), width = 600, height = 400
+        paste0(plotOutFile, "/", flowNameDs[k], '.png'), width=600, height=400
         )
       print(nlsGraph)
       dev.off()
