@@ -64,9 +64,10 @@ rectGateFlowFrame = function(
     flowData <- flowCore::read.FCS(
       paste0(rawDir,"/",flowName),
       transformation=FALSE,
-      truncate_max_range TRUE
+      truncate_max_range=TRUE
     ) 
   )
+  
   ##Checking to see if the user input the correct X and Y variable
   if(!xVariable %in% flowData@parameters@data$name){
     stop("Your X variable is not in the dataset")

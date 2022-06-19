@@ -4,7 +4,7 @@
 \alias{flowLineGraph}
 \title{flowLineGraph}
 \usage{
-flowLineGraph(flowDir = NA, flowControl, flowSamples, xVariable)
+flowLineGraph(flowDir = NA, flowControl = NA, flowSamples, xVariable)
 }
 \arguments{
 \item{flowDir}{The directory where the data is located. If NA then a window
