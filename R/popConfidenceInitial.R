@@ -176,7 +176,7 @@ popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
       g1SD <- flowDataMeans01$g1SD
       g2SD <- flowDataMeans01$g2SD
 
-
+      xpectr::suppress_mw(
       singlePopNLS <- nls(
           formula = y ~ (N1/(sqrt(2*pi)*g1SD)*exp(-((x-g1Mean)^2)/(2*g1SD^2))) +
             (N2/(sqrt(2*pi)*g2SD)* exp(-((x-g2Mean)^2)/(2*g2SD^2)))+
@@ -191,7 +191,7 @@ popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
             ),
           nls.control(warnOnly=TRUE)
         )
-
+        )
     }else{
       #G1 standard deviation
       g1LeftFlowData <- flowData[
@@ -234,20 +234,21 @@ popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
 
       g1Mean <- flowDataMeans01$g1Mean
       g1SD <- flowDataMeans01$g1SD
-
-        singlePopNLS <- nls(
-          formula = y ~ (N1/(sqrt(2*pi)*g1SD)*exp(-((x-g1Mean)^2)/(2*g1SD^2)))+
-            (A + B*x + C*(x^2))*
-            (1/(sqrt(2 * pi)*g1SD*(x/g1Mean))*exp(-((x-g1Mean)^2)/
-              (2*(g1SD*(x/g1Mean))^2))),
-          data=flowData,
-          start=c(
-            N1=flowDataMeans01$numG1,
-            A=0, B=0, C=0
-            ),
-          nls.control(warnOnly=TRUE)
-        )
-
+      
+      xpectr::suppress_mw(
+      singlePopNLS <- nls(
+        formula = y ~ (N1/(sqrt(2*pi)*g1SD)*exp(-((x-g1Mean)^2)/(2*g1SD^2)))+
+          (A + B*x + C*(x^2))*
+          (1/(sqrt(2 * pi)*g1SD*(x/g1Mean))*exp(-((x-g1Mean)^2)/
+            (2*(g1SD*(x/g1Mean))^2))),
+        data=flowData,
+        start=c(
+          N1=flowDataMeans01$numG1,
+          A=0, B=0, C=0
+          ),
+        nls.control(warnOnly=TRUE)
+      )
+      )
     }
 
     if(saveGraph == TRUE){

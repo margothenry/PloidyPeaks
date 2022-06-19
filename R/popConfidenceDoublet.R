@@ -340,7 +340,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
         G1g2SD <- flowDataMeans01$G1g2SD
         G2g2SD <- flowDataMeans01$G2g2SD
 
-
+        xpectr::suppress_mw(
         singlePopNLS <- nls(
           formula = y ~ (
             N1/(sqrt(2*pi) * g1SD) * exp(-((x-g1Mean)^2)/(2 *g1SD^2))) +
@@ -369,6 +369,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
             A3=0, B3=0, C3=0
           ),
           nls.control(warnOnly=TRUE)
+        )
         )
       }else{
 
@@ -427,7 +428,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
         g2SD <- flowDataMeans01$g2SD
         G1g2SD <- flowDataMeans01$G1g2SD
 
-
+        xpectr::suppress_mw(
         singlePopNLS <- nls(
           formula=y ~ (N1/(sqrt(2*pi)*g1SD)*exp(-((x-g1Mean)^2)/(2*g1SD^2))) +
             (A1 + B1*x + C1*(x^2))*
@@ -448,6 +449,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
             A2=0, B2=0, C2=0
           ),
           nls.control(warnOnly=TRUE)
+        )
         )
 
       }
@@ -643,7 +645,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
         G1g2SD <- flowDataMeans01$G1g2SD
         G2g2SD <- flowDataMeans01$G2g2SD
 
-
+        xpectr::suppress_mw(
         singlePopNLS <- nls(
           formula = y ~ (N1/(sqrt(2*pi)*g1SD)*exp(-((x-g1Mean)^2)/(2*g1SD^2)))+
             (A1 + B1*x + C1*(x^2))*
@@ -666,7 +668,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
           ),
           nls.control(warnOnly=TRUE)
         )
-
+        )
       }else{
 
         flowDataMeans01 <- flowDataMeans %>% dplyr::mutate(
@@ -707,7 +709,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
         g1SD <- flowDataMeans01$g1SD
         G1g2SD <- flowDataMeans01$G1g2SD
 
-
+        xpectr::suppress_mw(
         singlePopNLS <- nls(
           formula = y ~ (N1/(sqrt(2*pi)*g1SD)*exp(-((x-g1Mean)^2)/(2*g1SD^2))) +
             (A1 + B1*x + C1*(x^2))*
@@ -722,7 +724,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
             A1=0, B1=0, C1=0
           ),
           nls.control(warnOnly=TRUE)
-        )
+        ))
 
       }
 

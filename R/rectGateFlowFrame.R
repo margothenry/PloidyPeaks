@@ -56,9 +56,9 @@ rectGateFlowFrame = function(
   }
   
   if(!flowName %in% list.files(rawDir)){
-    stop("The flow frame you selected is not in the folder, check on the spelling of flowName and/or make sure you selected the proper folder")
+    stop(paste0("The flow frame ",flowName," is not in the folder, check on the spelling of flowName and/or make sure you selected the proper folder"))
   }
-  
+
   ##Reading in flow data
   xpectr::suppress_mw(
     flowData <- flowCore::read.FCS(
