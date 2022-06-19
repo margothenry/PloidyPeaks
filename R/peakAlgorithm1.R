@@ -37,6 +37,15 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
 
   ##Looping through each flow frame
   for(k in 1:length(flowSet)){
+    ##Checking the data in the folder is in proper format
+    if(
+      tools::file_ext(flowSet[k]) %in% c(
+        "csv", "xls", "xlsx","html", "ppt", "pptx" ,"pdf", "doc", "docx"
+        )
+      ){
+      stop(paste0("The flow frame ",flowSet[k]," is does not seem to be in the valid flow format. Consider changing the format or removing from the folder."))
+    }
+    
     ##Reading in and smoothing data
     flowName <- flowCore::read.FCS(
       paste0(flowDir, "/", flowSet[k]), transformation=FALSE

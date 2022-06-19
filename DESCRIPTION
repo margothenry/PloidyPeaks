@@ -17,6 +17,7 @@ Imports: data.table,
     sqldf,
     tidyverse,
     tcltk,
+    tools,
     zoo
 License: GPL-3
 Encoding: UTF-8

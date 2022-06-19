@@ -80,7 +80,15 @@ rectGateFlowSet = function(
   colnames(gatedCellsOut) <- c("Data", "% of cells gated out")
 
   for(i in 1:length(flowSet)){
-
+    
+    if(
+      tools::file_ext(flowSet[i]) %in% c(
+        "csv", "xls", "xlsx","html", "ppt", "pptx" ,"pdf", "doc", "docx"
+      )
+    ){
+      stop(paste0("The flow frame ",flowSet[i]," is does not seem to be in the valid flow format. Consider changing the format or removing from the folder."))
+    }
+    
     flowData <- flowSet[[i]]
     
     ##Checking to see if the user input the correct X and Y variable
