@@ -78,19 +78,19 @@ rectGateFlowFrame = function(
   }
   
   ##Checking the gating parameters are in the dataset
-  if(xMaxValue > flowData@parameters@data[["maxRange"]][1]){
+  if(xMaxValue > max(flowData@exprs[,xVariable])){
     stop("Your xMaxValue exceeds the range of the flow frame, consider a new value")
   }
   
-  if(xMinValue < flowData@parameters@data[["minRange"]][1]){
+  if(xMinValue < min(flowData@exprs[,xVariable])){
     stop("Your xMinValue exceeds the range of the flow frame, consider a new value")
   }
   
-  if(yMaxValue > flowData@parameters@data[["maxRange"]][1]){
+  if(yMaxValue > max(flowData@exprs[,yVariable])){
     stop("Your yMaxValue exceeds the range of the flow frame, consider a new value")
   }
   
-  if(yMinValue < flowData@parameters@data[["minRange"]][1]){
+  if(yMinValue < min(flowData@exprs[,yVariable])){
     stop("Your yMinValue exceeds the range of the flow frame, consider a new value")
   }
   
