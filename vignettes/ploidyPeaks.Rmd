@@ -1,25 +1,17 @@
 ---
 title: "ploidyPeaks"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ploidyPeaks}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
 library(knitr)
-library(devtools)
 knitr::opts_chunk$set(echo = TRUE)
 
-devtools::install_github("margothenry/PloidyPeaks")
 library(PloidyPeaks)
-
-library(patchwork)
-library(tidyverse)
-library(flowCore)
-library(ggcyto)
-library(zoo)
-library(scorepeak)
-library(tcltk)
-library(data.table)
-library(sqldf)
 library(here)
 ```
 
