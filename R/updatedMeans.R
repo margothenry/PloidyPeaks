@@ -37,19 +37,33 @@ updatedMeans = function(ds, flowDir, xVariable){
       possiblePairXOld=possiblePairX,
       possiblePairYOld=possiblePairY
     )
-
+    
+    midPoint <- flowData[
+      which(
+        abs(
+          flowData$x-mean(c(singlePop01$xOld, singlePop01$possiblePairXOld))
+        ) == min(
+          abs(flowData$x-mean(c(singlePop01$xOld, singlePop01$possiblePairXOld)))
+        )
+      ),
+    ]
+    
+    if(nrow(midPoint)>1){
+      midPoint <- midPoint[nrow(midPoint), ]
+    }
+    
     xPeak1 <- which(flowData$x == singlePop01$xOld)
     if(length(xPeak1)>1){
       xPeak1 <- xPeak1[1]
     }
 
-    if(xPeak1+10 > nrow(flowData) & xPeak1-10 < 1){
-      peakRowSmoothedRange <- flowData[seq(1, nrow(flowData), 1), ]
-    }else if(xPeak1+10 > nrow(flowData) & xPeak1-10 >= 1){
+    if(xPeak1+10 > midPoint$x & xPeak1-10 < 1){
+      peakRowSmoothedRange <- flowData[seq(1, midPoint$x, 1), ]
+    }else if(xPeak1+10 > midPoint$x & xPeak1-10 >= 1){
       peakRowSmoothedRange <- flowData[
-        seq(xPeak1-10, nrow(flowData), 1),
+        seq(xPeak1-10, midPoint$x, 1),
       ]
-    }else if(xPeak1+10 <= nrow(flowData) & xPeak1-10 < 1){
+    }else if(xPeak1+10 <= midPoint$x & xPeak1-10 < 1){
       peakRowSmoothedRange <- flowData[seq(1, xPeak1+10, 1), ]
     }else{ 
       peakRowSmoothedRange <- flowData[seq(xPeak1-10, xPeak1+10, 1), ]
@@ -65,22 +79,26 @@ updatedMeans = function(ds, flowDir, xVariable){
       if(length(xPeak2)>1){
         xPeak2 <- xPeak2[1]
       }
-
-      if(xPeak2+10 > nrow(flowData) & xPeak2-10 < 1){
-        peakRowSmoothedRange <- flowData[seq(xPeak1, nrow(flowData), 1), ]
-      }else if(xPeak2+10 > nrow(flowData) & xPeak2-10 >= 1){
+      midPointX = which(midPoint$x == flowData$x)
+      if(xPeak2+10 > nrow(flowData) & xPeak2-10 < midPointX){
+        peakRowSmoothedRange <- flowData[seq(midPointX, nrow(flowData), 1), ]
+      }else if(xPeak2+10 > nrow(flowData) & xPeak2-10 >= midPointX){
         peakRowSmoothedRange <- flowData[
           seq(xPeak2-10, nrow(flowData), 1),
         ]
-      }else if(xPeak2+10 <= nrow(flowData) & xPeak2-10 < 1){
-        peakRowSmoothedRange <- flowData[seq(xPeak1, xPeak2+10, 1), ]
+      }else if(xPeak2+10 <= nrow(flowData) & xPeak2-10 < midPointX){
+        peakRowSmoothedRange <- flowData[seq(midPointX, xPeak2+10, 1), ]
       }else{
         peakRowSmoothedRange <- flowData[seq(xPeak2-10, xPeak2+10, 1), ]
       }
 
       xPeak2Smoothed <- which(max(peakRowSmoothedRange$y) == flowData$y)
       if(length(xPeak2Smoothed) > 1){
-        xPeak2Smoothed <- xPeak2Smoothed[which(xPeak1Smoothed<xPeak2Smoothed)]
+        xPeak2Smoothed <- xPeak2Smoothed[
+          which(
+            xPeak2Smoothed> midPointX
+          )
+        ]
         xPeak2Smoothed <- xPeak2Smoothed[1]
       }
 

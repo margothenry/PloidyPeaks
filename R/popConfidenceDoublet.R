@@ -105,7 +105,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
       #G1 standard deviation
       G1LeftFlowData <- flowData[1:which(flowData$x == flowDataMeans$G1_1)-1, ]
       G1RightFlowData <- flowData[
-        which(flowData$x == flowDataMeans$G1_1)+1:which(flowData$x == midPoint$x),
+        (which(flowData$x == flowDataMeans$G1_1)+1):which(flowData$x == midPoint$x),
         ]
 
       leftPeak1 <- G1LeftFlowData[
@@ -136,7 +136,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
       G2LeftFlowData <- flowData[
         which(
           flowData$x == midPoint$x
-          ):which(flowData$x == flowDataMeans$G2_1)-1,
+          ):(which(flowData$x == flowDataMeans$G2_1)-1),
         ]
       G2RightFlowData <- flowData[
         (which(flowData$x == flowDataMeans$G2_1)+1):nrow(flowData),
@@ -190,7 +190,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
       doubletG1G2LeftFlowData <- flowData[
         which(
           flowData$x == midPointDoublet$x
-          ):which(flowData$x == flowDataMeans$`doublet G1+G2`)-1,
+          ):(which(flowData$x == flowDataMeans$`doublet G1+G2`)-1),
         ]
       doubletG1G2RightFlowData <- flowData[
         (which(flowData$x == flowDataMeans$`doublet G1+G2`)+1):nrow(flowData),
@@ -245,7 +245,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
         doubletG1G2LeftFlowData <- flowData[
           which(
             flowData$x == midPointDoublet2$x
-            ):which(flowData$x == flowDataMeans$`doublet G2+G2`)-1,
+            ):(which(flowData$x == flowDataMeans$`doublet G2+G2`)-1),
           ]
         
         doubletG2G2RightFlowData <- flowData[
