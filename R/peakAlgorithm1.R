@@ -55,7 +55,7 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
       stop("Your X variable is not in the dataset")
     }
     
-    flowData <- smoothData( flowName, xVariable, 13)
+    flowData <- smoothData( flowName, xVariable, 11)
 
     logFlow[1, ] <- c(algorithmNum, flowName@description[["GUID"]], 0)
 
@@ -195,8 +195,8 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
       xEpsilon <- xEpsilon[1]
     }
     postEpsilon <- flowData$y[c(xEpsilon:length(flowData$x))]
-    preEpsilon <- flowData$y[c(1:xEpsilon)]
-    cellCountPreEpsilon <- sum(preEpsilon)
+    # preEpsilon <- flowData$y[c(1:xEpsilon)]
+    # cellCountPreEpsilon <- sum(preEpsilon)
     cellCountPostEpsilon <- sum(postEpsilon)
     totalCellCount <- sum(flowData$y)
     ##Proportion of cells that are to the right of the G2 peak
