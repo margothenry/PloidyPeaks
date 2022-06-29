@@ -20,7 +20,7 @@
 #' )
 
 doubletCheck = function(doubletCheckDs, peaks, g1G2Range, g2G2Range){
-
+  x<-possiblePairX<-NULL
   ##creating lower bounds and upper bounds for peaks that could be classified as doublets
   doubletCheckDs2 <- doubletCheckDs %>% dplyr::mutate(
     g3LL=x + possiblePairX - g1G2Range,
