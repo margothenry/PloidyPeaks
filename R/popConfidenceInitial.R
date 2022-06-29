@@ -3,7 +3,7 @@
 #'
 #' @param flowDir The directory of the gated .fcs data
 #' @param ds dataset to be analyzed
-#' @param x_variable The fluorescence channel on the x axis
+#' @param xVariable The fluorescence channel on the x axis
 #' @param saveGraph  T/F for saving the graphs as an output of the NLS
 #'
 #' @export

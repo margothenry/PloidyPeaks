@@ -10,9 +10,9 @@
 #' Letting the user know that they may want to manually look those who got flagged as messy.
 #'
 #' @param flowDir The directory of the gated .fcs data
-#' @param x_variable The fluorescence channel on the x axis
-#' @param flagged_data_ds List of names of the flow frames that got flagged by PeakAlgorithm3
-#' @param append_data The data set of flow frames that are finished being analyzed
+#' @param xVariable The fluorescence channel on the x axis
+#' @param flaggedData_ List of names of the flow frames that got flagged by PeakAlgorithm3
+#' @param appendData The data set of flow frames that are finished being analyzed
 #' from the previous peak algorithms. The flow frames that are done after peakAlgorithm4
 #' will append to this data set.
 #' @param usedCellsThreshold Threshold for classifying multiple populations
@@ -22,9 +22,9 @@
 #' @examples
 #' peakAlgorithm4(
 #'  flowDir = "FlowData/T10_FLC/gated_data",
-#'  flagged_data_ds = flagged_data ,
-#'  x_variable = "FITC-A",
-#'  append_data = analyzed_ds,
+#'  flaggedData_ = flagged_data ,
+#'  xVariable = "FITC-A",
+#'  appendData = analyzed_ds,
 #'  usedCellsThreshold = 86
 #'  )
 #'
