@@ -21,6 +21,11 @@
 #' @import tcltk
 #' @import ggplot2
 #' 
+#' @importFrom grDevices dev.off png
+#' @importFrom graphics hist
+#' @importFrom stats nls nls.control predict quantile
+#' @importFrom utils data setTxtProgressBar txtProgressBar write.csv
+#' 
 #' @export
 #'
 #' @examples
