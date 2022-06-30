@@ -141,7 +141,7 @@ outputData = function(
     
 
     ##adding which algorithm analyzed the flow frame
-    logDs2=logDs %>% 
+    logDs2=.GlobalEnv$logDs %>% 
       dplyr::select(-Success) %>% 
       dplyr::mutate(Algorithm=as.numeric(Algorithm))
     
@@ -312,7 +312,7 @@ outputData = function(
     
 
     ##adding which algorithm analyzed the flow frame
-    logDs2=logDs %>% 
+    logDs2=.GlobalEnv$logDs %>% 
       dplyr::select(-Success) %>% 
       dplyr::mutate(Algorithm=as.numeric(Algorithm))
     
@@ -494,7 +494,7 @@ outputData = function(
     
 
     ##adding which algorithm analyzed the flow frame
-    logDs2=logDs %>% 
+    logDs2=.GlobalEnv$logDs %>% 
       dplyr::select(-Success) %>% 
       dplyr::mutate(Algorithm=as.numeric(Algorithm))
 
@@ -683,7 +683,7 @@ outputData = function(
     
 
     ##adding which algorithm analyzed the flow frame
-    logDs2=logDs %>% 
+    logDs2=.GlobalEnv$logDs %>% 
       dplyr::select(-Success) %>% 
       dplyr::mutate(Algorithm=as.numeric(Algorithm))
 
