@@ -16,10 +16,13 @@
 #' @export
 #'
 #' @examples
+#' flowSet <- list.files(here("vignettes/data/gated_data"))
+#' 
 #' peakAlgorithm1(
-#'  flowDir = "FlowData/T10_FLC/gated_data",
-#'  flowSet = flow_names_ds ,
-#'  xVariable = "FITC-A"
+#'  flowDir = here("vignettes/data/gated_data"),
+#'  flowSet = flowSet ,
+#'  xVariable = "FL1-A",
+#'  singleThreshold = 8
 #' )
 #'
 
@@ -242,8 +245,12 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
     .GlobalEnv$logDs[nrow(.GlobalEnv$logDs), ]$Success <- 1
 
   }
-
-  returnedList <- list(flaggedData, singleDataUpdated)
+  
+  if(!purrr::is_empty(singleData)){
+    returnedList <- list(flaggedData, singleDataUpdated)
+  }else{
+    returnedList <- list(flaggedData) 
+  }
 
   return(returnedList)
 }

@@ -7,6 +7,7 @@ Description: PloidyPeaks is a package to quantify population-level genome size v
 	The package uses peak detection algorithms and flow cytometry population definitions to quantify sub-populations.
 	The workflow is separated into three parts: 1) gating and 2) peak detection, 3) dataset output.
 	Built-in visualizations options are included throughout.
+LazyData: true
 Imports: data.table,
     dplyr,
     flowCore,

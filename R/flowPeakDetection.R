@@ -29,16 +29,24 @@
 #' @export
 #'
 #' @examples
+#' 
 #' flowPeakDetection(
-#'  xVariable = "FITC-A",
-#'  flowDir = "FlowData/T10_FLC/gated_data",
+#'  xVariable = "FL1-A",
+#'  flowDir = here("vignettes/data/gated_data"),
 #'  doublet = FALSE,
 #'  saveGraph = TRUE,
 #'  singleThreshold = 8,
 #'  usedCellsThreshold = 86
 #'  )
 #'
-flowPeakDetection = function(xVariable, flowDir = NA, doublet = FALSE, saveGraph = TRUE, singleThreshold = 8, usedCellsThreshold = 86){
+flowPeakDetection = function(
+  xVariable,
+  flowDir = NA,
+  doublet = FALSE,
+  saveGraph = TRUE,
+  singleThreshold = 8,
+  usedCellsThreshold = 86
+  ){
   ##Removing NOTE 'no visible binding for global variable'
   x<-propCellsUsed<-NULL
   ##Progress bar iterations
@@ -72,7 +80,9 @@ flowPeakDetection = function(xVariable, flowDir = NA, doublet = FALSE, saveGraph
   flaggedData <- as.data.frame(peakAlg1[[1]])
   names(flaggedData)[1] <- "data"
   ##The data that is not flagged
-  singleData <- peakAlg1[2]
+  if(length(peakAlg1) == 2){
+    singleData <- peakAlg1[2]
+  }
 
   ##update progress bar
   setTxtProgressBar(pb, 1)
