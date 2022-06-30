@@ -116,7 +116,6 @@ flowPeakDetection = function(
       saveGraph
       )
     print("Done! - Check 'analysis' folder for results")
-    break
   }
 
 
@@ -149,7 +148,6 @@ flowPeakDetection = function(
       saveGraph
       )
     print("Done! - Check 'analysis' folder for results")
-    break
   }
 
   ##Checking if there are any flagged flow frames from the third peak algorithm
@@ -182,7 +180,6 @@ flowPeakDetection = function(
       saveGraph
       )
     print("Done! - Check 'analysis' folder for results")
-    break
   }
 
   ##Checking if there are any flow frames that have not been analyzed
