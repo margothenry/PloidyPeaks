@@ -28,7 +28,7 @@
 outputData = function(flowDir, singleDs, finishedDs, messyDs, xVariable, doubletFlag, saveGraph){
   ##Removing NOTE 'no visible binding for global variable'
   x<-y<-.<-possiblePairX<-possiblePairY<-G1<-G1Count<-G2<-G2Count<-id<-NULL
-  g1G2Doublet<-g1G2DoubletCount<-g2G2Doublet<-g2G2DoubletCount<-NULL
+  g1G2Doublet<-g1G2DoubletCount<-g2G2Doublet<-g2G2DoubletCount<-logDs<-NULL
   residual<-residualDoublet<-Success<-Algorithm<-Data<-`doublet G1+G2`<-NULL
   `doublet G1+G2 count`<-`doublet G2+G2`<- `doublet G2+G2 count`<-NULL
   
