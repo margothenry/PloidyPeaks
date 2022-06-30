@@ -82,6 +82,8 @@ flowPeakDetection = function(
   ##The data that is not flagged
   if(length(peakAlg1) == 2){
     singleData <- peakAlg1[2]
+  }else{
+    singleData = NULL
   }
 
   ##update progress bar

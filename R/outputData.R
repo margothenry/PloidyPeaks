@@ -527,7 +527,7 @@ outputData = function(
           )
         )
     }
-    print("7")
+
     ##Creating a folder called analysis where the dataset will be saved
     setwd(flowDir)
     subDir <- "analysis"
