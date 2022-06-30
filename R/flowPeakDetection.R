@@ -39,7 +39,8 @@
 #'  )
 #'
 flowPeakDetection = function(xVariable, flowDir = NA, doublet = FALSE, saveGraph = TRUE, singleThreshold = 8, usedCellsThreshold = 86){
-
+  ##Removing NOTE 'no visible binding for global variable'
+  x<-propCellsUsed<-NULL
   ##Progress bar iterations
   total <- 7
   ##Create progress bar

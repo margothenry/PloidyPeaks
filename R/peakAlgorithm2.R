@@ -23,6 +23,9 @@
 
 
 peakAlgorithm2 = function(flowDir, flaggedData_, xVariable, usedCellsThreshold = 86){
+  ##Removing NOTE 'no visible binding for global variable'
+  y<-possiblePairY<-keep<-NULL
+  
   flowNameDs <- flaggedData_$data
   finishedData <- c()
   flaggedData <- c()

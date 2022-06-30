@@ -11,9 +11,9 @@ popConfidenceInitial(flowDir, ds, xVariable, saveGraph = TRUE)
 
 \item{ds}{dataset to be analyzed}
 
-\item{saveGraph}{T/F for saving the graphs as an output of the NLS}
+\item{xVariable}{The fluorescence channel on the x axis}
 
-\item{x_variable}{The fluorescence channel on the x axis}
+\item{saveGraph}{T/F for saving the graphs as an output of the NLS}
 }
 \description{
 popConfidenceInitial

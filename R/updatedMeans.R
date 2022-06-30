@@ -19,7 +19,11 @@
 
 
 updatedMeans = function(ds, flowDir, xVariable){
-
+  ##Removing NOTE 'no visible binding for global variable'
+  x<-y<-possiblePairX<-possiblePairY<-g3LL<-g3UL<-NULL
+  g4LL<-g4UL<-g1G2Doublet<-g1G2DoubletCount<-g2G2Doublet<-NULL
+  g2G2DoubletCount<-possiblePairXOld<-possiblePairYOld<-NULL
+  
   flowNameDs <- ds$data
   singlePopUpdated <- c()
 

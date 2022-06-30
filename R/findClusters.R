@@ -15,7 +15,8 @@
 #'  )
 #'
 findClusters = function(ds, clusterDist, maxXValue){
-
+  ##Removing NOTE 'no visible binding for global variable'
+  cluster<-y<-NULL
   ##Finding initial distance between all identified peaks
   tempDs <- ds
   tempDs$cluster <- 1

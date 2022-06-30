@@ -19,6 +19,9 @@
 #'
 popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
 
+  ##Removing NOTE 'no visible binding for global variable'
+  G1_1<-G2_1<-G1Count_1<-G2Count_1<-x<-y<-NULL
+
   modelData <- ds %>% dplyr::select(
     data,
     G1_1,

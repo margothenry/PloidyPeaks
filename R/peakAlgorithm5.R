@@ -25,6 +25,9 @@
 #'
 
 peakAlgorithm5 = function(flowDir, flaggedData_, xVariable, appendData){
+  ##Removing NOTE 'no visible binding for global variable'
+  x<-y<-possiblePairY<-keep<-NULL
+  
   naDs <- flaggedData_ %>% dplyr::filter(is.na(x))
   flowNameDs <- unique(naDs$data)
 

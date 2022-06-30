@@ -15,6 +15,8 @@
 #')
 
 findPairs = function(ds, LL, UL){
+  ##Removing NOTE 'no visible binding for global variable'
+  x<-NULL
   ##creating upper and lowed bounds that are read into the function
   findingPairsDs <- ds %>% dplyr::mutate(
     LL = x*LL,

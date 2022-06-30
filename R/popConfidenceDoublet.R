@@ -18,7 +18,10 @@
 #'
 #'
 popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
-
+  ##Removing NOTE 'no visible binding for global variable'
+  doublet<-G1_1<-G2_1<-`doublet G1+G2`<-`doublet G2+G2`<-G1Count_1<-NULL
+  G2Count_1<-`doublet G1+G2 count`<-`doublet G2+G2 count`<-x<-y<-NULL
+  
   ds2 <- ds %>% dplyr::filter(doublet == 1)
   flowNameDs <- unique(ds2$data)
 

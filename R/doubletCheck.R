@@ -20,6 +20,7 @@
 #' )
 
 doubletCheck = function(doubletCheckDs, peaks, g1G2Range, g2G2Range){
+  ##Removing NOTE 'no visible binding for global variable'
   x<-possiblePairX<-NULL
   ##creating lower bounds and upper bounds for peaks that could be classified as doublets
   doubletCheckDs2 <- doubletCheckDs %>% dplyr::mutate(

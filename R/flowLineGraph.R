@@ -24,7 +24,8 @@
 
 
 flowLineGraph = function(flowDir = NA, flowControl = NA, flowSamples, xVariable){
-
+  ##Removing NOTE 'no visible binding for global variable'
+  x<-y<-Data<-NULL
   if(is.na(flowDir)){
     getwd()
     flowDir <- tclvalue(tkchooseDirectory())

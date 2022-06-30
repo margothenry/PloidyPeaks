@@ -42,6 +42,9 @@ rectGateFlowSet = function(
   savePlot = TRUE
 ){
 
+  ##Removing NOTE 'no visible binding for global variable'
+  rectGate<-NULL
+  
   if(is.na(rawDir)){
     getwd()
     rawDir <- tclvalue(tkchooseDirectory())
