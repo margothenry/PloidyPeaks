@@ -108,16 +108,8 @@ rectGateFlowSet = function(
       stop("Your xMaxValue exceeds the range of the flow frame, consider a new value")
     }
     
-    if(xMinValue < min(flowData@exprs[,xVariable])){
-      stop("Your xMinValue exceeds the range of the flow frame, consider a new value")
-    }
-    
     if(yMaxValue > max(flowData@exprs[,yVariable])){
       stop("Your yMaxValue exceeds the range of the flow frame, consider a new value")
-    }
-    
-    if(yMinValue < min(flowData@exprs[,yVariable])){
-      stop("Your yMinValue exceeds the range of the flow frame, consider a new value")
     }
     
     ##Creating the gate
