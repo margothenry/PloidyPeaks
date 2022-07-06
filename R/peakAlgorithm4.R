@@ -148,7 +148,7 @@ peakAlgorithm4 = function(
     ##Checking if G2+G2 doublet is a true doublet and not a G2 peak for
     ##Another subpopulation
     tempDs<-possiblePeaks8
-    if(nrow(tempDs) > 1){
+    if(nrow(tempDs) > 1 & !is.na(tempDs$g1G2DoubletCount[1])){
       pop1<-tempDs[1,]
       for(i in 2:nrow(tempDs)){
         popInQuestion = tempDs[i,]
