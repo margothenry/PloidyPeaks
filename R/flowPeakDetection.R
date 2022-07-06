@@ -14,6 +14,7 @@
 #' @param saveGraph T/F for saving the graphs as an output of the NLS
 #' @param singleThreshold threshold for classifying single populations
 #' @param usedCellsThreshold threshold for classifying multiple populations
+#' @param MaxDoubletHeight
 #' 
 #' @import magrittr
 #' @import scorepeak
@@ -36,7 +37,8 @@
 #'  doublet = FALSE,
 #'  saveGraph = TRUE,
 #'  singleThreshold = 8,
-#'  usedCellsThreshold = 86
+#'  usedCellsThreshold = 86,
+#'  MaxDoubletHeight = 50
 #'  )
 #'
 flowPeakDetection = function(
@@ -45,7 +47,8 @@ flowPeakDetection = function(
   doublet = FALSE,
   saveGraph = TRUE,
   singleThreshold = 8,
-  usedCellsThreshold = 86
+  usedCellsThreshold = 86,
+  MaxDoubletHeight = NA
   ){
   ##Removing NOTE 'no visible binding for global variable'
   x<-propCellsUsed<-NULL
@@ -74,7 +77,12 @@ flowPeakDetection = function(
   colnames(logDs) <- c("Algorithm", "Data", "Success")
 
   ##Running first peak algorithm
-  peakAlg1 <- peakAlgorithm1(flowDir, flowSet,  xVariable, singleThreshold)
+  peakAlg1 <- peakAlgorithm1(
+    flowDir,
+    flowSet,
+    xVariable,
+    singleThreshold
+    )
 
   ##Getting the flagged flow frames that will be passed to the next algorithm
   flaggedData <- as.data.frame(peakAlg1[[1]])
@@ -96,7 +104,8 @@ flowPeakDetection = function(
       flowDir,
       flaggedData,
       xVariable,
-      usedCellsThreshold
+      usedCellsThreshold,
+      MaxDoubletHeight
       )
     flaggedData <- as.data.frame(peakAlg2[[1]])
     names(flaggedData)[1] <- "data"
@@ -129,7 +138,8 @@ flowPeakDetection = function(
       flaggedData,
       xVariable,
       finishedData,
-      usedCellsThreshold
+      usedCellsThreshold,
+      MaxDoubletHeight
       )
     flaggedData <- as.data.frame(peakAlg3[[1]])
     names(flaggedData)[1] <- "data"
@@ -160,7 +170,8 @@ flowPeakDetection = function(
       flaggedData,
       xVariable,
       finishedData,
-      usedCellsThreshold
+      usedCellsThreshold,
+      MaxDoubletHeight
       )
     flaggedData <- as.data.frame(peakAlg4[[1]])
     messyDataNoNA <- flaggedData %>% dplyr::filter(!is.na(x))
