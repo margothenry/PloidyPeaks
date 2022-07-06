@@ -68,12 +68,12 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
     )
 
     ##Finding local peaks
-    localPeaks <- detect_localmaxima(flowData$y, 5)
+    localPeaks <- detect_localmaxima(flowData$y, 3)
     possiblePeaks <- flowData[localPeaks, ]
 
     ##Removing the peaks that are identified at the base of the histogram
     possiblePeaks2 <- possiblePeaks[
-      which(possiblePeaks$y > quantile(flowData$y)[3]+5),
+      which(possiblePeaks$y > quantile(flowData$y)[4]),
       ]
     xVarMax <- max(flowData$x)
     ##Removing the peaks that are identified at the extreme left side of the
@@ -82,7 +82,7 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
 
     if(nrow(possiblePeaks2) == 0){
       possiblePeaks2 <- possiblePeaks[
-        which(possiblePeaks$y > quantile(flowData$y)[3]+5),
+        which(possiblePeaks$y > quantile(flowData$y)[4]),
         ]
     }
 
