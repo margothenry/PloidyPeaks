@@ -4,7 +4,13 @@
 \alias{peakAlgorithm2}
 \title{peakAlgorithm2}
 \usage{
-peakAlgorithm2(flowDir, flaggedData_, xVariable, usedCellsThreshold = 86)
+peakAlgorithm2(
+  flowDir,
+  flaggedData_,
+  xVariable,
+  usedCellsThreshold,
+  MaxDoubletHeight
+)
 }
 \arguments{
 \item{flowDir}{The directory of the gated .fcs data}
@@ -26,7 +32,8 @@ peakAlgorithm2(
  flowDir = "FlowData/T10_FLC/gated_data",
  flaggedData_ = flaggedData ,
  xVariable = "FITC-A",
- usedCellsThreshold = 86
+ usedCellsThreshold = 86,
+ MaxDoubletHeight = 50
  )
 
 }

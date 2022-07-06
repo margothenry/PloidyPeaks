@@ -9,7 +9,8 @@ peakAlgorithm3(
   flaggedData_,
   xVariable,
   appendData,
-  usedCellsThreshold = 86
+  usedCellsThreshold,
+  MaxDoubletHeight
 )
 }
 \arguments{
@@ -38,7 +39,8 @@ peakAlgorithm3(
  flaggedData_ = flaggedData ,
  xVariable = "FITC-A",
  appendData = analyzedDs,
- usedCellsThreshold = 86
+ usedCellsThreshold = 86,
+ MaxDoubletHeight = 50
  )
 
 }

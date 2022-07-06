@@ -10,7 +10,8 @@ flowPeakDetection(
   doublet = FALSE,
   saveGraph = TRUE,
   singleThreshold = 8,
-  usedCellsThreshold = 86
+  usedCellsThreshold = 86,
+  MaxDoubletHeight = NA
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ dataset - by default FALSE}
 \item{singleThreshold}{threshold for classifying single populations}
 
 \item{usedCellsThreshold}{threshold for classifying multiple populations}
+
+\item{MaxDoubletHeight}{}
 }
 \description{
 The wrapper function flowPeakDetection is the main function that consists of
@@ -36,13 +39,15 @@ information about the location of each peak and their height, as well as a
 for the number of sub-populations.
 }
 \examples{
+
 flowPeakDetection(
- xVariable = "FITC-A",
- flowDir = "FlowData/T10_FLC/gated_data",
+ xVariable = "FL1-A",
+ flowDir = here("vignettes/data/gated_data"),
  doublet = FALSE,
  saveGraph = TRUE,
  singleThreshold = 8,
- usedCellsThreshold = 86
+ usedCellsThreshold = 86,
+ MaxDoubletHeight = 50
  )
 
 }

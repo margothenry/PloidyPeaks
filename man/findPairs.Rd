@@ -4,10 +4,12 @@
 \alias{findPairs}
 \title{findPairs}
 \usage{
-findPairs(ds, LL, UL)
+findPairs(ds, peaks, LL, UL)
 }
 \arguments{
-\item{ds}{The data set with the possible peaks}
+\item{ds}{The data set with the possible peaks looking for pairs}
+
+\item{peaks}{The data set of possible peaks that are possible pairs}
 
 \item{LL}{The lower limit multiplier for the range of the G2 peak, i.e, LL*G1}
 

@@ -9,7 +9,8 @@ peakAlgorithm4(
   flaggedData_,
   xVariable,
   appendData,
-  usedCellsThreshold = 86
+  usedCellsThreshold,
+  MaxDoubletHeight
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ from the previous peak algorithms. The flow frames that are done after peakAlgor
 will append to this data set.}
 
 \item{usedCellsThreshold}{Threshold for classifying multiple populations}
+
+\item{MaxDoubletHeight}{}
 }
 \description{
 The forth branching point is in peakAlgorithm4, which seeks to identify all
@@ -41,7 +44,8 @@ peakAlgorithm4(
  flaggedData_ = flagged_data ,
  xVariable = "FITC-A",
  appendData = analyzed_ds,
- usedCellsThreshold = 86
+ usedCellsThreshold = 86,
+ MaxDoubletHeight = 50
  )
 
 }

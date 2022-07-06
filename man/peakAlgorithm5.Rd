@@ -29,7 +29,8 @@ peakAlgorithm5(
  flowDir = "FlowData/T10_FLC/gated_data",
  flaggedData_ = flagged_data ,
  xVariable = "FITC-A",
- appendData = analyzed_ds
+ appendData = analyzed_ds,
+ MaxDoubletHeight = 50
  )
 
 }
