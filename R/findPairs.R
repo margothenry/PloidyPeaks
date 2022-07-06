@@ -2,7 +2,8 @@
 #'
 #' findPairs identifies G1 and G2 sub population pairing.
 #'
-#' @param ds The data set with the possible peaks
+#' @param ds The data set with the possible peaks looking for pairs
+#' @param peaks The data set of possible peaks that are possible pairs
 #' @param LL The lower limit multiplier for the range of the G2 peak, i.e, LL*G1
 #' @param UL The upper limit multiplier for the range of the G2 peak, i.e, UL*G1
 #' @export
@@ -14,7 +15,7 @@
 #' UL = 2.1
 #')
 
-findPairs = function(ds, LL, UL){
+findPairs = function(ds, peaks, LL, UL){
   ##Removing NOTE 'no visible binding for global variable'
   x<-NULL
   ##creating upper and lowed bounds that are read into the function
@@ -29,21 +30,21 @@ findPairs = function(ds, LL, UL){
   findingPairsDs$possiblePairY <- NA
   for( i in 1:nrow(findingPairsDs)){
     possible_ <- which(
-      findingPairsDs$x >= findingPairsDs$LL[i] &
-        findingPairsDs$x <= findingPairsDs$UL[i]
+      peaks$x >= findingPairsDs$LL[i] &
+        peaks$x <= findingPairsDs$UL[i]
     )
-
+    
     if(length(possible_) > 1){
-      possible_ <- possible_[1]
+      possible_ <- which(peaks$y == max(peaks[possible_,]$y))
     }
-
+    
     if(!purrr::is_empty(possible_)){
       if(possible_ != i) {
-        maxPossible_ <- findingPairsDs[possible_, ]
+        maxPossible_ <- peaks[possible_, ]
         maxPossibleRows <- maxPossible_[
           order(maxPossible_$y, decreasing = TRUE),
-          ][1,]
-
+        ][1,]
+        
         findingPairsDs$possiblePairX[i] <- maxPossibleRows$x
         findingPairsDs$possiblePairY[i] <- maxPossibleRows$y
       }else{
@@ -51,7 +52,7 @@ findPairs = function(ds, LL, UL){
       }
     }
   }
-
+  
   return(findingPairsDs)
 }
 
