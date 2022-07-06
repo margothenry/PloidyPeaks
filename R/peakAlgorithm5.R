@@ -186,6 +186,7 @@ peakAlgorithm5 = function(
     }
     
     if(nrow(possiblePeaks7) == 0){
+      peaksFix<-peaksFix %>% tidyr::drop_na()
       maxPeaksFix <- peaksFix[which(max(peaksFix$y) == peaksFix$y), ]
       possiblePeaks7 <- data.frame(
         x=maxPeaksFix$x,
