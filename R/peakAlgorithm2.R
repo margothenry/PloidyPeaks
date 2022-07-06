@@ -42,7 +42,7 @@ peakAlgorithm2 = function(
   )
   colnames(logFlow) <- c("Algorithm", "Data", "Success")
   algorithmNum <- 2
-  
+
   for(k in 1:length(flowNameDs)){
     flowName <- flowCore::read.FCS(
       paste0(flowDir, "/", flowNameDs[k]), transformation=FALSE

@@ -40,7 +40,10 @@ doubletCheck = function(doubletCheckDs, peaks, g1G2Range, g2G2Range){
     )
 
     if(length(possible_) > 1){
-      possible_ <- possible_[1]
+      possible_ <- which(
+        peaks$y == max(peaks[possible_,]$y) &
+        peaks$x >= doubletCheckDs2$g3LL[i]   
+        )
     }
 
     if(!purrr::is_empty(possible_)){
@@ -69,7 +72,10 @@ doubletCheck = function(doubletCheckDs, peaks, g1G2Range, g2G2Range){
         peaks$x <= doubletCheckDs2$g4UL[i]
     )
     if(length(possible_) > 1){
-      possible_ <- possible_[1]
+      possible_ <- which(
+        peaks$y == max(peaks[possible_,]$y) &
+        peaks$x >= doubletCheckDs2$g4LL[i]  
+        )
     }
 
     if(!purrr::is_empty(possible_)){
