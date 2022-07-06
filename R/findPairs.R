@@ -35,7 +35,11 @@ findPairs = function(ds, peaks, LL, UL){
     )
     
     if(length(possible_) > 1){
-      possible_ <- which(peaks$y == max(peaks[possible_,]$y))
+      possible_ <- which(
+        peaks$y == max(peaks[possible_,]$y) &
+        peaks$x >= findingPairsDs$LL[i]
+        )
+      possible_<-possible_[1]
     }
     
     if(!purrr::is_empty(possible_)){
