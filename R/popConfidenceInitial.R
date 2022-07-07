@@ -29,13 +29,20 @@ popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
     G1Count_1,
     G2Count_1
   )
-
-  modelData01 <- modelData %>% dplyr::mutate(
+  
+  modelData01 = DJFMeans(
+    ds = modelData,
+    flowDir,
+    xVariable,
+    10
+    )
+  
+  modelData02 <- modelData01 %>% dplyr::mutate(
     sdG1Count=G1Count_1*0.6,
     sdG2Count=G2Count_1*0.6
   )
 
-  flowNameDs <- unique(modelData01$data)
+  flowNameDs <- unique(modelData02$data)
 
   residualDs <- data.frame(
     matrix(nrow=0, ncol=14)
@@ -62,8 +69,8 @@ popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
     flowName <- flowCore::read.FCS(
       paste0(flowDir, "/", flowNameDs[k]), transformation=FALSE
       )
-    flowData <- smoothData( flowName, xVariable, 5)
-    flowDataMeans <- modelData01%>% dplyr::filter(
+    flowData <- smoothData( flowName, xVariable, 10)
+    flowDataMeans <- modelData02%>% dplyr::filter(
       data == flowNameDs[k]
     )
 
