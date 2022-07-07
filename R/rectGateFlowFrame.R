@@ -150,5 +150,5 @@ rectGateFlowFrame = function(
     dev.off()
 
   }
-
+return(combinedPlot)
 }
