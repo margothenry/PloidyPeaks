@@ -4,7 +4,7 @@
 \alias{flowLineGraph}
 \title{flowLineGraph}
 \usage{
-flowLineGraph(flowDir = NA, flowControl = NA, flowSamples, xVariable)
+flowLineGraph(flowDir = NA, flowControl = NA, flowSamples = NA, xVariable)
 }
 \arguments{
 \item{flowDir}{The directory where the data is located. If NA then a window
@@ -24,8 +24,8 @@ for comparison (control sample is indicated by the user).
 }
 \examples{
  flowLineGraph(
-  flowControl = "gated_FH-B11",
-  flowSamples = c("gated_T1-D08","gated_FH-B08", "gated_T1-D10", "gated_A13-E10"),
+  flowControl = "FH-B11",
+  flowSamples = c("T1-D08","FH-B08", "T1-D10", "A13-E10"),
   xVariable = "FITC-A",
   flowDir = "FlowData/gated_data"
  )

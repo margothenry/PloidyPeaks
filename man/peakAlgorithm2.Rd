@@ -20,6 +20,9 @@ peakAlgorithm2(
 \item{xVariable}{The fluorescence channel on the x axis}
 
 \item{usedCellsThreshold}{Threshold for classifying multiple populations}
+
+\item{MaxDoubletHeight}{The maximum height a doublet can be. If left as NA
+the algorithm will find a value based on the other peaks}
 }
 \description{
 The second branching point is in peakAlgorithm2, which seeks to identify all

@@ -9,6 +9,8 @@
 #' @param xVariable The fluorescence channel on the x axis
 #' @param flaggedData_ List of names of the flow frames that got flagged by PeakAlgorithm1
 #' @param usedCellsThreshold Threshold for classifying multiple populations
+#' @param MaxDoubletHeight The maximum height a doublet can be. If left as NA
+#'  the algorithm will find a value based on the other peaks
 #'
 #' @export
 #'

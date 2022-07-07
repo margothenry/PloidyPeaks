@@ -16,7 +16,8 @@
 #' from the previous peak algorithms. The flow frames that are done after peakAlgorithm4
 #' will append to this data set.
 #' @param usedCellsThreshold Threshold for classifying multiple populations
-#' @param MaxDoubletHeight
+#' @param MaxDoubletHeight The maximum height a doublet can be. If left as NA
+#'  the algorithm will find a value based on the other peaks
 #' 
 #' @export
 #'

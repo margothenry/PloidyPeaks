@@ -14,7 +14,8 @@
 #' @param saveGraph T/F for saving the graphs as an output of the NLS
 #' @param singleThreshold threshold for classifying single populations
 #' @param usedCellsThreshold threshold for classifying multiple populations
-#' @param MaxDoubletHeight
+#' @param MaxDoubletHeight The maximum height a doublet can be. If left as NA
+#'  the algorithm will find a value based on the other peaks
 #' 
 #' @import magrittr
 #' @import scorepeak

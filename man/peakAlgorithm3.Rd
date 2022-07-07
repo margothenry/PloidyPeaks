@@ -24,6 +24,9 @@ peakAlgorithm3(
 from the previous peak algorithms. The flow frames that are done after peakAlgorithm3 will append to this data set.}
 
 \item{usedCellsThreshold}{Threshold for classifying multiple populations}
+
+\item{MaxDoubletHeightThe}{maximum height a doublet can be. If left as NA
+the algorithm will find a value based on the other peaks}
 }
 \description{
 The third branching point is in peakAlgorithm3, which seeks to identify all

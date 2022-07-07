@@ -26,7 +26,8 @@ will append to this data set.}
 
 \item{usedCellsThreshold}{Threshold for classifying multiple populations}
 
-\item{MaxDoubletHeight}{}
+\item{MaxDoubletHeight}{The maximum height a doublet can be. If left as NA
+the algorithm will find a value based on the other peaks}
 }
 \description{
 The forth branching point is in peakAlgorithm4, which seeks to identify all

@@ -28,7 +28,8 @@ dataset - by default FALSE}
 
 \item{usedCellsThreshold}{threshold for classifying multiple populations}
 
-\item{MaxDoubletHeight}{}
+\item{MaxDoubletHeight}{The maximum height a doublet can be. If left as NA
+the algorithm will find a value based on the other peaks}
 }
 \description{
 The wrapper function flowPeakDetection is the main function that consists of
