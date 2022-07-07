@@ -25,7 +25,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
   ds2 <- ds %>% dplyr::filter(doublet == 1)
   flowNameDs <- unique(ds2$data)
 
-  modelData <- ds2 %>% dplyr::select(
+  modelData01 <- ds2 %>% dplyr::select(
     data,
     G1_1,
     G2_1,
@@ -38,19 +38,12 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
     doublet
   )
   
-  modelData01 = DJFMeans(
-    ds = modelData,
-    flowDir,
-    xVariable,
-    10
-  )
-  
   modelData02 <- modelData01 %>% dplyr::mutate(
     sdG1Count=G1Count_1*0.6,
     sdG2Count=G2Count_1*0.6,
     sdG1G2Count=`doublet G1+G2 count`*0.6,
     sdG2G2Count=`doublet G2+G2 count`*0.6
-  ) %>% dplyr::select(-doublet)
+  )
 
   residualDoubletDs <- data.frame(
     matrix(nrow=0, ncol=26)
@@ -89,7 +82,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
     flowName <- flowCore::read.FCS(
       paste0(flowDir, "/", flowNameDs[k]), transformation=FALSE
       )
-    flowData <- smoothData( flowName, xVariable, 10)
+    flowData <- smoothData( flowName, xVariable, 5)
     flowDataMeans <- modelData02%>% dplyr::filter(
       data == flowNameDs[k]
     )
