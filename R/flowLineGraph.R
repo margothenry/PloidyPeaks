@@ -114,12 +114,22 @@ flowLineGraph = function(
         theme_bw()
       
     }else{
-      ##plotting
-      flowPlot <- ggplot() +
-        geom_line(data=sampleDs, aes(x=x, y=y), size = 1, color='black')+
-        ylab("Counts")+
-        xlab(xVariable)+
-        theme_bw()
+      if(length(flowSamples) > 1){
+        ##plotting
+        flowPlot <- ggplot() +
+          geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
+          ylab("Counts")+
+          xlab(xVariable)+
+          theme_bw()
+      }else if(length(flowSamples) == 1){
+        ##plotting
+        flowPlot <- ggplot() +
+          geom_line(data=sampleDs, aes(x=x, y=y), size = 1, color='black')+
+          ylab("Counts")+
+          xlab(xVariable)+
+          theme_bw()
+      }
+      
     }
   }else{
     if(!flowControl %in% list.files(flowDir)){
@@ -147,7 +157,6 @@ flowLineGraph = function(
       xlab(xVariable)+
       theme_bw()
   }
-  
   
   
   return(flowPlot)
