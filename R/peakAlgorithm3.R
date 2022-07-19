@@ -299,7 +299,14 @@ peakAlgorithm3 = function(
     .GlobalEnv$logDs[nrow(.GlobalEnv$logDs), ]$Success <- 1
   }
   
-  returnedList <- list(flaggedData, appendData)
+  if(!purrr::is_empty(appendData) & !purrr::is_empty(flaggedData)){
+    returnedList <- list(flaggedData, appendData)
+  }else if(!purrr::is_empty(appendData) & purrr::is_empty(flaggedData)){
+    returnedList <- list(appendData) 
+  }else{
+    returnedList <- list(flaggedData) 
+  }
+  
   
   return(returnedList)
   

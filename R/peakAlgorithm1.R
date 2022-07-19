@@ -246,8 +246,10 @@ peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){
 
   }
   
-  if(!purrr::is_empty(singleData)){
+  if(!purrr::is_empty(singleData) & !purrr::is_empty(flaggedData)){
     returnedList <- list(flaggedData, singleDataUpdated)
+  }else if(!purrr::is_empty(singleData) & purrr::is_empty(flaggedData)){
+    returnedList <- list(singleData) 
   }else{
     returnedList <- list(flaggedData) 
   }
