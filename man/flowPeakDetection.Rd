@@ -11,7 +11,8 @@ flowPeakDetection(
   saveGraph = TRUE,
   singleThreshold = 8,
   usedCellsThreshold = 86,
-  MaxDoubletHeight = NA
+  MaxDoubletHeight = NA,
+  subsetDs = NA
 )
 }
 \arguments{
@@ -30,14 +31,17 @@ dataset - by default FALSE}
 
 \item{MaxDoubletHeight}{The maximum height a doublet can be. If left as NA
 the algorithm will find a value based on the other peaks}
+
+\item{subsetDs}{A vector of samples that the user wants to analyze if they
+do not want to analyse the full dataset. Default value is NA}
 }
 \description{
 The wrapper function flowPeakDetection is the main function that consists of
 five main peak algorithm functions, as well as five helper functions used within
 the main functions. The output of flowPeakDetection is a single .csv file with
 information about the location of each peak and their height, as well as a
-“messy” and doublet indicator. As well as a statistical measure of confidence
-for the number of sub-populations.
+“for review” and doublet indicator. In addition a statistical measure of confidence
+for the number of sub-populations (RSE).
 }
 \examples{
 
@@ -48,7 +52,8 @@ flowPeakDetection(
  saveGraph = TRUE,
  singleThreshold = 8,
  usedCellsThreshold = 86,
- MaxDoubletHeight = 50
+ MaxDoubletHeight = 50,
+ subsetDs = c("A01-A01", "A01-A02")
  )
 
 }
