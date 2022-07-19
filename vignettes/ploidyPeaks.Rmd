@@ -103,39 +103,40 @@ knitr::include_graphics(here("vignettes/images/V2_gated2.png"))
 ``` 
 
 
-
-
-##### Warnings:  
-The following warning appears when you run the gating functions with save_plot = TRUE. No need to worry! This warning is letting us know that they are using different coordinates for the graphs then the suggested coordinates. 
-
-`Warnings: Coordinate system already present. Adding new coordinate system, which will replace the existing one.`  
-
-
 ### 1.2 Visualization  
 
 The raw data can be visualized as a histogram using `flowLineGraph`. This function permits the users to plot as many flow frames as they would like on the same graph panel. Each of the colourful lines represent a different flow frame, and the black line represents the control sample used for comparison (control sample is indicated by the user).   
 
 ##### Examples   
 
-
 ```{r}
- flowLineGraph(
+flowLineGraph(
   flowDir = here("vignettes/data/gated_data"),
-  flowControl = "V2",
-  flowSamples = c("V3","V5", "V7"),
-  xVariable = "FL1-A"
+  flowControl = "A4_12.fcs",
+  flowSamples = c("A3_9.fcs","A2_4.fcs", "A4_4.fcs", "A1_12.fcs", "A1_6.fcs"),
+  xVariable = "FITC-A"
 )
-```  
+``` 
+By leaving the `flowControl` parameter blank, no black line will appear.  
 
 ```{r}
 flowLineGraph(
   flowDir = here("vignettes/data/gated_data"),
-  flowControl = "V23",
-  flowSamples = c("V11", "V9", "V20", "V21", "V22", "V24", "V18"),
-  xVariable = "FL1-A"
+  flowSamples = c("A3_9.fcs","A2_4.fcs", "A4_4.fcs", "A1_12.fcs", "A1_6.fcs"),
+  xVariable = "FITC-A"
 )
-``` 
+```   
 
+You can plot a single sample by putting only one name in either the `flowSamples` or `flowControl` parameters.  
+```{r}
+flowLineGraph(
+  flowDir = here("vignettes/data/gated_data"),
+  flowSamples = c("A3_9.fcs"),
+  xVariable = "FITC-A"
+)
+```   
+  
+  
 ### 2. Peak Detection  
 
 The core of the package is the peak detection analysis, with the goal of properly identifying G1 and G2 peaks from all subpopulations. The wrapper function `flowPeakDetection` is the main function that consists of five main peak algorithm functions, as well as five helper functions used within the main functions. The output of `flowPeakDetection` is a single .csv file with information about the location of each peak and their height, as well as a “messy” and doublet indicator. In addition, the Dean-Jett-Fox cell cycle model is used to obtain a statistical measure of confidence for the number of sub-populations.   
@@ -144,7 +145,7 @@ The core of the package is the peak detection analysis, with the goal of properl
 
 ##### `peakAlgorithm1`    
 
-`peakAlgorithm1` is the first branching point to identify samples with single populations (which contain only two peaks and can be easily analysed) and to flag everything else. The algorithm will smooth the data with a smoothing level of 13 with the `smoothData` function. Then it finds a single G1 and G2 pairing. If there are more than two peaks identified, the algorithm will consider the G1/G2 pairing that is furthermost left on the x-axis to be the single population. With that population, a boundary is set to the right of the G2 peak and the ratio of cells in that area are calculated. If this ratio is within a certain threshold, the population is marked as a single population. If the ratio exceeds the threshold, the population is flagged to pass to the next algorithm, `peakAlgorithm2.` A default threshold of 8% was established by looking at the ratio of cells after the G2 peak from 500 known control populations composed of known *Candida albicans* single populations. But it is straightforward for researchers to infer an appropriate threshold from their data.  
+`peakAlgorithm1` is the first branching point to identify samples with single populations (which contain only two peaks and can be easily analysed) and to flag everything else. The algorithm will smooth the data with a smoothing level of 11 with the `smoothData` function. Then it finds a single G1 and G2 pairing. If there are more than two peaks identified, the algorithm will consider the G1/G2 pairing that is furthermost left on the x-axis to be the single population. With that population, a boundary is set to the right of the G2 peak and the ratio of cells in that area are calculated. If this ratio is within a certain threshold, the population is marked as a single population. If the ratio exceeds the threshold, the population is flagged to pass to the next algorithm, `peakAlgorithm2.` A default threshold of 8% was established by looking at the ratio of cells after the G2 peak from 500 known control populations composed of known *Candida albicans* single populations. But it is straightforward for researchers to infer an appropriate threshold from their data.  
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
 knitr::include_graphics(here("vignettes/images/PA1.png"))
@@ -177,7 +178,7 @@ knitr::include_graphics(here("vignettes/images/findCluster.png"))
 **Figure 6: A) The raw data that gets read into the algorithm. B) The data is smoothed by a smoothing factor of five. C) The peak detection algorithm identifies all clusters. D) The `findCluster` function will group together clusters in close proximity.**  
 
 ##### `findPairs`
-For all the peaks that have currently been identified, `findPairs`, assumes that each peak is a possible G1 and will try and find their subpopulation pairing. The algorithm finds a lower and upper limit for each possible G1 peak. This is done by taking into account that for every true G1 peak (i.e., genome size prior to replication), there should be a corresponding G2 peak (genome size after DNA replication before division) ~2 larger (in practice, it is typically 1.8-2.1x the G1 peak). Therefore, our lower limit is 1.8xG1 peak and our upper limit is 2.1xG1 peak. For each possible G1 peak, `findPairs` looks at peaks identified in this range, and if there is more than one peak identified, it will look at the tallest of those identified peaks to pair up with the G1 peak. If no peaks have been identified in this range, the algorithm will assume that this peak is not a G1 peak and remove from our dataset. In Figure 7, four peak have been identified as possible G1 peaks. The algorithm found a G2 pairing for the first two peaks and the remaining two are removed from the dataset.    
+For all the peaks that have currently been identified, `findPairs`, assumes that each peak is a possible G1 and will try and find their subpopulation pairing. The algorithm finds a lower and upper limit for each possible G1 peak. This is done by taking into account that for every true G1 peak (i.e., genome size prior to replication), there should be a corresponding G2 peak (genome size after DNA replication before division) ~2 larger (in practice, it is typically 1.75-2.1x the G1 peak). Therefore, our lower limit is 1.75xG1 peak and our upper limit is 2.2xG1 peak. For each possible G1 peak, `findPairs` looks at peaks identified in this range, and if there is more than one peak identified, it will look at the tallest of those identified peaks to pair up with the G1 peak. If no peaks have been identified in this range, the algorithm will assume that this peak is not a G1 peak and remove from our dataset. In Figure 7, four peak have been identified as possible G1 peaks. The algorithm found a G2 pairing for the first two peaks and the remaining two are removed from the dataset.    
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
 knitr::include_graphics(here("vignettes/images/findPairs.png"))
@@ -185,7 +186,7 @@ knitr::include_graphics(here("vignettes/images/findPairs.png"))
 
 **Figure 7: Sub population pairings from `findPairs.` The G1 peak located x = 170, has a corresponding G2 peak located at x = 355 (2.1xG1). The second subpopulation has a G1 peak at x = 355 and a G2 at x= 675 (1.9xG1).**  
 
-Once all sub population peaks are identified, the proportion of cells that are being used is calculated (Figure 8). If the proportion of cells used (cellProp) is under our threshold of 87%, that sample will be flagged for further analysis. Currently, the threshold has been determined by looking at the cellProp from known control populations composed of known *Candida albicans* single populations. But there is an option for researchers to infer an appropriate threshold from their data.  
+Once all sub population peaks are identified, the proportion of cells that are being used is calculated (Figure 8). If the proportion of cells used (cellProp) is under our threshold of 86%, that sample will be flagged for further analysis. Currently, the threshold has been determined by looking at the cellProp from known control populations composed of known *Candida albicans* single populations. But there is an option for researchers to infer an appropriate threshold from their data.  
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
 knitr::include_graphics(here("vignettes/images/findPairs_cellProp.png"))
@@ -210,9 +211,6 @@ This function creates a confidence term for the flow cytometry data. The Dean-Je
 
 The $x_i$'s are represented by the means identified in our peak algorithm. The $\sigma_i$'s are calculated as the width of the distribution at 60% of each mean. I.e., if the G1 mean is 170, the standard deviation will be calculated where the height is 0.6*170 = 102 on either side of the peak. The $N_i$'s are calucalted by summing the cells within ($-\sigma_i$,$\sigma_i$).  
 
-Hypothesis:  
-
-$Ho:$ the data contains a single population vs. $Ha:$ The data does not contain a single population
 
 G0/G1: 
 $$
@@ -267,9 +265,6 @@ $$
 F_d(x) = F_1(x) + F_2(x) + F_{s1}(x) + F_3(x) + F_{s2}(x) + F_4(x) + F_{s3}(x)
 $$    
 
-##### Warnings:  
-
-`In nls(formula = y ~ (N1/(sqrt(2 * pi) * g1SD) * exp(-((x - g1Mean)^2)/(2 *  :step factor 0.000488281 reduced below 'minFactor' of 0.000976562`
 
 ### 3. Output  
 
@@ -291,13 +286,13 @@ Step 1: Gating the data
 #Now I'm going to use rectGateFlowFrame() to test out which values to use to gate out the debris
 rectGateFlowFrame(
   rawDir = here("vignettes/data/raw"),
-  flowName = "V2",
-  xVariable = "FL1-A",
+  flowName = "A2_10.fcs",
+  xVariable = "FITC-A",
   yVariable = "SSC-A",
-  xMinValue = 30000,
-  xMaxValue = 700000,
-  yMinValue = 30000,
-  yMaxValue = 750000,
+  xMinValue = 100,
+  xMaxValue = 100,
+  yMinValue = 400,
+  yMaxValue = 700,
   savePlot = TRUE
 )
 
@@ -306,7 +301,7 @@ rectGateFlowFrame(
 ```  
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignettes/images/V2_gated2.png"))
+knitr::include_graphics(here("vignettes/images/A2_10_improperGate.png"))
 ```   
 
 This looks like we over gated our data, let's try other values    
@@ -315,32 +310,32 @@ This looks like we over gated our data, let's try other values
 
 rectGateFlowFrame(
   rawDir = here("vignettes/data/raw"),
-  flowName = "V2",
-  xVariable = "FL1-A",
+  flowName = "A2_10.fcs",
+  xVariable = "FITC-A",
   yVariable = "SSC-A",
-  xMinValue = 20000,
-  xMaxValue = 950000,
-  yMinValue = 10000,
-  yMaxValue = 950000,
+  xMinValue = 50,
+  xMaxValue = 50,
+  yMinValue = 800,
+  yMaxValue = 800,
   savePlot = TRUE
 )
 
 ```    
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignettes/images/V2_gated1.png"))
+knitr::include_graphics(here("vignettes/images/A2_10_properGate.png"))
 ```    
 
 This looks pretty good, now let's apply it to our whole flow set.  
 ```{r, warning = FALSE, eval=FALSE, echo=TRUE}
 rectGateFlowSet(
   rawDir = here("vignettes/data/raw"),
-  xVariable = "FL1-A",
+  xVariable = "FITC-A",
   yVariable = "SSC-A",
-  xMinValue = 20000,
-  xMaxValue = 950000,
-  yMinValue = 10000,
-  yMaxValue = 950000,
+  xMinValue = 50,
+  xMaxValue = 50,
+  yMinValue = 800,
+  yMaxValue = 800,
   savePlot = TRUE
 )
 
