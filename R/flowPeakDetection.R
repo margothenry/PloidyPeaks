@@ -14,7 +14,7 @@
 #' @param saveGraph T/F for saving the graphs as an output of the NLS
 #' @param singleThreshold threshold for classifying single populations
 #' @param usedCellsThreshold threshold for classifying multiple populations
-#' @param MaxDoubletHeight The maximum height a doublet can be. If left as NA
+#' @param maxDoubletHeight The maximum height a doublet can be. If left as NA
 #'  the algorithm will find a value based on the other peaks
 #' @param subsetDs A vector of samples that the user wants to analyze if they
 #' do not want to analyse the full dataset. Default value is NA
@@ -41,7 +41,7 @@
 #'  saveGraph = TRUE,
 #'  singleThreshold = 8,
 #'  usedCellsThreshold = 86,
-#'  MaxDoubletHeight = 50,
+#'  maxDoubletHeight = 50,
 #'  subsetDs = c("A01-A01", "A01-A02")
 #'  )
 #'
@@ -52,7 +52,7 @@ flowPeakDetection = function(
   saveGraph = TRUE,
   singleThreshold = 8,
   usedCellsThreshold = 86,
-  MaxDoubletHeight = NA,
+  maxDoubletHeight = NA,
   subsetDs = NA
 ){
   ##Removing NOTE 'no visible binding for global variable'
@@ -120,7 +120,7 @@ flowPeakDetection = function(
       flaggedData,
       xVariable,
       usedCellsThreshold,
-      MaxDoubletHeight
+      maxDoubletHeight
     )
     
     if(length(peakAlg2) == 2){
@@ -165,7 +165,7 @@ flowPeakDetection = function(
       xVariable,
       finishedData,
       usedCellsThreshold,
-      MaxDoubletHeight
+      maxDoubletHeight
     )
     
     if(length(peakAlg3) == 2){
@@ -207,7 +207,7 @@ flowPeakDetection = function(
       xVariable,
       finishedData,
       usedCellsThreshold,
-      MaxDoubletHeight
+      maxDoubletHeight
     )
     if(length(peakAlg4) == 2){
       flaggedData <- as.data.frame(peakAlg4[[1]])

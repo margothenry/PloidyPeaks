@@ -16,7 +16,7 @@
 #' from the previous peak algorithms. The flow frames that are done after peakAlgorithm4
 #' will append to this data set.
 #' @param usedCellsThreshold Threshold for classifying multiple populations
-#' @param MaxDoubletHeight The maximum height a doublet can be. If left as NA
+#' @param maxDoubletHeight The maximum height a doublet can be. If left as NA
 #'  the algorithm will find a value based on the other peaks
 #' 
 #' @export
@@ -28,7 +28,7 @@
 #'  xVariable = "FITC-A",
 #'  appendData = analyzed_ds,
 #'  usedCellsThreshold = 86,
-#'  MaxDoubletHeight = 50
+#'  maxDoubletHeight = 50
 #'  )
 #'
 
@@ -39,7 +39,7 @@ peakAlgorithm4 = function(
   xVariable, 
   appendData, 
   usedCellsThreshold,
-  MaxDoubletHeight
+  maxDoubletHeight
   ){
   
   ##Removing NOTE 'no visible binding for global variable'
@@ -115,12 +115,12 @@ peakAlgorithm4 = function(
       tempDs2<-c()
       for(i in 1:nrow(tempDs)){
         popInQuestion<-tempDs[i,]
-        if(is.na(MaxDoubletHeight)){
-          MaxDoubletHeight_ <- round((popInQuestion$y)/3.5,2)
+        if(is.na(maxDoubletHeight)){
+          maxDoubletHeight_ <- round((popInQuestion$y)/3.5,2)
         }else{
-          MaxDoubletHeight_<-MaxDoubletHeight
+          maxDoubletHeight_<-maxDoubletHeight
         }
-        if(popInQuestion$possiblePairY < MaxDoubletHeight_){
+        if(popInQuestion$possiblePairY < maxDoubletHeight_){
           popInQuestion$truePeak = FALSE
         }else{
           popInQuestion$truePeak = TRUE
@@ -154,7 +154,7 @@ peakAlgorithm4 = function(
       for(i in 2:nrow(tempDs)){
         popInQuestion = tempDs[i,]
         if(pop1$g2G2Doublet == popInQuestion$possiblePairX & 
-           popInQuestion$possiblePairY < MaxDoubletHeight_){
+           popInQuestion$possiblePairY < maxDoubletHeight_){
           tempDs <- tempDs[-i,]
         }else{
           tempDs$g1G2Doublet<-NA

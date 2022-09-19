@@ -9,7 +9,7 @@
 #' @param xVariable The fluorescence channel on the x axis
 #' @param flaggedData_ List of names of the flow frames that got flagged by PeakAlgorithm1
 #' @param usedCellsThreshold Threshold for classifying multiple populations
-#' @param MaxDoubletHeight The maximum height a doublet can be. If left as NA
+#' @param maxDoubletHeight The maximum height a doublet can be. If left as NA
 #'  the algorithm will find a value based on the other peaks
 #'
 #' @export
@@ -20,7 +20,7 @@
 #'  flaggedData_ = flaggedData ,
 #'  xVariable = "FITC-A",
 #'  usedCellsThreshold = 86,
-#'  MaxDoubletHeight = 50
+#'  maxDoubletHeight = 50
 #'  )
 #'
 
@@ -30,7 +30,7 @@ peakAlgorithm2 = function(
   flaggedData_,
   xVariable,
   usedCellsThreshold,
-  MaxDoubletHeight
+  maxDoubletHeight
   ){
   ##Removing NOTE 'no visible binding for global variable'
   y<-possiblePairY<-keep<-NULL
@@ -92,12 +92,12 @@ peakAlgorithm2 = function(
       tempDs2<-c()
       for(i in 1:nrow(tempDs)){
         popInQuestion<-tempDs[i,]
-        if(is.na(MaxDoubletHeight)){
-          MaxDoubletHeight_ <- round((popInQuestion$y)/2,2)
+        if(is.na(maxDoubletHeight)){
+          maxDoubletHeight_ <- round((popInQuestion$y)/2,2)
         }else{
-          MaxDoubletHeight_<-MaxDoubletHeight
+          maxDoubletHeight_<-maxDoubletHeight
         }
-        if(popInQuestion$possiblePairY < MaxDoubletHeight_){
+        if(popInQuestion$possiblePairY < maxDoubletHeight_){
           popInQuestion$truePeak = FALSE
         }else{
           popInQuestion$truePeak = TRUE
@@ -132,7 +132,7 @@ peakAlgorithm2 = function(
         popInQuestion<-tempDs[i,]
         if(!is.na(pop1$g2G2Doublet)){
           if(pop1$g2G2Doublet == popInQuestion$possiblePairX & 
-             popInQuestion$possiblePairY < MaxDoubletHeight_){
+             popInQuestion$possiblePairY < maxDoubletHeight_){
             tempDs <- tempDs[-i,]
           }else{
             tempDs$g1G2Doublet<-NA
