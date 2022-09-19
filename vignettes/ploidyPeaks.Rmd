@@ -20,44 +20,37 @@ library(here)
 
 ### Introduction to *ploidyPeaks*  
 
-Karyotypic variation in ploidy (the number of chromosome sets) and aneuploidy (an aberrant number of chromosomes) is observed in fungal microbial populations isolated from ecological, clinical, and industrial environments and is also hallmark of many types of cancer. In order to characterize and understand the dynamics of karyotype subpopulations, we require an unbiased computational method to identify different subpopulations and quantify the number of cells within them. Flow cytometry is the gold standard method to measure genome size from cell populations of interest. Cells within a population are typically measured from all phases of the cell cycle (G1 prior to DNA replication, S phase during replication, and G2 when cells have doubled their DNA but haven’t yet divided). When there is a single population, mathematical models can be fit to determine the base ploidy of the population (i.e., the mean of the G1 peak). Two existing models have been widely used and are incorporated into standard software platforms. The Watson pragmatic and the Dean-Jett-Fox cell cycle model generally have the same process, they assume that cells in the G1 and G2 clusters are Gaussian distributed but vary when finding the fit for S phase cells. In practice with fungal microbes, the two models typically give nearly identical results. However, when there are multiple subpopulations of mixed ploidy (which is commonly observed during evolution in vitro and in vivo), the researcher must manually gate the population into subpopulations prior to analysis. This is subject to considerable bias and is not feasible when there are multiple subpopulations. Our objective was thus to develop a new, open-source, method to quantify karyotypic variation in populations from flow cytometry data.   
+Karyotypic variation in ploidy (the number of chromosome sets) and aneuploidy (an aberrant number of chromosomes) is observed in fungal microbial populations isolated ecologically, clinically, and industrially, and is also the hallmark of many populations of cancer cells. Flow cytometry is the standard method to measure genome size in cell populations. A dye that stains DNA is applied to a population that contains cells at all phases of the cell cycle, i.e., $G_0/G_1$ cells prior to DNA replication, S phase cells undergoing replication, and $G_2/M$  cells that have doubled their DNA but not yet divided. The flow cytometer passes each cell one-by-one across a laser and captures the fluorescence of each cell, corresponding to genome size. Typically ~10,000 cells are measured. Two univariate models are widely used and incorporated into standard software. The Watson Pragmatic and Dean-Jett-Fox cell (DJF) cycle models both assume that $G_0/G_1$ and $G_2/M$ cell clusters are Gaussian distributed, but vary when finding the distribution for S phase cells. In practice with fungal microbial populations, the two models typically give nearly identical results. When all cells in the population are a single ploidy population, the the mean of the $G_0/G_1$ peak is interpreted as the genome size, corresponding to ploidy. When there are multiple subpopulations of mixed ploidy (which is commonly observed during evolution $in vitro$ and $in vivo$), the researcher must manually gate the population into subpopulations prior to analysis based on their best guess of the subpopulation locations and boundaries. We developed the R bioconductor package `ploidyPeaks` to quantify subpopulations genome sizes without requiring any user input. The package uses theory from previous work and peak detection algorithms to identify possible $G_0/G_1$ and $G_2/M$ peaks, and then identify and quantify sub-populations. In addition, `ploidyPeaks` extends existing algorithms by providing a statistical confidence term (residual standard errors). The workflow is separated into four parts, with built-in visualizations provided throughout: 1) gating, 2) peak detection, 3) confidence term, and 4) dataset output. `ploidyPeaks` will allow users to analyze their flow cytometry data unbiasedly with confidence and with minimal prior coding knowledge required.
 
-The R package `ploidyPeaks` focuses on quantifying population-level genome size variation from flow cytometry data without requiring user input. The package uses peak detection algorithms, flow cytometry population definitions and the Dean-Jett-Fox cell cycle algorithm to quantify sub-populations. The workflow is separated into three parts: 1) gating and 2) peak detection, 3) dataset output. Built-in visualizations options are included throughout.
+### Availability
+`ploidyPeaks` can be installed from Biconductor using R. The vignette, package dependencies and system requirements can be found (eventually link to bioconductor page with this info). The package has been tested on macOS (versions 12.3.1 and later) and Windows, using R version 4.1 and later.  
 
-#### *ploidyPeaks* main function overview  
-* `rectGateFlowFrame`: A function that gates out the debris for a single flow frame.     
-* `rectGateFlowSet`:  A function that gates out the debris for a whole flow set.      
-* `flowLineGraph`: A function to visualize multiple flow frames at once.  
-* `flowPeakDetection`: A function that uses peak detection, with the goal of properly identifying G1 and G2 peaks from all subpopulations.  
 
-### 0. Pre analysis set up:  
-
-##### Required software  
-
-R and RStudio must be set up on your computer. Once the software is downloaded, download the necessary packages indicated in the package description file. A version of R >= 4.1.0 is recommended.  
-
-##### Downloading the package    
+#### Downloading the package    
 
 The package is currently on GitHub, you must install the package prior to the analysis. If this is your first time downloading the package you can do it using:   `devtools::install_github("margothenry/PloidyPeaks")`   
 
-##### Data prep  
-The flow cytometry data that will be analyzed must be in a folder on your computer. It is not recommended that the folder is **not** in your downloads folder and somewhere else on your computer.  
+#### Data prep  
+The flow cytometry data that will be analyzed must be in a folder on your computer. It is **not** recommended that the folder is in your downloads folder, and somewhere else on your computer.  
+
+
+### Implementation    
+The main functions of `ploidyPeaks` are:  
+* `rectGateFlowFrame`: A function to gate out debris from one population (termed a `flow frame` by `flowCore`).
+* `rectGateFlowSet`:  A function to gate out debris for a whole data set (termed a `flow set` by `flowCore`).
+* `flowLineGraph`: A function to visualize multiple flow frames at once.  
+* `flowPeakDetection`: The main package function used to identify $G_0/G_1$ and $G_2/M$ peaks from all subpopulations using peak detection, to apply DJF to get a RSE, and to create outputs such as graphs and a .csv.  
 
 
 ### 1. Preparation of the data:  
 
 ### 1.1 Gating  
 
-The flow cytometer laser records everything that passes through the machine, which includes our cells population of interest, but can also include any other particle that was introduced during the cell preparation steps. The goal of gating is to remove the debris prior to analysis. Debris It is usually quite distinct from the major cell population and generally sits on the margin extremes of the measured particles.
+The flow cytometer scatters light though all suspended particles, and those light scatters are read into a detector that can visualize the light, this information will be passed on to an analyzer that will convert them to electrical impulses. Multiple parameters are measured for each cell. Forward scatter (FCS) measures the light scatter in the same direction as the laser, providing information on cell size, while side scatter (SSC) measures scatter on a 90 degree angle, providing information on cell granularity, which can be used to identify to identify the granularity of the cells. Fluorescence is measured in specific fluorescence channels that are named based on machine settings and applications. When the cells get passed through the laser it pulses, and that pulse is identified by height (-H), area (-A), and width (-W) for each parameter. Unlike cell size/shape parameters (i.e., SSC, FSC), the fluorescence intensity/genome size parameter can be called  by arbitrary fluorescence/laser numbers (FL1, FL2 etc.) or the name of the dye used to stain the DNA (FITC, PI, SYBR, SYTOX etc.) 
 
-There are two gating functions: `rectGateFlowFrame` and `rectGateFlowSet`. `rectGateFlowFrame` applies the gate on a single flow frame (.fcs), while `rectGateFlowSet` applies the gate to a flow set, a series of multiple flow frames. Combined they apply a rectangular gate to the particles and save the cells within the rectangular boundary as a .fcs file in a folder that is created called ‘gated_data’ for downstream analysis. The gate has a default value of x = (90000,900000) and y = (90000,900000), but the user has the option to input their own rectangular boundaries. `rectGateFlowFrame` is used for testing, the user can see how the data looks on a single flow frame, adapt the gating boundaries if needed, and once satisfied, apply the gate to the whole flow set with `rectGateFlowSet`. 
+Measured particles often include the cell population of interest as well as debris, which includes inert particles such as dust that are introduced during the cell preparation process as well as large clumps of cells that stick together. These cause an excess of cells along the plot margins. It is common to remove the debris by first gating on a bivariate density plot. The parameters can be FCS, SSC or any fluorescence that was applied in the flow set. The population of interest is visualized as a dense area in the plot.
 
-```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
-knitr::include_graphics(here("vignettes/images/gating.png"))
-```  
-
-
-**Figure 1: A) The red rectangle is the gate applied to the flow frame, the cells outside the gate are removed and B) the cells within the gate are saved and used for downstream further analysis.**   
+There are two gating functions: `rectGateFlowFrame` and `rectGateFlowSet`. `rectGateFlowFrame` applies the gate on a single flow frame (.fcs), while `rectGateFlowSet` applies the gate to a flow set, a series of multiple flow frames. Combined they apply a rectangular gate to the particles and save the cells within the rectangular boundary as a .fcs file in a folder that is created called ‘gated_data’ for downstream analysis. The gate is set to default values of  $xMinValue = 10000$, $xMaxValue = 900000$, $yMinValue = 10000$ and $yMaxValue = 900000$, gating on variables "SSC-A" and "FL-1", but the user has the option to input their own rectangular boundaries. There is an option to save graphs to display the comparison between the raw data (pre-gating), and the gated data (savePlot = TRUE). `rectGateFlowFrame` is used for testing, the user can see how the data looks on a single flow frame, adapt the gating boundaries if needed, and once satisfied, apply the gate to the whole flow set with `rectGateFlowSet`. 
 
 #### Examples  
 
@@ -66,7 +59,7 @@ Example of different minimum values for the same flow frame.
 ```{r, warning = FALSE, eval=FALSE, echo=TRUE}
 rectGateFlowFrame(
   rawDir = NA,
-  flowName = "V2",
+  flowName = "Sample1",
   xVariable = "FL1-A",
   yVariable = "SSC-A",
   xMinValue = 20000,
@@ -84,7 +77,7 @@ knitr::include_graphics(here("vignettes/images/V2_gated1.png"))
 ```{r, warning = FALSE, eval=FALSE, echo=TRUE}
 rectGateFlowFrame(
   rawDir = NA,
-  flowName = "V2",
+  flowName = "Sample1",
   xVariable = "FL1-A",
   yVariable = "SSC-A",
   xMinValue = 30000,
@@ -105,7 +98,7 @@ knitr::include_graphics(here("vignettes/images/V2_gated2.png"))
 
 ### 1.2 Visualization  
 
-The raw data can be visualized as a histogram using `flowLineGraph`. This function permits the users to plot as many flow frames as they would like on the same graph panel. Each of the colourful lines represent a different flow frame, and the black line represents the control sample used for comparison (control sample is indicated by the user).   
+The data from a single parameter (typically the one that corresponds to fluorescence intensity) can be visualized as a histogram using `flowLineGraph` This function permits the users to plot as many samples as they would like on top of each other on the same panel. Each trace indicates a different sample. If desired, a black line will indicate the control population that is specified by the user for comparison. 
 
 ##### Examples   
 
@@ -116,7 +109,8 @@ flowLineGraph(
   flowSamples = c("A3_9.fcs","A2_4.fcs", "A4_4.fcs", "A1_12.fcs", "A1_6.fcs"),
   xVariable = "FITC-A"
 )
-``` 
+```   
+
 By leaving the `flowControl` parameter blank, no black line will appear.  
 
 ```{r}
@@ -125,9 +119,11 @@ flowLineGraph(
   flowSamples = c("A3_9.fcs","A2_4.fcs", "A4_4.fcs", "A1_12.fcs", "A1_6.fcs"),
   xVariable = "FITC-A"
 )
-```   
+```     
 
-You can plot a single sample by putting only one name in either the `flowSamples` or `flowControl` parameters.  
+
+You can plot a single sample by putting a single sample in either the `flowSamples` or `flowControl` parameters.  
+
 ```{r}
 flowLineGraph(
   flowDir = here("vignettes/data/gated_data"),
@@ -137,21 +133,21 @@ flowLineGraph(
 ```   
   
   
-### 2. Peak Detection  
+### 2. Analysis of the data - peak detection   
 
-The core of the package is the peak detection analysis, with the goal of properly identifying G1 and G2 peaks from all subpopulations. The wrapper function `flowPeakDetection` is the main function that consists of five main peak algorithm functions, as well as five helper functions used within the main functions. The output of `flowPeakDetection` is a single .csv file with information about the location of each peak and their height, as well as a “messy” and doublet indicator. In addition, the Dean-Jett-Fox cell cycle model is used to obtain a statistical measure of confidence for the number of sub-populations.   
+The core of the package is the peak detection analysis, with the goal of properly identifying G1 and G2 peaks from all subpopulations. The wrapper function `flowPeakDetection` is the main function that consists of five main peak algorithm functions, as well as five helper functions used within the main functions. The output of `flowPeakDetection` is a single .csv file with information about the location of each peak and their height, as well as a doublet and a “to investiage”  indicator. In addition, the Dean-Jett-Fox cell cycle model is used to obtain a statistical measure of confidence for the number of sub-populations.   
 
 #### *`flowPeakDetection`* function overview:    
 
 ##### `peakAlgorithm1`    
 
-`peakAlgorithm1` is the first branching point to identify samples with single populations (which contain only two peaks and can be easily analysed) and to flag everything else. The algorithm will smooth the data with a smoothing level of 11 with the `smoothData` function. Then it finds a single G1 and G2 pairing. If there are more than two peaks identified, the algorithm will consider the G1/G2 pairing that is furthermost left on the x-axis to be the single population. With that population, a boundary is set to the right of the G2 peak and the ratio of cells in that area are calculated. If this ratio is within a certain threshold, the population is marked as a single population. If the ratio exceeds the threshold, the population is flagged to pass to the next algorithm, `peakAlgorithm2.` A default threshold of 8% was established by looking at the ratio of cells after the G2 peak from 500 known control populations composed of known *Candida albicans* single populations. But it is straightforward for researchers to infer an appropriate threshold from their data.  
+`peakAlgorithm1()` is the first branching point to identify samples with single populations (which contain only two peaks and can be easily analysed) and to flag everything else. The algorithm will smooth the data with a smoothing level of 11 with the `smoothData()` function. Then it finds a single G1 and G2 pairing. If there are more than two peaks identified, the algorithm will consider the G1/G2 pairing that is furthermost left on the x-axis to be the single population. With that population, a boundary is set to the right of the G2 peak and the ratio of cells in that area are calculated. If this ratio is within a certain threshold, the population is marked as a single population. If the ratio exceeds the threshold, the population is flagged to pass to the next algorithm, `peakAlgorithm2()`. A default threshold of 8.5% was established by looking at the ratio of cells after the G2 peak from 500 known control populations composed of known *Candida albicans* single populations. But it is straightforward for researchers to infer an appropriate threshold from their data.  
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
 knitr::include_graphics(here("vignettes/images/PA1.png"))
 ```   
 
-**Figure 4: peakAlgorithm1 looks at the ratio of cells to the right of the G2 peak. A) An example of data from a single population sample, with a low ratio of 5.5% of cells to the right. B) An example of a population that would be flagged where the ratio of cells (32.4%) exceeds the set threshold.**   
+**Figure 1: peakAlgorithm1 looks at the ratio of cells to the right of the G2 peak. A) An example of data from a single population sample, with a low ratio of 5.5% of cells to the right. B) An example of a population that would be flagged where the ratio of cells (32.4%) exceeds the set threshold.**   
 
 ##### `smoothData`  
 
@@ -161,32 +157,32 @@ knitr::include_graphics(here("vignettes/images/PA1.png"))
 knitr::include_graphics(here("vignettes/images/smoothing.png"))
 ```   
 
-**Figure 5: This is an example of the outcome of the `smoothData` function. The raw data (A) gets read into the function and a smoothing factor gets applies to eliminate every small spike getting identified as a peak. The smoothed data has a smoothing factor of 3 (B), 5 (C), and 13 (D).**  
+**Figure 2: This is an example of the outcome of the `smoothData` function. The raw data (A) gets read into the function and a smoothing factor gets applies to eliminate every small spike getting identified as a peak. The smoothed data has a smoothing factor of 3 (B), 5 (C), and 13 (D).**  
 
 ##### `peakAlgorithm2`  
 
-The second branching point is in `peakAlgorithm2`, which seeks to identify all possible sub populations. The algorithm looks at the proportion of cells used in the subpopulations. In other words, once the populations have been identified for a given flow frame, `peakAlgorithm2` will find the cells associated with the G1/G2 pairs (Figure 8).  The algorithm uses more granular data, a smoothing factor of 5 and repeats the initial peak detection step as in `peakAlgorithm1.` Two helper functions, `findClusters` and `findPairs`, are employed to find possible sub populations.    
+The second branching point is in `peakAlgorithm2()`, which seeks to identify all possible sub populations. The algorithm looks at the proportion of cells used in the subpopulations. In other words, once the populations have been identified for a given flow frame, `peakAlgorithm2()` will find the cells associated with the G1/G2 pairs (Figure 8).  The algorithm uses more granular data, a smoothing factor of 5 and repeats the initial peak detection step as in `peakAlgorithm1()`. Two helper functions, `findTruePeaks()` and `findPairs()`, are employed to find possible sub populations.    
 
-##### `findClusters`  
+##### `findTruePeaks`  
 
-While The algorithm identifies peaks that represent both peaks of interest (i.e., peaks that correspond to true G1 and G2 populations) as well as peaks that arise in the data due to spikes or abnormalities in the histogram. `findClusters` is used to differentiate between the two types of peaks and to remove the unnecessary peaks. This function will start by assuming each peak is its own cluster, then if two clusters are too close together, they will get combined and only one peak can be identified per cluster. In Figure 6C, we see that three peaks are identified, and that peaks 2 and 3 are very close together. This function will group together cluster two and three to become a single cluster (6D).    
+While The algorithm identifies peaks that represent both peaks of interest (i.e., peaks that correspond to true G1 and G2 populations) as well as peaks that arise in the data due to spikes or abnormalities in the histogram. `findTruePeaks()` is used to differentiate between the two types of peaks and to remove the unnecessary peaks. This function will start by assuming each peak is its own cluster, then if two clusters are too close together, they will get combined and only one peak can be identified per cluster. In Figure 6C, we see that three peaks are identified, and that peaks 2 and 3 are very close together. This function will group together cluster two and three to become a single cluster (6D).    
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
 knitr::include_graphics(here("vignettes/images/findCluster.png"))
 ```   
 
-**Figure 6: A) The raw data that gets read into the algorithm. B) The data is smoothed by a smoothing factor of five. C) The peak detection algorithm identifies all clusters. D) The `findCluster` function will group together clusters in close proximity.**  
+**Figure 3: A) The raw data that gets read into the algorithm. B) The data is smoothed by a smoothing factor of five. C) The peak detection algorithm identifies all clusters. D) The `findCluster` function will group together clusters in close proximity.**  
 
 ##### `findPairs`
-For all the peaks that have currently been identified, `findPairs`, assumes that each peak is a possible G1 and will try and find their subpopulation pairing. The algorithm finds a lower and upper limit for each possible G1 peak. This is done by taking into account that for every true G1 peak (i.e., genome size prior to replication), there should be a corresponding G2 peak (genome size after DNA replication before division) ~2 larger (in practice, it is typically 1.75-2.1x the G1 peak). Therefore, our lower limit is 1.75xG1 peak and our upper limit is 2.2xG1 peak. For each possible G1 peak, `findPairs` looks at peaks identified in this range, and if there is more than one peak identified, it will look at the tallest of those identified peaks to pair up with the G1 peak. If no peaks have been identified in this range, the algorithm will assume that this peak is not a G1 peak and remove from our dataset. In Figure 7, four peak have been identified as possible G1 peaks. The algorithm found a G2 pairing for the first two peaks and the remaining two are removed from the dataset.    
+For all the peaks that have currently been identified, `findPairs()`, assumes that each peak is a possible G1 and will try and find their subpopulation pairing. The algorithm finds a lower and upper limit for each possible G1 peak. This is done by taking into account that for every true G1 peak (i.e., genome size prior to replication), there should be a corresponding G2 peak (genome size after DNA replication before division) ~2 larger (in practice, it is typically 1.75-2.0x the G1 peak). Therefore, our lower limit is 1.75xG1 peak and our upper limit is 2.2xG1 peak. For each possible G1 peak, `findPairs()` looks at peaks identified in this range, and if there is more than one peak identified, it will look at the tallest of those identified peaks to pair up with the G1 peak. If no peaks have been identified in this range, the algorithm will assume that this peak is not a G1 peak and remove from our dataset. In Figure 7, four peak have been identified as possible G1 peaks. The algorithm found a G2 pairing for the first two peaks and the remaining two are removed from the dataset.    
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
 knitr::include_graphics(here("vignettes/images/findPairs.png"))
 ```  
 
-**Figure 7: Sub population pairings from `findPairs.` The G1 peak located x = 170, has a corresponding G2 peak located at x = 355 (2.1xG1). The second subpopulation has a G1 peak at x = 355 and a G2 at x= 675 (1.9xG1).**  
+**Figure 4: Sub population pairings from `findPairs.` The G1 peak located x = 170, has a corresponding G2 peak located at x = 355 (2.1xG1). The second subpopulation has a G1 peak at x = 355 and a G2 at x= 675 (1.9xG1).**  
 
-Once all sub population peaks are identified, the proportion of cells that are being used is calculated (Figure 8). If the proportion of cells used (cellProp) is under our threshold of 86%, that sample will be flagged for further analysis. Currently, the threshold has been determined by looking at the cellProp from known control populations composed of known *Candida albicans* single populations. But there is an option for researchers to infer an appropriate threshold from their data.  
+Once the sub population peaks are identified, the proportion of cells that are being used is calculated (Figure 8). If the proportion of cells used (cellProp) is under our threshold of 86%, that sample will be flagged for further analysis. Currently, the threshold has been determined by looking at the cellProp from known control populations composed of known *Candida albicans* single populations. But there is an option for researchers to infer an appropriate threshold from their data.  
 
 ```{r, echo=FALSE, fig.pos = "H", fig.align="center"}
 knitr::include_graphics(here("vignettes/images/findPairs_cellProp.png"))
@@ -194,7 +190,7 @@ knitr::include_graphics(here("vignettes/images/findPairs_cellProp.png"))
 **Figure 8: The shaded area in red is the cells being used in the subpopulation pairings, while the area in white is the cells not being used. CellProp is calculated by the number of cells in the red area divided by the total number of cells.**  
 
 ##### `peakAlgorithm3`, `peakAlgorithm4` & `peakAlgorithm5`  
-Flagged populations from `peakAlgorithm2` are passed on to `peakAlgorithm3.` The granularity is adjusted, the interval between G1 and G2 peaks is widened to (1.7, 2.3), and then `findCluster` and `findPairs` are applied as before. If the sample still does not pass the threshold in `peakAlgorithm3`, then it gets flagged and passed on to `peakAlgorithm4`, where the data is more granular, with a smoothing level of four and then `findCluster` and `findPairs` are applied as before. Samples that are flagged at the end of `peakAlgorithm4` are annotated as ‘messy’ to indicate lower confidence in the identified peaks and signify that the user should visually inspect these samples. They are passed on to `peakAlgorithm5` which has a smoothing level of three and the G1 and G2 peak interval is widened to (1.4, 2.5) to identify for possible pairs.   
+Flagged populations from `peakAlgorithm2()` are passed on to `peakAlgorithm3()`. The granularity is adjusted, the interval between G1 and G2 peaks is widened to (1.7, 2.3), and then `findTruePeaks()` and `findPairs` are applied as before. If the sample still does not pass the threshold in `peakAlgorithm3()`, then it gets flagged and passed on to `peakAlgorithm4()`, where the data is more granular, with a smoothing level of four and then `findTruePeaks()` and `findPairs()` are applied as before. Samples that are flagged at the end of `peakAlgorithm4()` are annotated as ‘messy’ to indicate lower confidence in the identified peaks and signify that the user should visually inspect these samples. They are passed on to `peakAlgorithm5()` which has a smoothing level of three and the G1 and G2 peak interval is widened to (1.5, 2.5) to identify for possible pairs.   
 
 ##### `doubletCheck`
 For single populations, `doubletCheck` is used to identify doublets. Doublets are an excess of cells around the G1+G2 range. The doublet peak will not belong to any sub population as they do not fall within the proper range, and so the proportion of cells that are not part of any subpopulation is higher which will cause our peak algorithms to fail. This function is applied to each peakAlgorithm function prior to their branching point.   
@@ -205,74 +201,86 @@ knitr::include_graphics(here("vignettes/images/doublet.png"))
 
 **Figure 9: An example of a doublet, which is found approximately at the G1 + G2 location on the x-axis. A) Prior to the identification of the doublet, only 80% of cells were accounted for, which would fail our algorithm. B) After the identification of the doublet, the peak gets counted towards cellProp and 92% of cells are accounted for, which would pass the algorithm.**   
 
-`popConfidenceInitial` &  `popConfidenceDoublet`  
+#### Confidence term using residual standard error (RSE)
 
-This function creates a confidence term for the flow cytometry data. The Dean-Jett-Fox (DJF) cell cycle model is used to obtain a residual standard error(RSE). The model assumes the data only contains a single population, and we use the residual standard error to conclude if the data is in fact single (low RSE) or has multiple populations (high RSE). `popConfidenceInitial` gives a initial RSE value without incorporating doublets. If doublets are identified, `popConfidenceDoublet` finds a second RSE value.  
-
-The $x_i$'s are represented by the means identified in our peak algorithm. The $\sigma_i$'s are calculated as the width of the distribution at 60% of each mean. I.e., if the G1 mean is 170, the standard deviation will be calculated where the height is 0.6*170 = 102 on either side of the peak. The $N_i$'s are calucalted by summing the cells within ($-\sigma_i$,$\sigma_i$).  
-
-
-G0/G1: 
+Following peak detection analysis, the Dean-Jett-Fox cell cycle algorithm is applied to each sample using the identified peak means and heights (from each subpopulation, where appropriate) to find a residual standard error (RSE) using nonlinear least squares models. Three DJF models are run for each sample. The first model assumes each sample is a single population, the second adds doublet peaks (if identified) to the single population, and if appropriate, the third model fits each subpopulation identified by the algorithm in the process. The final RSE is the lowest of the fitted models. Users can use the RSE as a confidence term to see how well the algorithm performed and further investigate the samples with high RSE values.
+ 
+The DJF cell cycle algorithm assumes the peaks are Gaussian distributed with 
 $$
-F_1 (x) = \frac{N_1}{\sqrt{2\pi\sigma_1^2} }exp[-\frac{(x-x_1)^2}{2\sigma_1^2}]
-$$  
-G2/M: 
+F_i (x) = \frac{N_i}{\sqrt{2\pi\sigma_i^2} }exp[-\frac{(x-x_i)^2}{2\sigma_i^2}]
 $$
-F_2 (x) = \frac{N_2}{\sqrt{2\pi\sigma_2^2} }exp[-\frac{(x-x_2)^2}{2\sigma_2^2}]
-$$  
-S phase between G1 and G2: 
+
+Where the $x_i$'s are represented by the means identified in our peak algorithm. The $\sigma_i$'s are calculated as the width of the distribution at 60%(add ref) of each mean. I.e., if the G1 mean is 170, the standard deviation will be calculated where the height is $0.6*170 = 102$ on either side of the peak. The $N_i$'s are calculated by summing the cells within ($-\sigma_i$,$\sigma_i$).
+
+The first model assumes each sample is a single population:
+
+$$
+F_{1_1} (x) = \frac{N_1}{\sqrt{2\pi\sigma_1^2} }exp[-\frac{(x-x_1)^2}{2\sigma_1^2}]
+$$
+
+G2: 
+
+$
+F_{2_1} (x) = \frac{N_2}{\sqrt{2\pi\sigma_2^2} }exp[-\frac{(x-x_2)^2}{2\sigma_2^2}]
+$
+
+S-phase between G1 and G2:
+
 $$
 F_{s1} (x) = \sum_{j = x_1}^{x_2} f(x_j) \frac{1}{\sqrt{2\pi\sigma_1^2}\frac{x_j}{x_1} }exp[-\frac{(x-x_j)^2}{2(\sigma_1\frac{x_j}{x_1})^2}]
-$$  
+$$
+
+And the model 1 is $F_{M1}(x) = F_{1_1}(x) + F_{2_1}(x) + F_{s1}(x)$
+
+The second model will adds doublet peaks to the single population, if any were identified by \verb!doubletCheck()!. 
+
 
 G1+G2 doublet:  
 
 $$
-F_3(x) = \frac{N_3}{\sqrt{2\pi\sigma_3^2} }exp[-\frac{(x-x_3)^2}{2\sigma_3^2}]
+F_{d1}(x) = \frac{N_{d1}}{\sqrt{2\pi\sigma_{d1}^2} }exp[-\frac{(x-x_{d1})^2}{2\sigma_{d1}^2}]
 $$  
 S phase between G2 and G1+G2 doublet:  
+
 $$
-F_{s2} (x) = \sum_{j = x_2}^{x_3} f(x_j) \frac{1}{\sqrt{2\pi\sigma_2^2}\frac{x_j}{x_2} }exp[-\frac{(x-x_j)^2}{2(\sigma_2\frac{x_j}{x_2})^2}]
+F_{s_d1} (x) = \sum_{j = x_2}^{x_{d1}} f(x_j) \frac{1}{\sqrt{2\pi\sigma_2^2}\frac{x_j}{x_2} }exp[-\frac{(x-x_j)^2}{2(\sigma_2\frac{x_j}{x_2})^2}]
 $$
+
 G2+G2 doublet:  
 $$
-F_4(x) = \frac{N_4}{\sqrt{2\pi\sigma_4^2} }exp[-\frac{(x-x_4)^2}{2\sigma_4^2}]
+F_{d2}(x) = \frac{N_{d2}}{\sqrt{2\pi\sigma_{d2}^2} }exp[-\frac{(x-x_{d2})^2}{2\sigma_{d2}^2}]
 $$  
+
 S phase between G1+G2 doublet and G2+G2 doublet:  
 $$
-F_{s3} (x) = \sum_{j = x_3}^{x_4} f(x_j) \frac{1}{\sqrt{2\pi\sigma_3^2}\frac{x_j}{x_3} }exp[-\frac{(x-x_j)^2}{2(\sigma_3\frac{x_j}{x_3})^2}]
+F_{s_d2} (x) = \sum_{j = x_{d1}}^{x_{d2}} f(x_j) \frac{1}{\sqrt{2\pi\sigma_{d1}^2}\frac{x_j}{x_{d1}} }exp[-\frac{(x-x_j)^2}{2(\sigma_{d1}\frac{x_j}{x_{d1}})^2}]
 $$   
 
+And our model 2 is
+$$
+F_{M2}(x) = F_{1_1} + F_{2_1}) + F_{s}(x) + F_{d1}(x) + F_{s_d1}(x) + F_{d2}(x) + F_{s_d2}(x)
+$$  
+
+If appropriate (i.e., if \verb!flowPeakDectection()! identified any subpopulations), the third model fits each subpopulation identified by the algorithm. 
+
+$$
+F_{multi}(x) = \sum_{i = 1}^{n} F_{1_i}(x) + F_{2_i}(x) + F_{s_i}(x) 
+$$  
 
 
+Where 
 $$
 f(x_j) = A + Bx_j + Cx_j^2
 $$   
-
-A, B and C are estimated using Nonlinear least squares  
-
-
-
-Therefore, the two curves that can be applied :  
-
-For populations without doublets (`popConfidenceInitial`):  
-$$
-F(x) = F_1(x) + F_2(x) + F_{s1}(x)
-$$  
-
-For populations with doublets (`popConfidenceDoublet`):    
-$$
-F_d(x) = F_1(x) + F_2(x) + F_{s1}(x) + F_3(x) + F_{s2}(x) + F_4(x) + F_{s3}(x)
-$$    
-
+A, B and C are estimated using Nonlinear least squares 
 
 ### 3. Output  
 
-##### `outputData`  
+##### `Package Output`  
 
-`outputData` creates a .csv and saves it in a folder called ‘analysis’ for the user. The dataset includes the location of all peaks identified, the height of the peaks, an option to have the information on doublets, a flag if the data was messy, which algorithm analyzed the data, a residual standard error for the population.  
+Throughout the analysis different data outputs are provided. These outputs will be saved in the parent directory of where the user saved their raw data, this is also where the gated data is saved. When the user gates the data, a *.csv* file, named \emph{percentOfCellsGatedOut}, will be saved with information on the proportion of cells that have been gated out for each sample. The user can use \emph{percentOfCellsGatedOut} as an indication of if a sample is messy (A sample can have a significantly greater proportion of cells gated out than the other samples), if the chosen gating parameters were chosen properly (there were no cells gated out, or the proportion was significantly large for all).  
 
-In addition, the user has the choice to save the graphs with the DJF curves and the raw data overlapped. The default  option for the parameter saveGraph is TRUE, which means the graphs will be saved in a folder called 'nlsGraphs'.
+The main data output from the package is a \emph{.csv} file called \emph{ploidyPeaksOutput}, this is saved in a folder called 'analysis', in the same location as the \emph{percentOfCellsGatedOut}. \emph{ploidyPeaksOutput} contains all of the information from the peak detection analysis. Each row is a different sample. Column information is peak means (G1 and G2 peaks), peak heights, and includes the number of identified subpopulations. The user can also specify if they want similar information on doublets, whether to include an indicator of whether the sample should be investigated further by the user, which peak algorithm was used to analyze each sample, and the residual standard error value from the models.
 
 
 #### Walk through  
