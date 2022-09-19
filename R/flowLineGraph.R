@@ -107,8 +107,8 @@ flowLineGraph = function(
       
       ##plotting
       flowPlot <- ggplot() +
-        geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
         geom_line(data=controlDs, aes(x=x, y=y, group=2), size = 1, color='black')+
+        geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
         ylab("Counts")+
         xlab(xVariable)+
         theme_bw()
