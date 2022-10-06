@@ -141,12 +141,12 @@ flowPeakDetection = function(
   }else{
     ##update progress bar
     finishedData <- NULL
-    messyData <- NULL
+    investigateData <- NULL
     outputData(
       flowDir,
       singleData,
       finishedData,
-      messyData,
+      investigateData,
       xVariable,
       doublet,
       saveGraph
@@ -183,14 +183,14 @@ flowPeakDetection = function(
     ##update progress bar
     setTxtProgressBar(pb, 3)
   }else{
-    messyData <- NULL
+    investigateData <- NULL
     ##update progress bar
     setTxtProgressBar(pb, 7)
     outputData(
       flowDir,
       singleData,
       finishedData,
-      messyData,
+      investigateData,
       xVariable,
       doublet,
       saveGraph
@@ -211,8 +211,8 @@ flowPeakDetection = function(
     )
     if(length(peakAlg4) == 2){
       flaggedData <- as.data.frame(peakAlg4[[1]])
-      messyDataNoNA <- flaggedData %>% dplyr::filter(!is.na(x))
-      messyDataNoNA <- messyDataNoNA %>% dplyr::select(-propCellsUsed)
+      investigateDataNoNA <- flaggedData %>% dplyr::filter(!is.na(x))
+      investigateDataNoNA <- investigateDataNoNA %>% dplyr::select(-propCellsUsed)
       finishedData <- peakAlg4[2]
     }else if( length(as.data.frame(peakAlg4[[1]])) == 1){
       finishedData <- finishedData
@@ -220,20 +220,20 @@ flowPeakDetection = function(
       names(flaggedData)[1] <- "data"
     }else{
       flaggedData <- NULL
-      messyDataNoNA <- NULL
+      investigateDataNoNA <- NULL
       finishedData <- peakAlg4[[1]]
     }
     
     ##update progress bar
     setTxtProgressBar(pb, 4)
   }else{
-    messyData <- NULL
+    investigateData <- NULL
     ##update progress bar
     outputData(
       flowDir,
       singleData,
       finishedData,
-      messyData,
+      investigateData,
       xVariable,
       doublet,
       saveGraph
@@ -245,15 +245,15 @@ flowPeakDetection = function(
   ##Checking if there are any flow frames that have not been analyzed
   ##If so, the last peak algorithm will run
   if(TRUE %in% is.na(flaggedData$x)){
-    peakAlg5 <- peakAlgorithm5(flowDir, flaggedData, xVariable, messyDataNoNA)
-    messyData <- peakAlg5
+    peakAlg5 <- peakAlgorithm5(flowDir, flaggedData, xVariable, investigateDataNoNA)
+    investigateData <- peakAlg5
   }else{
-    messyData <- messyDataNoNA
+    investigateData <- investigateDataNoNA
     outputData(
       flowDir,
       singleData,
       finishedData,
-      messyData,
+      investigateData,
       xVariable,
       doublet,
       saveGraph
@@ -266,7 +266,7 @@ flowPeakDetection = function(
     flowDir,
     singleData,
     finishedData,
-    messyData,
+    investigateData,
     xVariable,
     doublet,
     saveGraph

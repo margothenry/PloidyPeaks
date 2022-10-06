@@ -212,7 +212,7 @@ peakAlgorithm5 = function(
     
     possiblePeaks9 <- possiblePeaks8 %>% dplyr::mutate(
       data=flowName@description[["GUID"]],
-      messy=1
+      investigate=1
     )
     
     appendData <- rbind(

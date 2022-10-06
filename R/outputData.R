@@ -2,13 +2,13 @@
 #'
 #' outputData creates a .csv and saves it in a folder called ‘analysis’ for the user.
 #' The dataset includes the location of all peaks identified, the height of the peaks,
-#' an option to have the information on doublets, a flag if the data was messy,
+#' an option to have the information on doublets, a flag if the data was investigate,
 #' a confidence interval for the population.
 #'
 #' @param flowDir The data set to analyze for doublets
 #' @param singleDs The data set for the single populations found in PeakAlgorithm1
 #' @param finishedDs The data set for all other flow frames that have been analyzed
-#' @param messyDs The data set that got identified as messy
+#' @param investigateDs The data set that got identified as investigate
 #' @param xVariable The fluorescence channel on the x axis
 #' @param doubletFlag TRUE/FALSE
 #' @param saveGraph TRUE/FALSE
@@ -19,7 +19,7 @@
 #'  flowDir = "FlowData/T10_FLC/gated_data",
 #'  singleDs = single_data,
 #'  finishedDs = finished_data,
-#'  messyDs = messy_data,
+#'  investigateDs = investigate_data,
 #'  xVariable = "FITC-A",
 #'  doubletFlag = FALSE,
 #'  saveGraph = TRUE
@@ -29,7 +29,7 @@ outputData = function(
   flowDir,
   singleDs,
   finishedDs,
-  messyDs,
+  investigateDs,
   xVariable,
   doubletFlag,
   saveGraph
@@ -43,7 +43,7 @@ outputData = function(
   ##If the algorithm classified each sub population in the first algorithm
   if(
     purrr::is_empty(finishedDs) &
-    purrr::is_empty(messyDs) &
+    purrr::is_empty(investigateDs) &
     !purrr::is_empty(singleDs)
     ){
 
@@ -51,7 +51,7 @@ outputData = function(
     finalPart1=singleDs %>% data.frame() %>%
       dplyr::select(-c("g3LL", "g3UL", "g4LL", "g4UL")) %>%
       dplyr::mutate(
-        messy=0,
+        investigate=0,
         G1=x,
         G1Count=y,
         G2=possiblePairX,
@@ -69,7 +69,7 @@ outputData = function(
         "G2Count",
         "g1G2DoubletCount",
         "g2G2DoubletCount",
-        "messy"
+        "investigate"
       )
     )
 
@@ -181,6 +181,18 @@ outputData = function(
       -c(residual2Pop, residual3Pop)
     )
     
+    # Flagging to investigate if the algorithm found multiple subpopulations
+    # But the RSE for single population is less than RSE for multiple subpop
+    for(i in 1:nrow(finalData5)){
+      if(
+        !is.na(finalData5[i,]$multipleRSE) &
+        finalData5[i,]$multipleRSE > finalData5[i,]$singleRSE
+      ){
+        finalData5[i,]$investigate = 1
+      }
+      
+    }
+    
     ##adding which algorithm analyzed the flow frame
     logDs2<-.GlobalEnv$logDs %>% 
       dplyr::select(-Success) %>% 
@@ -202,7 +214,9 @@ outputData = function(
     
     ##merging the algorithm used with the final dataset
     finalData6<-merge(finalData5, logDs5, by="data")
-
+    finalData6<-finalData6 %>% dplyr::rename(
+      "Sample" = "data"
+    )
     ##If doublet = FALSE, remove doublet information
     if(doubletFlag == FALSE){
       finalData6=finalData6 %>%
@@ -222,11 +236,11 @@ outputData = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings=FALSE)
     write.csv(
       finalData6,
-      paste0(file.path(dirname(getwd()), subDir), "/flow_analysis.csv")
+      paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv")
       )
 
   }else if(
-    purrr::is_empty(messyDs) &
+    purrr::is_empty(investigateDs) &
     !purrr::is_empty(finishedDs) &
     !purrr::is_empty(singleDs)
     ){
@@ -237,7 +251,7 @@ outputData = function(
     finalPart1=singleDs %>% data.frame() %>%
       dplyr::select(-c("g3LL", "g3UL", "g4LL", "g4UL")) %>%
       dplyr::mutate(
-        messy=0,
+        investigate=0,
         G1=x,
         G1Count=y,
         G2=possiblePairX,
@@ -260,7 +274,7 @@ outputData = function(
           )
         ) %>%
       dplyr::mutate(
-        messy=0,
+        investigate=0,
         G1=x,
         G1Count=y,
         G2=possiblePairX,
@@ -282,7 +296,7 @@ outputData = function(
         "G2Count",
         "g1G2DoubletCount",
         "g2G2DoubletCount",
-        "messy"
+        "investigate"
       )
     )
 
@@ -393,6 +407,17 @@ outputData = function(
       -c(residual2Pop, residual3Pop)
     )
     
+    # Flagging to investigate if the algorithm found multiple subpopulations
+    # But the RSE for single population is less than RSE for multiple subpop
+    for(i in 1:nrow(finalData5)){
+      if(
+        !is.na(finalData5[i,]$multipleRSE) &
+        finalData5[i,]$multipleRSE > finalData5[i,]$singleRSE
+      ){
+        finalData5[i,]$investigate = 1
+      }
+      
+    }
     
     ##adding which algorithm analyzed the flow frame
     logDs2<-.GlobalEnv$logDs %>% 
@@ -415,7 +440,10 @@ outputData = function(
 
     ##merging the algorithm used with the final dataset
     finalData6<-merge(finalData5, logDs5, by="data")
-
+    finalData6<-finalData6 %>% dplyr::rename(
+      "Sample" = "data"
+    )
+    
     ##If doublet = FALSE, remove doublet information
     if(doubletFlag == FALSE){
       finalData6=finalData6 %>%
@@ -435,14 +463,14 @@ outputData = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
     write.csv(
       finalData6,
-      paste0(file.path(dirname(getwd()), subDir), "/flow_analysis.csv"
+      paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv"
              )
       )
 
   }else if(
     purrr::is_empty(singleDs) &
     !purrr::is_empty(finishedDs) &
-    !purrr::is_empty(messyDs)
+    !purrr::is_empty(investigateDs)
     ){
     ##If the algorithm classified each sub population before prior the 4th
     ##algorithm
@@ -463,7 +491,7 @@ outputData = function(
         )
       ) %>%
       dplyr::mutate(
-        messy=0,
+        investigate=0,
         G1=x,
         G1Count=y,
         G2=possiblePairX,
@@ -482,7 +510,7 @@ outputData = function(
         "G2Count",
         "g1G2DoubletCount",
         "g2G2DoubletCount",
-        "messy"
+        "investigate"
       )
     )
     
@@ -593,6 +621,18 @@ outputData = function(
       -c(residual2Pop, residual3Pop)
     )
     
+    # Flagging to investigate if the algorithm found multiple subpopulations
+    # But the RSE for single population is less than RSE for multiple subpop
+    for(i in 1:nrow(finalData5)){
+      if(
+        !is.na(finalData5[i,]$multipleRSE) &
+        finalData5[i,]$multipleRSE > finalData5[i,]$singleRSE
+      ){
+        finalData5[i,]$investigate = 1
+      }
+      
+    }
+    
     ##adding which algorithm analyzed the flow frame
     logDs2<-.GlobalEnv$logDs %>% 
       dplyr::select(-Success) %>% 
@@ -614,6 +654,9 @@ outputData = function(
     
     ##merging the algorithm used with the final dataset
     finalData6<-merge(finalData5, logDs5, by="data")
+    finalData6<-finalData6 %>% dplyr::rename(
+      "Sample" = "data"
+    )
     
     ##If doublet = FALSE, remove doublet information
     if(doubletFlag == FALSE){
@@ -634,17 +677,17 @@ outputData = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
     write.csv(
       finalData6,
-      paste0(file.path(dirname(getwd()), subDir), "/flow_analysis.csv"
+      paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv"
       )
     )
     
   }else if(
-    purrr::is_empty(messyDs) &
+    purrr::is_empty(investigateDs) &
     !purrr::is_empty(finishedDs) &
     purrr::is_empty(singleDs)
   ){
     ##Formatting the diploid data from the first peak algorithm
-    finalPart1=messyDs %>% data.frame() %>%
+    finalPart1=investigateDs %>% data.frame() %>%
       dplyr::select(
         -c(
           "g3LL",
@@ -680,7 +723,7 @@ outputData = function(
         )
       ) %>%
       dplyr::mutate(
-        messy=0,
+        investigate=0,
         G1=x,
         G1Count=y,
         G2=possiblePairX,
@@ -702,7 +745,7 @@ outputData = function(
         "G2Count",
         "g1G2DoubletCount",
         "g2G2DoubletCount",
-        "messy"
+        "investigate"
       )
     )
     
@@ -813,6 +856,18 @@ outputData = function(
       -c(residual2Pop, residual3Pop)
     )
     
+    # Flagging to investigate if the algorithm found multiple subpopulations
+    # But the RSE for single population is less than RSE for multiple subpop
+    for(i in 1:nrow(finalData5)){
+      if(
+        !is.na(finalData5[i,]$multipleRSE) &
+        finalData5[i,]$multipleRSE > finalData5[i,]$singleRSE
+      ){
+        finalData5[i,]$investigate = 1
+      }
+      
+    }
+    
     ##adding which algorithm analyzed the flow frame
     logDs2<-.GlobalEnv$logDs %>% 
       dplyr::select(-Success) %>% 
@@ -834,6 +889,9 @@ outputData = function(
     
     ##merging the algorithm used with the final dataset
     finalData6<-merge(finalData5, logDs5, by="data")
+    finalData6<-finalData6 %>% dplyr::rename(
+      "Sample" = "data"
+    )
     
     ##If doublet = FALSE, remove doublet information
     if(doubletFlag == FALSE){
@@ -854,7 +912,7 @@ outputData = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
     write.csv(
       finalData6,
-      paste0(file.path(dirname(getwd()), subDir), "/flow_analysis.csv"
+      paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv"
       )
     )
   }else{
@@ -863,7 +921,7 @@ outputData = function(
     finalPart1=singleDs %>% data.frame() %>%
       dplyr::select(-c("g3LL", "g3UL", "g4LL", "g4UL")) %>%
       dplyr::mutate(
-        messy=0,
+        investigate=0,
         G1=x,
         G1Count=y,
         G2=possiblePairX,
@@ -886,7 +944,7 @@ outputData = function(
           )
         ) %>%
       dplyr::mutate(
-        messy=0,
+        investigate=0,
         G1=x,
         G1Count=y,
         G2=possiblePairX,
@@ -894,7 +952,7 @@ outputData = function(
       )
 
     ##Formatting the data from the last peak algorthm
-    finalPart3=messyDs %>% data.frame() %>%
+    finalPart3=investigateDs %>% data.frame() %>%
       dplyr::select(
         -c(
           "g3LL",
@@ -930,7 +988,7 @@ outputData = function(
         "G2Count",
         "g1G2DoubletCount",
         "g2G2DoubletCount",
-        "messy"
+        "investigate"
       )
     )
 
@@ -1042,6 +1100,17 @@ outputData = function(
       -c(residual2Pop, residual3Pop)
     )
     
+    # Flagging to investigate if the algorithm found multiple subpopulations
+    # But the RSE for single population is less than RSE for multiple subpop
+    for(i in 1:nrow(finalData5)){
+      if(
+        !is.na(finalData5[i,]$multipleRSE) &
+        finalData5[i,]$multipleRSE > finalData5[i,]$singleRSE
+      ){
+        finalData5[i,]$investigate = 1
+      }
+      
+    }
 
     ##adding which algorithm analyzed the flow frame
     logDs2<-.GlobalEnv$logDs %>% 
@@ -1064,7 +1133,10 @@ outputData = function(
 
     ##merging the algorithm used with the final dataset
     finalData6<-merge(finalData5, logDs5, by="data")
-
+    finalData6<-finalData6 %>% dplyr::rename(
+      "Sample" = "data"
+    )
+    
     ##If doublet = FALSE, remove doublet information
     if(doubletFlag == FALSE){
       finalData6=finalData6 %>%
@@ -1085,7 +1157,7 @@ outputData = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings=FALSE)
     write.csv(
       finalData6,
-      paste0(file.path(dirname(getwd()), subDir), "/flow_analysis.csv")
+      paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv")
       )
 
   }

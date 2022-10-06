@@ -6,8 +6,8 @@
 #' In other words, once the populations have been identified for a given flow frame,
 #' peakAlgorithm4 will find the cells associated with the G1/G2 pairs. The difference
 #' from PeakAlgorithm3 is that peakAlgorithm4 works with more granular data, i.e, smooth level = 4.
-#' Additionally, those that get flagged from peakAlgorithm4 will get a 'messy' indicator.
-#' Letting the user know that they may want to manually look those who got flagged as messy.
+#' Additionally, those that get flagged from peakAlgorithm4 will get a 'investigate' indicator.
+#' Letting the user know that they may want to manually look those who got flagged as investigate.
 #'
 #' @param flowDir The directory of the gated .fcs data
 #' @param xVariable The fluorescence channel on the x axis
@@ -287,7 +287,7 @@ peakAlgorithm4 = function(
     
     
     if(
-      possiblePeaks8$propCellsUsed[1] >= usedCellsThreshold &
+      possiblePeaks8$propCellsUsed[1] >= 60 &
       !is.na(possiblePeaks8$propCellsUsed[1])
     ){
       
@@ -304,7 +304,7 @@ peakAlgorithm4 = function(
       
       possiblePeaks9 <- possiblePeaks8 %>% dplyr::mutate(
         data=flowName@description[["GUID"]],
-        messy=1
+        investigate=1
       )
       
       flaggedData <- rbind(
