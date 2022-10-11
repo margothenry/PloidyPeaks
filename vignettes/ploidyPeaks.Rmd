@@ -28,7 +28,7 @@ The workflow is separated into four parts, with built-in visualizations provided
 
 
 
-### Implementation    
+## Implementation    
 The main functions of *ploidyPeaks* are:  
 
 * Reading in the data and gating  
@@ -46,7 +46,7 @@ The main functions of *ploidyPeaks* are:
 
 
 
-### Reading in the data and gating  
+## Reading in the data and gating  
 
 
 Two gating functions are available: 
@@ -83,11 +83,13 @@ rectGateFlowFrame(
 knitr::include_graphics(here("vignettes/images/V2_gated2.png"))
 ```   
 
-Figure 1: Example of `rectGateFlowFrame()` visualization
+<b>
+Figure 1: Example of `rectGateFlowFrame()` visualization.
+</b>  
 
 The proportion of cells that were been gated out for each sample is saved as *percentOfCellsGatedOut.csv*.
 
-### Fluorescence intensity visualization 
+## Fluorescence intensity visualization 
 
 *flowLineGraph* is used to plot a histogram trace of the data from a single parameter (typically the one that corresponds to fluorescence intensity). This function can be used to plot a single sample or as many samples as desired on top of each other on the same panel. All samples (specified by `flowSamples`) are coloured randomly by default. A control population can be identified (`flowControl`) to be shown as a black line. A vector can also be supplied to specify the specific colours that are desired  (`flowColours`; the number of colours provided must match the number of samples specified in `flowSamples`).
 
@@ -96,8 +98,9 @@ The proportion of cells that were been gated out for each sample is saved as *pe
 knitr::include_graphics(here("vignettes/images/flowlinegraph.png"))
 ```     
 
-Figure 2: 
-
+<b>
+Figure 2: In A.
+</b>
 
 ## Peak detection, subpopulation identification, and residual standard error calculation   
 
@@ -120,53 +123,69 @@ The subpopulation pairing method we use builds off the Watson Pragmatic (WP) and
 knitr::include_graphics(here("vignettes/images/findPairs.png"))
 ```    
 
-Figure : In A) The peak detection algorithm and `findTruePeaks()` identified four peaks located at x=170, 355, 490 and 675, which are marked by blue dots. B) Considering the first peak at $x = 170$ (red dot), `findPairs()` will calculate lower and upper bounds and look to see if a peak falls within those limits. For `peakAlgorithm2()` the lower bound is set at 1.75$\times$170 = 297.5, and the upper bound is set at 2.2$\times$170 = 374, which is represented as the red shaded area. The peak located at x = 355 falls within those limits, so `findPairs()` assigns these two peaks as a subpopulation pair.
+<b>
+Figure 3: In A) The peak detection algorithm and `findTruePeaks()` identified four peaks located at x=170, 355, 490 and 675, which are marked by blue dots. B) Considering the first peak at $x = 170$ (red dot), `findPairs()` will calculate lower and upper bounds and look to see if a peak falls within those limits. For `peakAlgorithm2()` the lower bound is set at $1.75\times170 = 297.5$, and the upper bound is set at $2.2\times170 = 374$, which is represented as the red shaded area. The peak located at x = 355 falls within those limits, so `findPairs()` assigns these two peaks as a subpopulation pair.
+</b>  
+
 
 After the subpopulations have been identified, the number of cells associated with each subpopulation is determined. If the proportion of unused cells is large, the algorithm will assume some subpopulation peaks were not identified, and the sample will get passed to the next peak detection algorithm. 
 
-In addition to G1 and G2 peaks, doublet peaks may also be present in the data. Since the doublet peak does not belong to any subpopulation, doublets increase the number of unused cells and when there are large doublet populations the peak algorithm will fail (Figure \ref{fig: doublet}). The helper function `doubletCheck()` (which is automatically run) identifies potential doublet peaks in each sample. It looks for peaks around the G1+G2 range as well as the G2+G2 range. If there is a peak identified in that range, the sample will save the information on the location and height of the doublet. 
+In addition to G1 and G2 peaks, doublet peaks may also be present in the data. Since the doublet peak does not belong to any subpopulation, doublets increase the number of unused cells and when there are large doublet populations the peak algorithm will fail (Figure 4). The helper function `doubletCheck()` (which is automatically run) identifies potential doublet peaks in each sample. It looks for peaks around the G1+G2 range as well as the G2+G2 range. If there is a peak identified in that range, the sample will save the information on the location and height of the doublet. 
 
-There is no way to discriminate between the a G1+G1 doublet and a true G2 peak. The G2+G2 doublet can be mistaken as the G2 of a subpopulation and discriminating between these two types of peak is difficult. We have made some criteria for a subpopulation G2 based on samples with known ploidy. If the sample identifies a subpopulation G2 but that peak is smaller than the G1+G2 doublet, then it is classified as a G2+G2 doublet(Figure \ref{fig: doublet} B). The parameter *maxDoubletHeight* in `flowPeakDetection()` can be adjusted by the user to determine whether specific peaks are classified as a doublet. *maxDoubletHeight* determines that threshold for a G2 peak to be within a specified height of their G1 peak (called *maxDoubletHeight*).
+There is no way to discriminate between the a G1+G1 doublet and a true G2 peak. The G2+G2 doublet can be mistaken as the G2 of a subpopulation and discriminating between these two types of peak is difficult. We have made some criteria for a subpopulation G2 based on samples with known ploidy. If the sample identifies a subpopulation G2 but that peak is smaller than the G1+G2 doublet, then it is classified as a G2+G2 doublet(Figure 4 B). The parameter *maxDoubletHeight* in `flowPeakDetection()` can be adjusted by the user to determine whether specific peaks are classified as a doublet. *maxDoubletHeight* determines that threshold for a G2 peak to be within a specified height of their G1 peak (called *maxDoubletHeight*).
 
 ```{r, echo=FALSE, fig.pos = "H", out.width="100%", fig.align="center"}
 knitr::include_graphics(here("vignettes/images/doublets.png"))
 ```    
 
-Figure 3: Identification of doublets. A) Before specifying that there is a G1+G2 doublet peak, the sample would fail all peak detection branching points since the proportion of cells being used is 80%. After considering doublets, 92% of cells are considered accounted for. B) Before identifying the G1+G2 and the G2+G2 doublet, this sample had only 61% of cells used; once we included the doublet peaks, 97% of cells were accounted for.
+<b>
+Figure 4: Identification of doublets. A) Before specifying that there is a G1+G2 doublet peak, the sample would fail all peak detection branching points since the proportion of cells being used is 80%. After considering doublets, 92% of cells are considered accounted for. B) Before identifying the G1+G2 and the G2+G2 doublet, this sample had only 61% of cells used; once we included the doublet peaks, 97% of cells were accounted for.
+</b>  
 
 ### peakAlgorithm 2, 3, 4 and 5  
 
-Once all  peaks are identified, the proportion of cells that were used is calculated ("*cellPerc*", Figure \ref{fig: cellPerc}). If *cellPerc* is under 86%, that sample will be passed on to the next algorithm, `peakAlgorithm3()`. The *cellPerc* threshold was determined by examining control populations composed of known *Candida albicans* single populations; it can be adjusted by the user.
+Once all  peaks are identified, the proportion of cells that were used is calculated ("*cellPerc*", Figure 5). If *cellPerc* is under 86%, that sample will be passed on to the next algorithm, `peakAlgorithm3()`. The *cellPerc* threshold was determined by examining control populations composed of known *Candida albicans* single populations; it can be adjusted by the user.
 
 ```{r, echo=FALSE, fig.pos = "H", out.width="100%", fig.align="center"}
 knitr::include_graphics(here("vignettes/images/cellProp.png"))
 ```    
 
-Figure 4: The left most panel is sample with two subpopulations. The blue dots represent the G1 and G2 mean of the first subpopulation, and the green dot represents the mean of the second subpopulation. The percent of cells being used in the subpopulation pairings is represented in the right panel in the shaded red area, while the area in white ate the cells not being used. *cellPerc* is calculated by the number of cells in the red area divided by the total number of cells $\times$ 100.  
+<b>
+Figure 5: The left most panel is sample with two subpopulations. The blue dots represent the G1 and G2 mean of the first subpopulation, and the green dot represents the mean of the second subpopulation. The percent of cells being used in the subpopulation pairings is represented in the right panel in the shaded red area, while the area in white ate the cells not being used. *cellPerc* is calculated by the number of cells in the red area divided by the total number of cells $\times$ 100.  
+</b>  
+
+
 
 Populations that do not fall within the threshold from `peakAlgorithm2()` are passed to `peakAlgorithm3()`. The interval where a G2 peaks is looked for is widened to (1.7, 2.3). If the sample's *cellPerc* still does not pass the threshold of 86% in `peakAlgorithm3()`,then it gets passed on to `peakAlgorithm4()`, where the smoothing level is reduced to four. Samples that are flagged at the end of `peakAlgorithm4()` are annotated in the final data table to be investigated by the user for visual inspection, as there is less confidence in the identified peaks. They are passed on to the final function, `peakAlgorithm5()`, which has a smoothing level of three and the G1 and G2 peak interval is widened to (1.4, 2.5) in a final attempt to identify possible pairs. 
 
+
+
+
+
 ```{r, echo=FALSE, fig.pos = "H", out.width="100%", fig.align="center"}
 knitr::include_graphics(here("vignettes/images/wrapper_workflow.png"))
-```    
+```     
+
+<b>
+Figure 6: All samples go through to `peakAlgorithm1()`, which uses a smoothing level of 11 and a G2 bound of ($1.75\times G1, 2.2\times G1$), if the *popBoundary* falls within the set threshold the sample is done being analyzed, if it does not then it gets passed on to `peakAlgorithm2()`. The process in `peakAlgorithm2()` is similar, but uses more granular data (smoothing level of 5) and calculates *cellPerc*. If *cellPerc* exceeds the threshold it gets passed on to the `peakAlgorithm3()`.  `peakAlgorithm3()` widens the bounds for G2 to ($1.75 \times G1, 2.2 \times G1$), and  `peakAlgorithm4()` uses a smoothing level of 4.  `peakAlgorithm5()` uses the most granular data (smoothing level of 3) and the widest bounds for G2 ($1.5 \times G1, 2.5 \times G1$).  
+</b>  
 
 
 
-Figure 5: All samples go through to `peakAlgorithm1()`, which uses a smoothing level of 11 and a G2 bound of ($1.75\times G1, 2.2\times G1$), if the *popBoundary* falls within the set threshold the sample is done being analyzed, if it does not then it gets passed on to `peakAlgorithm2()`. The process in `peakAlgorithm2()` is similar, but uses more granular data (smoothing level of 5) and calculates *cellPerc*. If *cellPerc* exceeds the threshold it gets passed on to the `peakAlgorithm3()`.  `peakAlgorithm3()` widens the bounds for G2 to ($1.75 \times G1, 2.2 \times G1$), and  `peakAlgorithm4()` uses a smoothing level of 4.  `peakAlgorithm5()` uses the most granular data (smoothing level of 3) and the widest bounds for G2 ($1.5 \times G1, 2.5 \times G1$).
-
-```{r, echo=FALSE, fig.pos = "H", out.width="80%", fig.align="center"}
+```{r, echo=FALSE, fig.pos = "H", out.width="60%", fig.align="center"}
 knitr::include_graphics(here("vignettes/images/20220807_workflow.png"))
 ```   
 
-Figure 6: The workflow of the `peakAlgorithm` functions. The existing functions are highlighted in purple, while we created the ones highlighted in blue. The data gets read into R using the existing *read.FCS()* function from *flowCore*. The data gets passed through the hist function from base R to manipulate the raw data into the data that will be used for the peak detection algorithms. The data then gets smoothed using the `rollmean()` function from the *zoo* package in a function called `smoothData()`. We find the local maximums with *scorepeak*’s `detect_localmaxima()` and remove the ‘fake’ peaks with `findTruePeaks()`. For the samples’ that are identified as a possible multi population will use `findPairs()` to identify possible subpopulations. Then the algorithm will find doublets (if any). Lastly, we find the percent of cells within a specific area, i.e., *popBoundary* and *cellPerc*, and if that area falls within the set threshold, the sample is done being analyzed or else if it gets passed to the  next algorithm. 
+<b>
+Figure 7: The workflow of the `peakAlgorithm` functions. The existing functions are highlighted in purple, while we created the ones highlighted in blue. The data gets read into R using the existing *read.FCS()* function from *flowCore*. The data gets passed through the hist function from base R to manipulate the raw data into the data that will be used for the peak detection algorithms. The data then gets smoothed using the `rollmean()` function from the *zoo* package in a function called `smoothData()`. We find the local maximums with *scorepeak*’s `detect_localmaxima()` and remove the ‘fake’ peaks with `findTruePeaks()`. For the samples’ that are identified as a possible multi population will use `findPairs()` to identify possible subpopulations. Then the algorithm will find doublets (if any). Lastly, we find the percent of cells within a specific area, i.e., *popBoundary* and *cellPerc*, and if that area falls within the set threshold, the sample is done being analyzed or else if it gets passed to the  next algorithm. 
+</b>
 
-
-#### Confidence term using residual standard error (RSE)
+### Confidence term using residual standard error (RSE)
 
 Following peak detection analysis, the Dean-Jett-Fox cell cycle algorithm is applied to each sample using the identified peak means and heights (from each subpopulation, where appropriate) to find a residual standard error (RSE) using nonlinear least squares models. Three DJF models are run for each sample. The first model assumes each sample is a single population, the second adds doublet peaks (if identified) to the single population, and if appropriate, the third model fits each subpopulation identified by the algorithm in the process. The final RSE is the lowest of the fitted models. Users can use the RSE as a confidence term to see how well the algorithm performed and further investigate the samples with high RSE values.
 
 
-### Output  
+## Output  
 
 
 Throughout the analysis different data outputs are provided. These outputs will be saved in the parent directory of where the user saved their raw data, this is also where the gated data is saved. When the user gates the data, a *.csv* file, named *percentOfCellsGatedOut*, will be saved with information on the proportion of cells that have been gated out for each sample. The user can use *percentOfCellsGatedOut* as an indication of if a sample is messy (A sample can have a significantly greater proportion of cells gated out than the other samples), if the chosen gating parameters were chosen properly (there were no cells gated out, or the proportion was significantly large for all).  
@@ -177,9 +196,11 @@ The main data output from the package is a *.csv* file called *ploidyPeaksOutput
 knitr::include_graphics(here("vignettes/images/folder_structure.png"))
 ```   
 
-Figure 7:The folder structure created by *ploidyPeaks*. The user creates the initial folder that contains the data they want to analyze (raw_data), this will be the main directory for the package. When using the gating functions, the package creates a folder for the gated data (gated_data), a folder for the plots comparing the gated and the raw data (plotted_data), and a *.csv* called *percentOfCellsGatedOut* with information on the percent of cells gated out for each sample. When analyzing the data with `flowPeakDetection()`, a *.csv* called *ploidyPeaksOutput* will be created in a folder called analysis. Additionally, a folder will be created to store the graphs for the models (nlsGraphs) with sub folders for each model (nlsSingle_graphs, nlsDoublet_graphs, nlsMultiple_graphs).
+<b>
+Figure 8: The folder structure created by *ploidyPeaks*. The user creates the initial folder that contains the data they want to analyze (raw_data), this will be the main directory for the package. When using the gating functions, the package creates a folder for the gated data (gated_data), a folder for the plots comparing the gated and the raw data (plotted_data), and a *.csv* called *percentOfCellsGatedOut* with information on the percent of cells gated out for each sample. When analyzing the data with `flowPeakDetection()`, a *.csv* called *ploidyPeaksOutput* will be created in a folder called analysis. Additionally, a folder will be created to store the graphs for the models (nlsGraphs) with sub folders for each model (nlsSingle_graphs, nlsDoublet_graphs, nlsMultiple_graphs).
+</b>
 
-#### Walk through    
+## Walk through    
 
 This is a walk through from the starting point of raw flow cytomtery data to the end of the analysis.  
 
