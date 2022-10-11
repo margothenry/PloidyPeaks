@@ -108,7 +108,7 @@ flowLineGraph = function(
       controlDs <- smoothData(flowNameControl, xVariable, 5)
       controlDs$Data <- flowControl
       
-      if(is.null(flowColours)){
+      if(is.na(flowColours[1])){
         ##plotting
         flowPlot <- ggplot() +
           geom_line(data=controlDs, aes(x=x, y=y, group=2), size = 1, color='black')+
@@ -133,7 +133,7 @@ flowLineGraph = function(
       
     }else{
       if(length(flowSamples) > 1){
-        if(is.null(flowColours)){
+        if(is.na(flowColours[1])){
           ##plotting
           flowPlot <- ggplot() +
             geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
@@ -155,7 +155,7 @@ flowLineGraph = function(
         }
         
       }else if(length(flowSamples) == 1){
-        if(is.null(flowColours)){
+        if(is.na(flowColours[1])){
           ##plotting
           flowPlot <- ggplot() +
             geom_line(data=sampleDs, aes(x=x, y=y), size = 1, color='black')+
