@@ -99,7 +99,7 @@ knitr::include_graphics(here("vignettes/images/flowlinegraph.png"))
 ```     
 
 <b>
-Figure 2: In A.
+Figure 2: Example of `flowLineGraph()` visualization. A) A visualization with a control sample (`flowControl`) and six samples (`flowSamples`). B) A visualization using specified colours (`flowColours`).
 </b>
 
 ## Peak detection, subpopulation identification, and residual standard error calculation   
