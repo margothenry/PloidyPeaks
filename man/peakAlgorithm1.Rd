@@ -25,13 +25,13 @@ threshold, the population is marked as a single population. If the ratio exceeds
 the threshold, the population is flagged to pass to the next algorithm, PeakAlgorithm2.
 }
 \examples{
-flowSet <- list.files(here("vignettes/data/gated_data"))
-
+\dontrun{
 peakAlgorithm1(
  flowDir = here("vignettes/data/gated_data"),
  flowSet = flowSet ,
  xVariable = "FL1-A",
  singleThreshold = 8
 )
+}
 
 }

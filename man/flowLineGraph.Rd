@@ -31,6 +31,7 @@ different flow frame, and the black line represents the control sample used
 for comparison (control sample is indicated by the user).
 }
 \examples{
+\dontrun{
  flowLineGraph(
   flowControl = "FH-B11",
   flowSamples = c("T1-D08","FH-B08", "T1-D10", "A13-E10"),
@@ -38,4 +39,5 @@ for comparison (control sample is indicated by the user).
   xVariable = "FITC-A",
   flowDir = "FlowData/gated_data"
  )
+ }
 }

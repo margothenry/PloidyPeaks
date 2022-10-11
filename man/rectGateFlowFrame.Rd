@@ -44,6 +44,7 @@ This function will gate your raw .fcs file and save your gated data, a plot
 of your gated data, and a plot of the original data
 }
 \examples{
+\dontrun{
 rectGateFlowFrame(
  rawDir = NA,
  flowName = "A10-t0.fcs",
@@ -55,4 +56,5 @@ rectGateFlowFrame(
  yMaxValue = 900000,
  savePlot = TRUE
 )
+}
 }

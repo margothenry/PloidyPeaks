@@ -37,6 +37,7 @@ peakAlgorithm3 will find the cells associated with the G1/G2 pairs. The differen
 from PeakAlgorithm2 is that peakAlgorithm3 will try and find a G2 pair in a (1.7\emph{G1, 2.3}G1)
 }
 \examples{
+\dontrun{
 peakAlgorithm3(
  flowDir = "FlowData/T10_FLC/gated_data",
  flaggedData_ = flaggedData ,
@@ -45,5 +46,6 @@ peakAlgorithm3(
  usedCellsThreshold = 86,
  maxDoubletHeight = 50
  )
+ }
 
 }

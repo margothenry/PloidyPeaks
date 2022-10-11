@@ -19,12 +19,13 @@ popConfidence2Pop(flowDir, ds, xVariable, saveGraph = TRUE)
 popConfidence2Pop
 }
 \examples{
+\dontrun{
 popConfidence2Pop(
  flowDir = "FlowData/T10_FLC/gated_data",
  ds = data,
  xVariable = "FITC-A",
  saveGraph = TRUE
  )
-
+}
 
 }

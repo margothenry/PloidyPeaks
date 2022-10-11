@@ -36,6 +36,7 @@ an option to have the information on doublets, a flag if the data was investigat
 a confidence interval for the population.
 }
 \examples{
+\dontrun{
 outputData(
  flowDir = "FlowData/T10_FLC/gated_data",
  singleDs = single_data,
@@ -45,4 +46,5 @@ outputData(
  doubletFlag = FALSE,
  saveGraph = TRUE
  )
+ }
 }

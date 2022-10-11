@@ -11,11 +11,13 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #'updatedMeans(
 #' ds = singleData,
 #' flowDir = "FlowData/T10_FLC/gated_data",
 #' xVariable = "FITC-A"
 #' )
+#' }
 
 
 updatedMeans = function(ds, flowDir, xVariable){

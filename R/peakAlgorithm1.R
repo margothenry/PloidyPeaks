@@ -16,14 +16,14 @@
 #' @export
 #'
 #' @examples
-#' flowSet <- list.files(here("vignettes/data/gated_data"))
-#' 
+#' \dontrun{
 #' peakAlgorithm1(
 #'  flowDir = here("vignettes/data/gated_data"),
 #'  flowSet = flowSet ,
 #'  xVariable = "FL1-A",
 #'  singleThreshold = 8
 #' )
+#' }
 #'
 
 peakAlgorithm1 = function(flowDir, flowSet, xVariable, singleThreshold = 8){

@@ -33,7 +33,7 @@
 #' @export
 #'
 #' @examples
-#' 
+#' \dontrun{
 #' flowPeakDetection(
 #'  xVariable = "FL1-A",
 #'  flowDir = here("vignettes/data/gated_data"),
@@ -44,6 +44,7 @@
 #'  maxDoubletHeight = 50,
 #'  subsetDs = c("A01-A01", "A01-A02")
 #'  )
+#'  }
 #'
 flowPeakDetection = function(
   xVariable,

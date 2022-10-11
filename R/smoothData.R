@@ -10,7 +10,9 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #'smoothData(flowDs, "FITC-A", 5)
+#'}
 
 smoothData = function(flowDs, xVariable, smoothLevel){
 

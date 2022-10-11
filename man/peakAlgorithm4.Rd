@@ -40,6 +40,7 @@ Additionally, those that get flagged from peakAlgorithm4 will get a 'investigate
 Letting the user know that they may want to manually look those who got flagged as investigate.
 }
 \examples{
+\dontrun{
 peakAlgorithm4(
  flowDir = "FlowData/T10_FLC/gated_data",
  flaggedData_ = flagged_data ,
@@ -48,5 +49,6 @@ peakAlgorithm4(
  usedCellsThreshold = 86,
  maxDoubletHeight = 50
  )
+ }
 
 }

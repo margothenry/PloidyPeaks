@@ -19,6 +19,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' rectGateFlowSet(
 #'  rawDir = NA,
 #'  xVariable = "FL1-A",
@@ -29,6 +30,7 @@
 #'  yMaxValue = 900000,
 #'  savePlot = TRUE
 #')
+#'}
 #
 
 rectGateFlowSet = function(

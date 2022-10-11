@@ -12,12 +12,14 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' doubletCheck(
 #'  doubletCheckDs = single_ds,
 #'  peaks = peaks_ds,
 #'  g1G2Range = 10,
 #'  g2G2Range = 15
 #' )
+#' }
 
 doubletCheck = function(doubletCheckDs, peaks, g1G2Range, g2G2Range){
   ##Removing NOTE 'no visible binding for global variable'

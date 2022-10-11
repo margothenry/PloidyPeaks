@@ -9,11 +9,13 @@
 #' @export
 #'
 #' @examples
-#'findPairs(
-#' ds = peaks_ds,
-#' LL = 1.8,
-#' UL = 2.1
-#')
+#' \dontrun{
+#' findPairs(
+#'  ds = peaks_ds,
+#'  LL = 1.8,
+#'  UL = 2.1
+#' )
+#'}
 
 findPairs = function(ds, peaks, LL, UL){
   ##Removing NOTE 'no visible binding for global variable'

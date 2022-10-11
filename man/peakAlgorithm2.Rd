@@ -31,6 +31,7 @@ in the subpopulations (CellProp). In other words, once the populations have been
 identified for a given flow frame, peakAlgorithm2 will find the cells associated with the G1/G2 pairs.
 }
 \examples{
+\dontrun{
 peakAlgorithm2(
  flowDir = "FlowData/T10_FLC/gated_data",
  flaggedData_ = flaggedData ,
@@ -38,5 +39,6 @@ peakAlgorithm2(
  usedCellsThreshold = 86,
  maxDoubletHeight = 50
  )
+ }
 
 }

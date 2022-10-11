@@ -19,5 +19,7 @@ A function that reads in the gated data and applies a smoothing factor
 to the data.
 }
 \examples{
+\dontrun{
 smoothData(flowDs, "FITC-A", 5)
+}
 }

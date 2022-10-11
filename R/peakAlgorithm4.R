@@ -22,6 +22,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' peakAlgorithm4(
 #'  flowDir = "FlowData/T10_FLC/gated_data",
 #'  flaggedData_ = flagged_data ,
@@ -30,6 +31,7 @@
 #'  usedCellsThreshold = 86,
 #'  maxDoubletHeight = 50
 #'  )
+#'  }
 #'
 
 

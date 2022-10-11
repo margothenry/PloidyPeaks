@@ -19,12 +19,13 @@ popConfidenceDoublet(flowDir, ds, xVariable, saveGraph = TRUE)
 popConfidenceDoublet
 }
 \examples{
+\dontrun{
 popConfidenceDoublet(
  flowDir = "FlowData/T10_FLC/gated_data",
  ds = data,
  xVariable = "FITC-A",
  saveGraph = TRUE
  )
-
+}
 
 }

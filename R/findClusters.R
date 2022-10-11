@@ -8,11 +8,13 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' findClusters(
 #'  ds = possible_peaks2,
 #'  clusterDist = 40,
 #'  maxXValue = maxXValue
 #'  )
+#'  }
 #'
 findClusters = function(ds, clusterDist, maxXValue){
   ##Removing NOTE 'no visible binding for global variable'

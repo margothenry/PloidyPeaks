@@ -44,7 +44,7 @@ information about the location of each peak and their height, as well as a
 for the number of sub-populations (RSE).
 }
 \examples{
-
+\dontrun{
 flowPeakDetection(
  xVariable = "FL1-A",
  flowDir = here("vignettes/data/gated_data"),
@@ -55,5 +55,6 @@ flowPeakDetection(
  maxDoubletHeight = 50,
  subsetDs = c("A01-A01", "A01-A02")
  )
+ }
 
 }

@@ -17,10 +17,12 @@ findClusters(ds, clusterDist, maxXValue)
 findClusters identifies G1 and G2 sub population pairing.
 }
 \examples{
+\dontrun{
 findClusters(
  ds = possible_peaks2,
  clusterDist = 40,
  maxXValue = maxXValue
  )
+ }
 
 }

@@ -15,12 +15,14 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' peakAlgorithm5(
 #'  flowDir = "FlowData/T10_FLC/gated_data",
 #'  flaggedData_ = flagged_data ,
 #'  xVariable = "FITC-A",
 #'  appendData = analyzed_ds
 #'  )
+#'  }
 #'
 
 peakAlgorithm5 = function(

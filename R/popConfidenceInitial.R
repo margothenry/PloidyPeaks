@@ -9,13 +9,14 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' popConfidenceInitial(
 #'  flowDir = "FlowData/T10_FLC/gated_data",
 #'  ds = data,
 #'  xVariable = "FITC-A",
 #'  saveGraph = TRUE
 #'  )
-#'
+#'}
 #'
 popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
 

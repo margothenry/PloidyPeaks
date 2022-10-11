@@ -19,9 +19,11 @@ findPairs(ds, peaks, LL, UL)
 findPairs identifies G1 and G2 sub population pairing.
 }
 \examples{
+\dontrun{
 findPairs(
-ds = peaks_ds,
-LL = 1.8,
-UL = 2.1
+ ds = peaks_ds,
+ LL = 1.8,
+ UL = 2.1
 )
+}
 }

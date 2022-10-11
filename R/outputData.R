@@ -15,6 +15,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' outputData(
 #'  flowDir = "FlowData/T10_FLC/gated_data",
 #'  singleDs = single_data,
@@ -24,6 +25,7 @@
 #'  doubletFlag = FALSE,
 #'  saveGraph = TRUE
 #'  )
+#'  }
 
 outputData = function(
   flowDir,

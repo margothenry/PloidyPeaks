@@ -41,6 +41,7 @@ This function will gate your raw flow set and save your gated data, a plot
 of your gated data, and a plot of the original data
 }
 \examples{
+\dontrun{
 rectGateFlowSet(
  rawDir = NA,
  xVariable = "FL1-A",
@@ -51,4 +52,5 @@ rectGateFlowSet(
  yMaxValue = 900000,
  savePlot = TRUE
 )
+}
 }

@@ -22,10 +22,12 @@ For single populations, doubletCheck is used to identify doublets.
 Doublets are an excess of cells around the G1+G2 range.
 }
 \examples{
+\dontrun{
 doubletCheck(
  doubletCheckDs = single_ds,
  peaks = peaks_ds,
  g1G2Range = 10,
  g2G2Range = 15
 )
+}
 }

@@ -22,6 +22,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' rectGateFlowFrame(
 #'  rawDir = NA,
 #'  flowName = "A10-t0.fcs",
@@ -33,6 +34,7 @@
 #'  yMaxValue = 900000,
 #'  savePlot = TRUE
 #')
+#'}
 #
 rectGateFlowFrame = function(
   rawDir = NA,

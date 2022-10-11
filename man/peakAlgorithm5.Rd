@@ -25,11 +25,13 @@ peakAlgorithm5 will find the cells associated with the G1/G2 pairs. The differen
 from PeakAlgorithm4 is that peakAlgorithm5 works with more granular data, i.e, smooth level = 3, as well try and find a G2 pair in a (1.5\emph{G1, 2.5}G1)
 }
 \examples{
+\dontrun{
 peakAlgorithm5(
  flowDir = "FlowData/T10_FLC/gated_data",
  flaggedData_ = flagged_data ,
  xVariable = "FITC-A",
  appendData = analyzed_ds
  )
+ }
 
 }

@@ -9,13 +9,14 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' popConfidenceDoublet(
 #'  flowDir = "FlowData/T10_FLC/gated_data",
 #'  ds = data,
 #'  xVariable = "FITC-A",
 #'  saveGraph = TRUE
 #'  )
-#'
+#'}
 #'
 popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
   ##Removing NOTE 'no visible binding for global variable'

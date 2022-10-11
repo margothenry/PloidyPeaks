@@ -20,9 +20,11 @@ of 13 and so updatedMeans will find the peaks associated with the data at
 a smoothing factor of 5.
 }
 \examples{
+\dontrun{
 updatedMeans(
 ds = singleData,
 flowDir = "FlowData/T10_FLC/gated_data",
 xVariable = "FITC-A"
 )
+}
 }

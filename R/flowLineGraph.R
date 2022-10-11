@@ -16,6 +16,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #'  flowLineGraph(
 #'   flowControl = "FH-B11",
 #'   flowSamples = c("T1-D08","FH-B08", "T1-D10", "A13-E10"),
@@ -23,6 +24,7 @@
 #'   xVariable = "FITC-A",
 #'   flowDir = "FlowData/gated_data"
 #'  )
+#'  }
 
 
 flowLineGraph = function(
