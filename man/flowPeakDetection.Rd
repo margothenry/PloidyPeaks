@@ -11,7 +11,7 @@ flowPeakDetection(
   saveGraph = TRUE,
   singleThreshold = 8,
   usedCellsThreshold = 86,
-  MaxDoubletHeight = NA,
+  maxDoubletHeight = NA,
   subsetDs = NA
 )
 }
@@ -29,7 +29,7 @@ dataset - by default FALSE}
 
 \item{usedCellsThreshold}{threshold for classifying multiple populations}
 
-\item{MaxDoubletHeight}{The maximum height a doublet can be. If left as NA
+\item{maxDoubletHeight}{The maximum height a doublet can be. If left as NA
 the algorithm will find a value based on the other peaks}
 
 \item{subsetDs}{A vector of samples that the user wants to analyze if they
@@ -52,7 +52,7 @@ flowPeakDetection(
  saveGraph = TRUE,
  singleThreshold = 8,
  usedCellsThreshold = 86,
- MaxDoubletHeight = 50,
+ maxDoubletHeight = 50,
  subsetDs = c("A01-A01", "A01-A02")
  )
 

@@ -10,7 +10,7 @@ peakAlgorithm4(
   xVariable,
   appendData,
   usedCellsThreshold,
-  MaxDoubletHeight
+  maxDoubletHeight
 )
 }
 \arguments{
@@ -26,7 +26,7 @@ will append to this data set.}
 
 \item{usedCellsThreshold}{Threshold for classifying multiple populations}
 
-\item{MaxDoubletHeight}{The maximum height a doublet can be. If left as NA
+\item{maxDoubletHeight}{The maximum height a doublet can be. If left as NA
 the algorithm will find a value based on the other peaks}
 }
 \description{
@@ -36,8 +36,8 @@ looks at the proportion of cells used in the subpopulations (CellProp).
 In other words, once the populations have been identified for a given flow frame,
 peakAlgorithm4 will find the cells associated with the G1/G2 pairs. The difference
 from PeakAlgorithm3 is that peakAlgorithm4 works with more granular data, i.e, smooth level = 4.
-Additionally, those that get flagged from peakAlgorithm4 will get a 'messy' indicator.
-Letting the user know that they may want to manually look those who got flagged as messy.
+Additionally, those that get flagged from peakAlgorithm4 will get a 'investigate' indicator.
+Letting the user know that they may want to manually look those who got flagged as investigate.
 }
 \examples{
 peakAlgorithm4(
@@ -46,7 +46,7 @@ peakAlgorithm4(
  xVariable = "FITC-A",
  appendData = analyzed_ds,
  usedCellsThreshold = 86,
- MaxDoubletHeight = 50
+ maxDoubletHeight = 50
  )
 
 }

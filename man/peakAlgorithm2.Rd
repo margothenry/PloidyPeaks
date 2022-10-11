@@ -9,7 +9,7 @@ peakAlgorithm2(
   flaggedData_,
   xVariable,
   usedCellsThreshold,
-  MaxDoubletHeight
+  maxDoubletHeight
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ peakAlgorithm2(
 
 \item{usedCellsThreshold}{Threshold for classifying multiple populations}
 
-\item{MaxDoubletHeight}{The maximum height a doublet can be. If left as NA
+\item{maxDoubletHeight}{The maximum height a doublet can be. If left as NA
 the algorithm will find a value based on the other peaks}
 }
 \description{
@@ -36,7 +36,7 @@ peakAlgorithm2(
  flaggedData_ = flaggedData ,
  xVariable = "FITC-A",
  usedCellsThreshold = 86,
- MaxDoubletHeight = 50
+ maxDoubletHeight = 50
  )
 
 }

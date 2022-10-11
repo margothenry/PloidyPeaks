@@ -4,7 +4,13 @@
 \alias{flowLineGraph}
 \title{flowLineGraph}
 \usage{
-flowLineGraph(flowDir = NA, flowControl = NA, flowSamples = NA, xVariable)
+flowLineGraph(
+  flowDir = NA,
+  flowControl = NA,
+  flowSamples = NA,
+  xVariable,
+  flowColours = NA
+)
 }
 \arguments{
 \item{flowDir}{The directory where the data is located. If NA then a window
@@ -15,6 +21,8 @@ will prompt the user to select a folder.}
 \item{flowSamples}{The vector of samples}
 
 \item{xVariable}{The fluorescence channel you are interested in visualizing}
+
+\item{flowColours}{Vector of colours for the flowSample to be plotted}
 }
 \description{
 A function that permits the users to plot as many flow frames as they would
@@ -26,6 +34,7 @@ for comparison (control sample is indicated by the user).
  flowLineGraph(
   flowControl = "FH-B11",
   flowSamples = c("T1-D08","FH-B08", "T1-D10", "A13-E10"),
+  flowColours = c("green","blue", "red", "orange"),
   xVariable = "FITC-A",
   flowDir = "FlowData/gated_data"
  )
