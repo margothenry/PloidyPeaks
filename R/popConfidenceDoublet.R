@@ -743,7 +743,7 @@ popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
         theme(legend.title = element_blank())
 
       plotDir <- "nlsGraphs"
-      plotInitDir <- "NLSDoublet_graphs"
+      plotInitDir <- "nlsDoublet_graphs"
       dir.create(
         file.path(dirname(flowDir), plotDir, plotInitDir), showWarnings=FALSE
         )

@@ -264,7 +264,7 @@ popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
 
       plotDir <- "nlsGraphs"
       dir.create(file.path(dirname(flowDir), plotDir), showWarnings=FALSE)
-      plotInitDir <- "NLSInitial_graphs"
+      plotInitDir <- "nlsSingle_graphs"
       dir.create(
         file.path(dirname(flowDir) ,plotDir, plotInitDir), showWarnings=FALSE
         )

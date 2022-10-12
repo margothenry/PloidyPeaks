@@ -45,7 +45,7 @@ peakAlgorithm4 = function(
   ){
   
   ##Removing NOTE 'no visible binding for global variable'
-  y<-possiblePairY<-keep<-NULL
+  y<-possiblePairY<-keep<-truePeak<-NULL
   
   flowNameDs <- flaggedData_$data
   flaggedData <- c()

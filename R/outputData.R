@@ -41,7 +41,7 @@ outputData = function(
   g1G2Doublet<-g1G2DoubletCount<-g2G2Doublet<-g2G2DoubletCount<-NULL
   residual<-residualDoublet<-Success<-Algorithm<-Data<-`doublet G1+G2`<-NULL
   `doublet G1+G2 count`<-`doublet G2+G2`<- `doublet G2+G2 count`<-NULL
-  
+  residual3Pop<-residual2Pop<-residualMultiple<-NULL
   ##If the algorithm classified each sub population in the first algorithm
   if(
     purrr::is_empty(finishedDs) &

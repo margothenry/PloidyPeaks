@@ -13,7 +13,7 @@
 #' @param appendData The data set of flow frames that are finished being analyzed
 #' from the previous peak algorithms. The flow frames that are done after peakAlgorithm3 will append to this data set.
 #' @param usedCellsThreshold Threshold for classifying multiple populations
-#' @param maxDoubletHeightThe maximum height a doublet can be. If left as NA
+#' @param maxDoubletHeight The maximum height a doublet can be. If left as NA
 #'  the algorithm will find a value based on the other peaks
 #' @export
 #'
@@ -40,7 +40,7 @@ peakAlgorithm3 = function(
   ){
   
   ##Removing NOTE 'no visible binding for global variable'
-  y<-possiblePairY<-keep<-NULL
+  y<-possiblePairY<-keep<-truePeak<-NULL
   
   flowNameDs <- flaggedData_$data
   flaggedData <- c()

@@ -464,7 +464,7 @@ popConfidence3Pop = function(flowDir, ds, xVariable, saveGraph = TRUE){
       
       plotDir <- "nlsGraphs"
       dir.create(file.path(dirname(flowDir), plotDir), showWarnings=FALSE)
-      plotInitDir <- "NLSMultiple_graphs"
+      plotInitDir <- "nlsMultiple_graphs"
       dir.create(
         file.path(dirname(flowDir) ,plotDir, plotInitDir), showWarnings=FALSE
       )

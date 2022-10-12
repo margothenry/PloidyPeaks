@@ -25,7 +25,7 @@ from the previous peak algorithms. The flow frames that are done after peakAlgor
 
 \item{usedCellsThreshold}{Threshold for classifying multiple populations}
 
-\item{maxDoubletHeightThe}{maximum height a doublet can be. If left as NA
+\item{maxDoubletHeight}{The maximum height a doublet can be. If left as NA
 the algorithm will find a value based on the other peaks}
 }
 \description{

@@ -22,7 +22,7 @@ popConfidence2Pop = function(flowDir, ds, xVariable, saveGraph = TRUE){
   
   ##Removing NOTE 'no visible binding for global variable'
   G1_1<-G2_1<-G1Count_1<-G2Count_1<-x<-y<-NULL
-  G1_2<-G2_2<-G1Count_2<-G2Count_2<-NULL
+  G1_2<-G2_2<-G1_3<-G1Count_2<-G2Count_2<-NULL
   
   if(TRUE %in% grepl("_3", names(ds))){
     ds1<-ds %>% dplyr::filter(
@@ -441,7 +441,7 @@ popConfidence2Pop = function(flowDir, ds, xVariable, saveGraph = TRUE){
       
       plotDir <- "nlsGraphs"
       dir.create(file.path(dirname(flowDir), plotDir), showWarnings=FALSE)
-      plotInitDir <- "NLSMultiple_graphs"
+      plotInitDir <- "nlsMultiple_graphs"
       dir.create(
         file.path(dirname(flowDir) ,plotDir, plotInitDir), showWarnings=FALSE
       )
