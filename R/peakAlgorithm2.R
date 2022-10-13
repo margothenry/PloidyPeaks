@@ -80,7 +80,7 @@ peakAlgorithm2 = function(
     }
     possiblePeaks3 <- findClusters(possiblePeaks2, 40, xVarMax)
     
-    possiblePeaks4 <- findPairs(possiblePeaks3, possiblePeaks3, 1.7, 2.3)
+    possiblePeaks4 <- findPairs(possiblePeaks3, possiblePeaks3, 1.75, 2.2)
     
     possiblePeaks4 <- possiblePeaks4 %>%
       tidyr::drop_na() %>%
