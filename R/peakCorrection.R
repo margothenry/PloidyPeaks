@@ -1,4 +1,24 @@
-
+#' peakCorrection
+#'
+#' peakCorrection is a function created for the user to rerun the analysis on 
+#' a sample with a certain number of subpopulations.
+#'
+#' @param xVariable The fluorescence channel on the x axis
+#' @param flowDir The directory of the gated .fcs data
+#' @param sampleName the name of the sample you want to analyze
+#' @param numSubPop the number of subpopulations you want the algorithm to identify
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' peakCorrection(
+#'  xVariable = "FITC-A",
+#'  flowDir = NA,
+#'  sampleName = "A01-A01",
+#'  numSubPop = 2
+#'  )
+#'  }
+#'
 peakCorrection = function(
   xVariable,
   flowDir = NA,
