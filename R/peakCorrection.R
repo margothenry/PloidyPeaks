@@ -26,6 +26,8 @@ peakCorrection = function(
   numSubPop = 2
 ){
   
+  points<-NULL
+  
   .GlobalEnv$logDs <- data.frame(
     matrix(nrow=0, ncol=3)
   )
@@ -101,10 +103,14 @@ peakCorrection = function(
       plot(flowData, type = "l", main = "Local Peaks")
       points(possiblePeaks3$x, possiblePeaks3$y, col = "red", pch = 19)
       
-      possiblePeaks4 <- findPairs(possiblePeaks3, possiblePeaks3, 1.75-range_increase, 2.2+range_increase)
+      possiblePeaks4 <- findPairs(
+        possiblePeaks3, possiblePeaks3, 1.75-range_increase, 2.2+range_increase
+        )
       possiblePeaks4 <- possiblePeaks4 %>%
         tidyr::drop_na() 
-      possiblePeaks5 <- possiblePeaks4[!duplicated(possiblePeaks4$possiblePairY), ]
+      possiblePeaks5 <- possiblePeaks4[
+        !duplicated(possiblePeaks4$possiblePairY),
+        ]
     }
   }else if(nrow(possiblePeaks5) > numSubPop){
     possiblePeaks5<-possiblePeaks5[1:numSubPop,] 
@@ -168,7 +174,7 @@ peakCorrection = function(
     finishedData,
     investigateData,
     xVariable,
-    doublet = FALSE,
+    doubletFlag = FALSE,
     saveGraph = TRUE
   )
   print("Done! - Check 'analysis' folder for results")

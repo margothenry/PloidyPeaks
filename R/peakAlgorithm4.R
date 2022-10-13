@@ -289,7 +289,7 @@ peakAlgorithm4 = function(
     
     
     if(
-      possiblePeaks8$propCellsUsed[1] >= 60 &
+      possiblePeaks8$propCellsUsed[1] >= 80 &
       !is.na(possiblePeaks8$propCellsUsed[1])
     ){
       
