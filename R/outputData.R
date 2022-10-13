@@ -35,7 +35,7 @@ outputData = function(
   xVariable,
   doubletFlag,
   saveGraph
-  ){
+){
   ##Removing NOTE 'no visible binding for global variable'
   x<-y<-.<-possiblePairX<-possiblePairY<-G1<-G1Count<-G2<-G2Count<-id<-NULL
   g1G2Doublet<-g1G2DoubletCount<-g2G2Doublet<-g2G2DoubletCount<-NULL
@@ -47,8 +47,8 @@ outputData = function(
     purrr::is_empty(finishedDs) &
     purrr::is_empty(investigateDs) &
     !purrr::is_empty(singleDs)
-    ){
-
+  ){
+    
     ##Formatting the single pop data from the first peak algorithm
     finalPart1=singleDs %>% data.frame() %>%
       dplyr::select(-c("g3LL", "g3UL", "g4LL", "g4UL")) %>%
@@ -59,7 +59,7 @@ outputData = function(
         G2=possiblePairX,
         G2Count=possiblePairY
       )
-
+    
     finalData=finalPart1 %>% dplyr::select(
       c(
         "data",
@@ -74,16 +74,16 @@ outputData = function(
         "investigate"
       )
     )
-
+    
     finalData$data=factor(finalData$data)
     finalData=finalData[order(finalData$data), ]
-
+    
     ##Creating the doublet indicator
     finalData$doublet=0
     finalData$doublet[!is.na(finalData$g1G2Doublet)]=1
     finalData$g2G2Doublet[finalData$doublet == 0]=NA
     finalData$g2G2DoubletCount[finalData$doublet == 0]=NA
-
+    
     ##Turning the long dataset into a wide dataset
     ##Selection the variables that need to be transformed from long to wide
     finalDataG1G2=finalData %>%
@@ -91,17 +91,17 @@ outputData = function(
     ##Selection the variables that do not need to change
     finalDataFlags=finalData %>%
       dplyr::select(-c(G1, G1Count, G2, G2Count))
-
+    
     finalDataFlags=finalDataFlags[!duplicated(finalDataFlags$data), ]
-
+    
     ##Making wide dataset
     finalData2=finalDataG1G2 %>%
       dplyr::mutate(id=rowid(data)) %>%
       tidyr::pivot_wider(names_from=id, values_from=c(G1, G1Count, G2, G2Count))
-
+    
     ##Merging data together
     finalData3=merge(finalData2, finalDataFlags, by="data")
-
+    
     finalData3=finalData3 %>%
       dplyr::rename(
         `doublet G1+G2`=g1G2Doublet,
@@ -109,7 +109,7 @@ outputData = function(
         `doublet G2+G2`=g2G2Doublet,
         `doublet G2+G2 count`=g2G2DoubletCount
       )
-
+    
     ##Getting RSE value
     ##Testing hypothesis of a single population or multiple population
     initialRSE=popConfidenceInitial(
@@ -147,7 +147,7 @@ outputData = function(
     }
     
     finalData4<-sqldf::sqldf(
-    "select ds.*,
+      "select ds.*,
             ds2.residual,
             ds3.residualDoublet,
             ds4.residual2Pop,
@@ -231,7 +231,7 @@ outputData = function(
           )
         )
     }
-
+    
     ##Creating a folder called analysis where the dataset will be saved
     setwd(flowDir)
     subDir <- "analysis"
@@ -239,16 +239,16 @@ outputData = function(
     write.csv(
       finalData6,
       paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv")
-      )
-
+    )
+    
   }else if(
     purrr::is_empty(investigateDs) &
     !purrr::is_empty(finishedDs) &
     !purrr::is_empty(singleDs)
-    ){
+  ){
     ##If the algorithm classified each sub population before prior the 4th
     ##algorithm
-
+    
     ##Formatting the diploid data from the first peak algorithm
     finalPart1=singleDs %>% data.frame() %>%
       dplyr::select(-c("g3LL", "g3UL", "g4LL", "g4UL")) %>%
@@ -259,226 +259,9 @@ outputData = function(
         G2=possiblePairX,
         G2Count=possiblePairY
       )
-
+    
     ##Formatting the data from the other peak algorithms
     finalPart2=finishedDs %>% data.frame() %>%
-      dplyr::select(
-        -c(
-          "g3LL",
-          "g3UL",
-          "g4LL",
-          "g4UL",
-          "propCellsUsed",
-          "cluster",
-          "distToNext",
-          "LL",
-          "UL"
-          )
-        ) %>%
-      dplyr::mutate(
-        investigate=0,
-        G1=x,
-        G1Count=y,
-        G2=possiblePairX,
-        G2Count=possiblePairY
-      )
-
-    ##Merging the two datasets
-    finalData=rbind(
-      finalPart1,
-      finalPart2
-    ) %>% dplyr::select(
-      c(
-        "data",
-        "G1",
-        "G2",
-        "g1G2Doublet",
-        "g2G2Doublet",
-        "G1Count",
-        "G2Count",
-        "g1G2DoubletCount",
-        "g2G2DoubletCount",
-        "investigate"
-      )
-    )
-
-    finalData$data=factor(finalData$data)
-    finalData=finalData[order(finalData$data), ]
-
-    ##Creating the doublet indicator
-    finalData$doublet=0
-    finalData$doublet[!is.na(finalData$g1G2Doublet)]=1
-    finalData$g2G2Doublet[finalData$doublet == 0]=NA
-    finalData$g2G2DoubletCount[finalData$doublet == 0]=NA
-
-    ##Turning the long dataset into a wide dataset
-    ##Selection the variables that need to be transformed from long to wide
-    finalDataG1G2=finalData %>%
-      dplyr::select(data, G1, G1Count, G2, G2Count)
-    ##Selection the variables that do not need to change
-    finalDataFlags=finalData %>%
-      dplyr::select(-c(G1, G1Count, G2, G2Count))
-
-    finalDataFlags=finalDataFlags[!duplicated(finalDataFlags$data), ]
-
-    ##Making wide dataset
-    finalData2=finalDataG1G2 %>%
-      dplyr::mutate(id=rowid(data)) %>%
-      tidyr::pivot_wider(names_from=id, values_from=c(G1, G1Count, G2, G2Count))
-
-    ##Merging data together
-    finalData3=merge(finalData2, finalDataFlags, by="data")
-    finalData3=finalData3 %>%
-      dplyr::rename(
-        `doublet G1+G2`=g1G2Doublet,
-        `doublet G1+G2 count`=g1G2DoubletCount,
-        `doublet G2+G2`=g2G2Doublet,
-        `doublet G2+G2 count`=g2G2DoubletCount
-      )
-
-    ##Getting RSE value
-    ##Testing hypothesis of a single population or multiple population
-    initialRSE=popConfidenceInitial(
-      flowDir, ds=finalData3, xVariable, saveGraph
-    )
-    
-    if( TRUE %in% finalData3$doublet ){
-      doubletRSE<-popConfidenceDoublet(
-        flowDir, ds=finalData3, xVariable, saveGraph
-      )
-    }else{
-      doubletRSE<-finalData3 %>% dplyr::mutate(
-        residualDoublet=NA
-      )
-    }
-    
-    if(TRUE %in% grepl("_2", names(finalData3))){
-      twoPopRSE<-popConfidence2Pop(
-        flowDir, ds=finalData3, xVariable, saveGraph
-      )
-    }else{
-      twoPopRSE<-finalData3 %>% dplyr::mutate(
-        residual2Pop=NA
-      )
-    }
-    
-    if(TRUE %in% grepl("_3", names(finalData3))){
-      threePopRSE<-popConfidence3Pop(
-        flowDir, ds=finalData3, xVariable, saveGraph
-      )
-    }else{
-      threePopRSE<-finalData3 %>% dplyr::mutate(
-        residual3Pop=NA
-      )
-    }
-    
-    finalData4<-sqldf::sqldf(
-    "select ds.*,
-            ds2.residual,
-            ds3.residualDoublet,
-            ds4.residual2Pop,
-            ds5.residual3Pop
-     from finalData3 ds
-     left join initialRSE ds2
-      on ds.data = ds2.data
-    left join doubletRSE ds3
-      on ds.data = ds3.data
-    left join twoPopRSE ds4
-      on ds.data = ds4.data
-    left join threePopRSE ds5
-      on ds.data = ds5.data"
-    )
-    
-    finalData4<-finalData4 %>% dplyr::mutate(
-      residualMultiple=ifelse(is.na(residual3Pop), residual2Pop, residual3Pop)
-    )
-    
-    finalData5<-finalData4 %>% dplyr::mutate(
-      finalRSE=do.call(
-        pmin, 
-        c(
-          subset(., select=c(residual, residualDoublet, residualMultiple)),
-          na.rm=TRUE
-        )
-      )
-    ) %>% dplyr::rename(
-      singleRSE=residual,
-      doubletRSE=residualDoublet,
-      multipleRSE=residualMultiple
-    ) %>% dplyr::select(
-      -c(residual2Pop, residual3Pop)
-    )
-    
-    # Flagging to investigate if the algorithm found multiple subpopulations
-    # But the RSE for single population is less than RSE for multiple subpop
-    for(i in 1:nrow(finalData5)){
-      if(
-        !is.na(finalData5[i,]$multipleRSE) &
-        finalData5[i,]$multipleRSE > finalData5[i,]$singleRSE
-      ){
-        finalData5[i,]$investigate = 1
-      }
-      
-    }
-    
-    ##adding which algorithm analyzed the flow frame
-    logDs2<-.GlobalEnv$logDs %>% 
-      dplyr::select(-Success) %>% 
-      dplyr::mutate(Algorithm=as.numeric(Algorithm))
-    
-    logDs3<-logDs2 %>%
-      dplyr::mutate(id=rowid(Data)) %>%
-      tidyr::pivot_wider(names_from=id, values_from=c(Algorithm))
-    
-    logDs4<-logDs3 %>% dplyr::mutate(
-      Algorithm=do.call(
-        pmax, 
-        c(subset(., select=2:ncol(logDs3)), na.rm=TRUE))
-    )
-
-    logDs5<-logDs4 %>%
-      dplyr::select(Data, Algorithm) %>%
-      dplyr::rename(data=Data)
-
-    ##merging the algorithm used with the final dataset
-    finalData6<-merge(finalData5, logDs5, by="data")
-    finalData6<-finalData6 %>% dplyr::rename(
-      "Sample" = "data"
-    )
-    
-    ##If doublet = FALSE, remove doublet information
-    if(doubletFlag == FALSE){
-      finalData6=finalData6 %>%
-        dplyr::select(
-          -c(
-            `doublet G1+G2`,
-            `doublet G1+G2 count`,
-            `doublet G2+G2`,
-            `doublet G2+G2 count`
-          )
-        )
-    }
-
-    ##Creating a folder called analysis where the dataset will be saved
-    setwd(flowDir)
-    subDir <- "analysis"
-    dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
-    write.csv(
-      finalData6,
-      paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv"
-             )
-      )
-
-  }else if(
-    purrr::is_empty(singleDs) &
-    !purrr::is_empty(finishedDs) &
-    !purrr::is_empty(investigateDs)
-    ){
-    ##If the algorithm classified each sub population before prior the 4th
-    ##algorithm
-    
-    ##Formatting the data from the other peak algorithms
-    finalData=finishedDs %>% data.frame() %>%
       dplyr::select(
         -c(
           "g3LL",
@@ -499,9 +282,12 @@ outputData = function(
         G2=possiblePairX,
         G2Count=possiblePairY
       )
-
+    
     ##Merging the two datasets
-    finalData %>% dplyr::select(
+    finalData=rbind(
+      finalPart1,
+      finalPart2
+    ) %>% dplyr::select(
       c(
         "data",
         "G1",
@@ -534,7 +320,7 @@ outputData = function(
       dplyr::select(-c(G1, G1Count, G2, G2Count))
     
     finalDataFlags=finalDataFlags[!duplicated(finalDataFlags$data), ]
-
+    
     ##Making wide dataset
     finalData2=finalDataG1G2 %>%
       dplyr::mutate(id=rowid(data)) %>%
@@ -549,7 +335,243 @@ outputData = function(
         `doublet G2+G2`=g2G2Doublet,
         `doublet G2+G2 count`=g2G2DoubletCount
       )
-
+    
+    ##Getting RSE value
+    ##Testing hypothesis of a single population or multiple population
+    initialRSE=popConfidenceInitial(
+      flowDir, ds=finalData3, xVariable, saveGraph
+    )
+    
+    if( TRUE %in% finalData3$doublet ){
+      doubletRSE<-popConfidenceDoublet(
+        flowDir, ds=finalData3, xVariable, saveGraph
+      )
+    }else{
+      doubletRSE<-finalData3 %>% dplyr::mutate(
+        residualDoublet=NA
+      )
+    }
+    
+    if(TRUE %in% grepl("_2", names(finalData3))){
+      twoPopRSE<-popConfidence2Pop(
+        flowDir, ds=finalData3, xVariable, saveGraph
+      )
+    }else{
+      twoPopRSE<-finalData3 %>% dplyr::mutate(
+        residual2Pop=NA
+      )
+    }
+    
+    if(TRUE %in% grepl("_3", names(finalData3))){
+      threePopRSE<-popConfidence3Pop(
+        flowDir, ds=finalData3, xVariable, saveGraph
+      )
+    }else{
+      threePopRSE<-finalData3 %>% dplyr::mutate(
+        residual3Pop=NA
+      )
+    }
+    
+    finalData4<-sqldf::sqldf(
+      "select ds.*,
+            ds2.residual,
+            ds3.residualDoublet,
+            ds4.residual2Pop,
+            ds5.residual3Pop
+     from finalData3 ds
+     left join initialRSE ds2
+      on ds.data = ds2.data
+    left join doubletRSE ds3
+      on ds.data = ds3.data
+    left join twoPopRSE ds4
+      on ds.data = ds4.data
+    left join threePopRSE ds5
+      on ds.data = ds5.data"
+    )
+    
+    finalData4<-finalData4 %>% dplyr::mutate(
+      residualMultiple=ifelse(is.na(residual3Pop), residual2Pop, residual3Pop)
+    )
+    
+    finalData5<-finalData4 %>% dplyr::mutate(
+      finalRSE=do.call(
+        pmin, 
+        c(
+          subset(., select=c(residual, residualDoublet, residualMultiple)),
+          na.rm=TRUE
+        )
+      )
+    ) %>% dplyr::rename(
+      singleRSE=residual,
+      doubletRSE=residualDoublet,
+      multipleRSE=residualMultiple
+    ) %>% dplyr::select(
+      -c(residual2Pop, residual3Pop)
+    )
+    
+    # Flagging to investigate if the algorithm found multiple subpopulations
+    # But the RSE for single population is less than RSE for multiple subpop
+    for(i in 1:nrow(finalData5)){
+      if(
+        !is.na(finalData5[i,]$multipleRSE) &
+        finalData5[i,]$multipleRSE > finalData5[i,]$singleRSE
+      ){
+        finalData5[i,]$investigate = 1
+      }
+      
+    }
+    
+    ##adding which algorithm analyzed the flow frame
+    logDs2<-.GlobalEnv$logDs %>% 
+      dplyr::select(-Success) %>% 
+      dplyr::mutate(Algorithm=as.numeric(Algorithm))
+    
+    logDs3<-logDs2 %>%
+      dplyr::mutate(id=rowid(Data)) %>%
+      tidyr::pivot_wider(names_from=id, values_from=c(Algorithm))
+    
+    logDs4<-logDs3 %>% dplyr::mutate(
+      Algorithm=do.call(
+        pmax, 
+        c(subset(., select=2:ncol(logDs3)), na.rm=TRUE))
+    )
+    
+    logDs5<-logDs4 %>%
+      dplyr::select(Data, Algorithm) %>%
+      dplyr::rename(data=Data)
+    
+    ##merging the algorithm used with the final dataset
+    finalData6<-merge(finalData5, logDs5, by="data")
+    finalData6<-finalData6 %>% dplyr::rename(
+      "Sample" = "data"
+    )
+    
+    ##If doublet = FALSE, remove doublet information
+    if(doubletFlag == FALSE){
+      finalData6=finalData6 %>%
+        dplyr::select(
+          -c(
+            `doublet G1+G2`,
+            `doublet G1+G2 count`,
+            `doublet G2+G2`,
+            `doublet G2+G2 count`
+          )
+        )
+    }
+    
+    ##Creating a folder called analysis where the dataset will be saved
+    setwd(flowDir)
+    subDir <- "analysis"
+    dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
+    write.csv(
+      finalData6,
+      paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv"
+      )
+    )
+    
+  }else if(
+    purrr::is_empty(singleDs) &
+    !purrr::is_empty(finishedDs) &
+    !purrr::is_empty(investigateDs)
+  ){
+    ##If the algorithm classified each sub population before prior the 4th
+    ##algorithm
+    
+    ##Formatting the data from the other peak algorithms
+    finalData1<-finishedDs %>% data.frame() %>%
+      dplyr::select(
+        -c(
+          "g3LL",
+          "g3UL",
+          "g4LL",
+          "g4UL",
+          "propCellsUsed",
+          "cluster",
+          "distToNext",
+          "LL",
+          "UL"
+        )
+      ) %>%
+      dplyr::mutate(
+        investigate=0,
+        G1=x,
+        G1Count=y,
+        G2=possiblePairX,
+        G2Count=possiblePairY
+      )
+    
+    finalPart2<-investigateDs %>% data.frame() %>%
+      dplyr::select(
+        -c(
+          "g3LL",
+          "g3UL",
+          "g4LL",
+          "g4UL",
+          "cluster",
+          "distToNext",
+          "LL",
+          "UL"
+        )
+      ) %>%
+      dplyr::mutate(
+        G1=x,
+        G1Count=y,
+        G2=possiblePairX,
+        G2Count=possiblePairY
+      )
+    ##Merging the two datasets
+    finalData<-rbind(
+      finalPart1,
+      finalPart2
+    ) %>% dplyr::select(
+      c(
+        "data",
+        "G1",
+        "G2",
+        "g1G2Doublet",
+        "g2G2Doublet",
+        "G1Count",
+        "G2Count",
+        "g1G2DoubletCount",
+        "g2G2DoubletCount",
+        "investigate"
+      )
+    )
+    
+    finalData$data=factor(finalData$data)
+    finalData=finalData[order(finalData$data), ]
+    
+    ##Creating the doublet indicator
+    finalData$doublet=0
+    finalData$doublet[!is.na(finalData$g1G2Doublet)]=1
+    finalData$g2G2Doublet[finalData$doublet == 0]=NA
+    finalData$g2G2DoubletCount[finalData$doublet == 0]=NA
+    
+    ##Turning the long dataset into a wide dataset
+    ##Selection the variables that need to be transformed from long to wide
+    finalDataG1G2=finalData %>%
+      dplyr::select(data, G1, G1Count, G2, G2Count)
+    ##Selection the variables that do not need to change
+    finalDataFlags=finalData %>%
+      dplyr::select(-c(G1, G1Count, G2, G2Count))
+    
+    finalDataFlags=finalDataFlags[!duplicated(finalDataFlags$data), ]
+    
+    ##Making wide dataset
+    finalData2=finalDataG1G2 %>%
+      dplyr::mutate(id=rowid(data)) %>%
+      tidyr::pivot_wider(names_from=id, values_from=c(G1, G1Count, G2, G2Count))
+    
+    ##Merging data together
+    finalData3=merge(finalData2, finalDataFlags, by="data")
+    finalData3=finalData3 %>%
+      dplyr::rename(
+        `doublet G1+G2`=g1G2Doublet,
+        `doublet G1+G2 count`=g1G2DoubletCount,
+        `doublet G2+G2`=g2G2Doublet,
+        `doublet G2+G2 count`=g2G2DoubletCount
+      )
+    
     ##Getting RSE value
     ##Testing hypothesis of a single population or multiple population
     initialRSE=popConfidenceInitial(
@@ -672,7 +694,7 @@ outputData = function(
           )
         )
     }
-
+    
     ##Creating a folder called analysis where the dataset will be saved
     setwd(flowDir)
     subDir <- "analysis"
@@ -688,29 +710,9 @@ outputData = function(
     !purrr::is_empty(finishedDs) &
     purrr::is_empty(singleDs)
   ){
-    ##Formatting the diploid data from the first peak algorithm
-    finalPart1=investigateDs %>% data.frame() %>%
-      dplyr::select(
-        -c(
-          "g3LL",
-          "g3UL",
-          "g4LL",
-          "g4UL",
-          "cluster",
-          "distToNext",
-          "LL",
-          "UL"
-        )
-      ) %>%
-      dplyr::mutate(
-        G1=x,
-        G1Count=y,
-        G2=possiblePairX,
-        G2Count=possiblePairY
-      )
     
     ##Formatting the data from the other peak algorithms
-    finalPart2=finishedDs %>% data.frame() %>%
+    finalPart1<-finishedDs %>% data.frame() %>%
       dplyr::select(
         -c(
           "g3LL",
@@ -732,11 +734,8 @@ outputData = function(
         G2Count=possiblePairY
       )
     
-    ##Merging the two datasets
-    finalData=rbind(
-      finalPart1,
-      finalPart2
-    ) %>% dplyr::select(
+    ##Removing columns
+    finalData<-finalPart1 %>% dplyr::select(
       c(
         "data",
         "G1",
@@ -918,7 +917,7 @@ outputData = function(
       )
     )
   }else{
-
+    
     ##Formatting the diploid data from the first peak algorithm
     finalPart1=singleDs %>% data.frame() %>%
       dplyr::select(-c("g3LL", "g3UL", "g4LL", "g4UL")) %>%
@@ -929,7 +928,7 @@ outputData = function(
         G2=possiblePairX,
         G2Count=possiblePairY
       )
-
+    
     ##Formatting the data from peak algorithm 2-4
     finalPart2=finishedDs %>% data.frame() %>%
       dplyr::select(
@@ -943,8 +942,8 @@ outputData = function(
           "distToNext",
           "LL",
           "UL"
-          )
-        ) %>%
+        )
+      ) %>%
       dplyr::mutate(
         investigate=0,
         G1=x,
@@ -952,7 +951,7 @@ outputData = function(
         G2=possiblePairX,
         G2Count=possiblePairY
       )
-
+    
     ##Formatting the data from the last peak algorthm
     finalPart3=investigateDs %>% data.frame() %>%
       dplyr::select(
@@ -965,15 +964,15 @@ outputData = function(
           "distToNext",
           "LL",
           "UL"
-          )
-        ) %>%
+        )
+      ) %>%
       dplyr::mutate(
         G1=x,
         G1Count=y,
         G2=possiblePairX,
         G2Count=possiblePairY
       )
-
+    
     ##Merging the three datasets
     finalData=rbind(
       finalPart1,
@@ -993,16 +992,16 @@ outputData = function(
         "investigate"
       )
     )
-
+    
     finalData$data=factor(finalData$data)
     finalData=finalData[order(finalData$data), ]
-
+    
     ##Creating the doublet indicator
     finalData$doublet=0
     finalData$doublet[!is.na(finalData$g1G2Doublet)]=1
     finalData$g2G2Doublet[finalData$doublet == 0]=NA
     finalData$g2G2DoubletCount[finalData$doublet == 0]=NA
-
+    
     ##Turning the long dataset into a wide dataset
     ##Selection the variables that need to be transformed from long to wide
     finalDataG1G2=finalData %>%
@@ -1010,17 +1009,17 @@ outputData = function(
     ##Selection the variables that do not need to change
     finalDataFlags=finalData %>%
       dplyr::select(-c(G1, G2,G1Count, G2Count))
-
+    
     finalDataFlags=finalDataFlags[!duplicated(finalDataFlags$data), ]
-
+    
     ##Making wide dataset
     finalData2=finalDataG1G2 %>%
       dplyr::mutate(id=rowid(data)) %>%
       tidyr::pivot_wider(names_from=id, values_from=c(G1, G2,G1Count, G2Count))
-
+    
     ##Merging data together
     finalData3=merge(finalData2, finalDataFlags, by="data")
-
+    
     finalData3=finalData3 %>%
       dplyr::rename(
         `doublet G1+G2`=g1G2Doublet,
@@ -1028,7 +1027,7 @@ outputData = function(
         `doublet G2+G2`=g2G2Doublet,
         `doublet G2+G2 count`=g2G2DoubletCount
       )
-
+    
     ##Getting RSE value
     ##Testing hypothesis of a single population or multiple population
     initialRSE=popConfidenceInitial(
@@ -1113,16 +1112,16 @@ outputData = function(
       }
       
     }
-
+    
     ##adding which algorithm analyzed the flow frame
     logDs2<-.GlobalEnv$logDs %>% 
       dplyr::select(-Success) %>% 
       dplyr::mutate(Algorithm=as.numeric(Algorithm))
-
+    
     logDs3<-logDs2 %>%
-    dplyr::mutate(id=rowid(Data)) %>%
-    tidyr::pivot_wider(names_from=id, values_from=c(Algorithm))
-
+      dplyr::mutate(id=rowid(Data)) %>%
+      tidyr::pivot_wider(names_from=id, values_from=c(Algorithm))
+    
     logDs4<-logDs3 %>% dplyr::mutate(
       Algorithm=do.call(
         pmax, 
@@ -1132,7 +1131,7 @@ outputData = function(
     logDs5<-logDs4 %>%
       dplyr::select(Data, Algorithm) %>%
       dplyr::rename(data=Data)
-
+    
     ##merging the algorithm used with the final dataset
     finalData6<-merge(finalData5, logDs5, by="data")
     finalData6<-finalData6 %>% dplyr::rename(
@@ -1151,8 +1150,8 @@ outputData = function(
           )
         )
     }
-
-
+    
+    
     ##Creating a folder called analysis where the dataset will be saved
     setwd(flowDir)
     subDir <- "analysis"
@@ -1160,10 +1159,10 @@ outputData = function(
     write.csv(
       finalData6,
       paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv")
-      )
-
+    )
+    
   }
-
+  
 }
 
 
