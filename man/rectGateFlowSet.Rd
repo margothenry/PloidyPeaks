@@ -34,7 +34,8 @@ rectGateFlowSet(
 data - by default TRUE}
 }
 \value{
-A .fcs of the gated data
+A set of .fcs of the gated data, plots of gated data, and a .csv
+containing information on how percentage of cells gated out
 }
 \description{
 This function will gate your raw flow set and save your gated data, a plot

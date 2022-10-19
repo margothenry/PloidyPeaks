@@ -11,9 +11,13 @@ peakCorrection(xVariable, flowDir = NA, sampleName, numSubPop = 2)
 
 \item{flowDir}{The directory of the gated .fcs data}
 
-\item{sampleName}{the name of the sample you want to analyze}
+\item{sampleName}{the name of the sample the user wants to analyze}
 
-\item{numSubPop}{the number of subpopulations you want the algorithm to identify}
+\item{numSubPop}{the number of subpopulations the user wants
+the algorithm to identify}
+}
+\value{
+a .csv with information abour each sample and nls graphs
 }
 \description{
 peakCorrection is a function created for the user to rerun the analysis on

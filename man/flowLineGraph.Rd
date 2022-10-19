@@ -24,6 +24,9 @@ will prompt the user to select a folder.}
 
 \item{flowColours}{Vector of colours for the flowSample to be plotted}
 }
+\value{
+a line graph for the samples
+}
 \description{
 A function that permits the users to plot as many flow frames as they would
 like on the same graph panel. Each of the colourful lines represent a

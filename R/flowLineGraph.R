@@ -13,6 +13,7 @@
 #' @param flowColours Vector of colours for the flowSample to be plotted
 #' @import tcltk
 #' @import ggplot2
+#' @return a line graph for the samples
 #' @export
 #'
 #' @examples
@@ -28,188 +29,255 @@
 
 
 flowLineGraph = function(
-  flowDir = NA,
-  flowControl = NA,
-  flowSamples = NA,
-  xVariable,
-  flowColours = NA
+    flowDir = NA,
+    flowControl = NA,
+    flowSamples = NA,
+    xVariable,
+    flowColours = NA
 ){
-  ##Removing NOTE 'no visible binding for global variable'
-  x<-y<-Data<-NULL
-  if(is.na(flowDir)){
+    ##Removing NOTE 'no visible binding for global variable'
+    x<-y<-Data<-NULL
+    if(is.na(flowDir)){
     getwd()
     flowDir <- tclvalue(tkchooseDirectory())
-  }
-  
-  ##Checking if the folder they selected is empty
-  if(purrr::is_empty(flowDir)){
-    stop("Your directory is empty")
-  }
-  
-  ##samples dataset
-  if(TRUE %in% !is.na(flowSamples)){
-    if(length(flowSamples) > 1){
-      
-      sampleDs <- c()
-      for(k in 1:length(flowSamples)){
+    }
+    
+    ##Checking if the folder they selected is empty
+    if(purrr::is_empty(flowDir)){
+        stop("Your directory is empty")
+    }
+    
+    ##samples dataset
+    if(TRUE %in% !is.na(flowSamples)){
+        if(length(flowSamples) > 1){
         
-        if(!flowSamples[k] %in% list.files(flowDir)){
-          stop(paste0("The flow frame ",flowSamples[k]," is not in the folder, check on the spelling of flowName and/or make sure you selected the proper folder"))
+        sampleDs <- c()
+        for(k in seq_len(length(flowSamples))){
+            if(!flowSamples[k] %in% list.files(flowDir)){
+                    errorMsg<-paste0("The flow frame ",flowSamples[k]," is not
+                    in the folder, check on the spelling of flowName and/or make 
+                    sure you selected the proper folder")
+                    stop(errorMsg)
+                    rm(errorMsg)
+            }
+            xpectr::suppress_mw(
+                    flowName <- flowCore::read.FCS(
+                        paste0(flowDir, "/", flowSamples[k]),
+                        transformation=FALSE
+                    )
+            )
+            
+            ##Checking to see if the user input the correct X variable
+            if(!xVariable %in% flowName@parameters@data$name){
+                    stop("Your X variable is not in the dataset")
+            }
+            
+            ds <- .smoothData( flowName, xVariable, 5)
+            ds$Data <- flowSamples[k]
+            sampleDs <- rbind(
+                sampleDs,
+                ds
+            )
         }
+        
+    }else{
+            xpectr::suppress_mw(
+                    flowName <- flowCore::read.FCS(
+                        paste0(flowDir, "/", flowSamples), transformation=FALSE
+                    ) 
+            )
+            ##Checking to see if the user input the correct X variable
+            if(!xVariable %in% flowName@parameters@data$name){
+                stop("Your X variable is not in the dataset")
+            }
+            
+            sampleDs <- .smoothData(flowName, xVariable, 5)
+            sampleDs$Data <- flowSamples
+    }
+    if(!is.na(flowControl)){
+        if(!flowControl %in% list.files(flowDir)){
+            errorMsg<-paste0(
+                "The flow frame ",flowControl," is not in the folder, 
+                check on the spelling of flowName and/or make sure you
+                selected the proper folder"
+                )
+            stop(errorMsg)
+            rm(errorMsg)
+        }
+        ##control dataset
         xpectr::suppress_mw(
-          flowName <- flowCore::read.FCS(
-            paste0(flowDir, "/", flowSamples[k]), transformation=FALSE
-          )
+            flowNameControl <- flowCore::read.FCS(
+                paste0(flowDir, "/", flowControl), transformation=FALSE
+            ) 
         )
         
         ##Checking to see if the user input the correct X variable
-        if(!xVariable %in% flowName@parameters@data$name){
-          stop("Your X variable is not in the dataset")
+        if(!xVariable %in% flowNameControl@parameters@data$name){
+                stop("Your X variable is not in the dataset")
         }
         
-        ds <- smoothData( flowName, xVariable, 5)
-        ds$Data <- flowSamples[k]
-        sampleDs <- rbind(
-          sampleDs,
-          ds
-        )
-      }
-      
-    }else{
-      xpectr::suppress_mw(
-        flowName <- flowCore::read.FCS(
-          paste0(flowDir, "/", flowSamples), transformation=FALSE
-        ) 
-      )
-      
-      ##Checking to see if the user input the correct X variable
-      if(!xVariable %in% flowName@parameters@data$name){
-        stop("Your X variable is not in the dataset")
-      }
-      
-      sampleDs <- smoothData(flowName, xVariable, 5)
-      sampleDs$Data <- flowSamples
-    }
-    
-    if(!is.na(flowControl)){
-      if(!flowControl %in% list.files(flowDir)){
-        stop(paste0("The flow frame ",flowControl," is not in the folder, check on the spelling of flowName and/or make sure you selected the proper folder"))
-      }
-      ##control dataset
-      xpectr::suppress_mw(
-        flowNameControl <- flowCore::read.FCS(
-          paste0(flowDir, "/", flowControl), transformation=FALSE
-        ) 
-      )
-      
-      ##Checking to see if the user input the correct X variable
-      if(!xVariable %in% flowNameControl@parameters@data$name){
-        stop("Your X variable is not in the dataset")
-      }
-      
-      controlDs <- smoothData(flowNameControl, xVariable, 5)
-      controlDs$Data <- flowControl
-      
-      if(is.na(flowColours[1])){
-        ##plotting
-        flowPlot <- ggplot() +
-          geom_line(data=controlDs, aes(x=x, y=y, group=2), size = 1, color='black')+
-          geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
-          ylab("Counts")+
-          xlab(xVariable)+
-          theme_bw()
-      }else{
+        controlDs <- .smoothData(flowNameControl, xVariable, 5)
+        controlDs$Data <- flowControl
         
-        if(length(flowColours) != length(unique(sampleDs$Data))){
-          stop("'flowColours' vector length does not match the number of unique samples in 'flowSamples'.")
-        }
-        ##plotting
-        flowPlot <- ggplot() +
-          geom_line(data=controlDs, aes(x=x, y=y, group=2), size = 1, color='black')+
-          geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
-          ylab("Counts")+
-          xlab(xVariable)+
-          scale_color_manual(values=flowColours)+
-          theme_bw()
-      }
-      
-    }else{
-      if(length(flowSamples) > 1){
         if(is.na(flowColours[1])){
-          ##plotting
-          flowPlot <- ggplot() +
-            geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
-            ylab("Counts")+
-            xlab(xVariable)+
-            theme_bw()
+            ##plotting
+            flowPlot <- ggplot() +
+                geom_line(
+                    data=controlDs,
+                    aes(x=x, y=y, group=2), size = 1, color='black'
+                )+
+                geom_line(
+                    data=sampleDs, aes(x=x, y=y, group=Data, color = Data)
+                )+
+                ylab("Counts")+
+                xlab(xVariable)+
+                theme_bw()
         }else{
-          
-          if(length(flowColours) != length(unique(sampleDs$Data))){
-            stop("'flowColours' vector length does not match the number of unique samples in 'flowSamples'.")
-          }
-          ##plotting
-          flowPlot <- ggplot() +
-            geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
-            ylab("Counts")+
-            xlab(xVariable)+
-            scale_color_manual(values=flowColours)+
-            theme_bw()
+            if(length(flowColours) != length(unique(sampleDs$Data))){
+                stop(
+                    "'flowColours' vector length does not match the number of
+                    unique samples in 'flowSamples'"
+                )
+            }
+            ##plotting
+            flowPlot <- ggplot() +
+                    geom_line(
+                            data=controlDs,
+                            aes(x=x, y=y, group=2),
+                            size = 1,
+                            color='black'
+                    )+
+                    geom_line(
+                            data=sampleDs,
+                            aes(x=x, y=y, group=Data, color = Data)
+                            )+
+                    ylab("Counts")+
+                    xlab(xVariable)+
+                    scale_color_manual(values=flowColours)+
+                    theme_bw()
         }
         
-      }else if(length(flowSamples) == 1){
-        if(is.na(flowColours[1])){
-          ##plotting
-          flowPlot <- ggplot() +
-            geom_line(data=sampleDs, aes(x=x, y=y), size = 1, color='black')+
-            ylab("Counts")+
-            xlab(xVariable)+
-            theme_bw()
-        }else{
-          
-          if(length(flowColours) != length(unique(sampleDs$Data))){
-            stop("'flowColours' vector length does not match the number of unique samples in 'flowSamples'.")
-          }
-          ##plotting
-          flowPlot <- ggplot() +
-            geom_line(data=sampleDs, aes(x=x, y=y, group=Data, color = Data))+
-            ylab("Counts")+
-            xlab(xVariable)+
-            scale_color_manual(values=flowColours)+
-            theme_bw()
-        }
+    }else{
+            if(length(flowSamples) > 1){
+                    if(is.na(flowColours[1])){
+                            ##plotting
+                            flowPlot <- ggplot() +
+                                geom_line(
+                                        data=sampleDs,
+                                        aes(x=x, y=y, group=Data, color = Data)
+                                        )+
+                                ylab("Counts")+
+                                xlab(xVariable)+
+                                theme_bw()
+                    }else{
+                            if(length(flowColours) != length(unique(sampleDs$Data))){
+                                    stop("'flowColours' vector length does not match the number of
+                                    unique samples in 'flowSamples'")
+                            }
+                        ##plotting
+                        flowPlot <- ggplot() +
+                                geom_line(
+                                        data=sampleDs,
+                                        aes(x=x, y=y, group=Data, color = Data)
+                                )+
+                                ylab("Counts")+
+                                xlab(xVariable)+
+                                scale_color_manual(values=flowColours)+
+                                theme_bw()
+                    }
+                                
+            }else if(length(flowSamples) == 1){
+                    if(is.na(flowColours[1])){
+                            ##plotting
+                            flowPlot <- ggplot() +
+                                geom_line(
+                                        data=sampleDs,
+                                        aes(x=x, y=y),
+                                        size = 1,
+                                        color='black'
+                                        )+
+                                ylab("Counts")+
+                                xlab(xVariable)+
+                                theme_bw()
+                    }else{
+                            if(length(flowColours) != 
+                                    length(unique(sampleDs$Data))
+                            ){
+                                    stop("'flowColours' vector length does not 
+                                            match the number of unique samples 
+                                                in 'flowSamples'")
+                            }
+                            ##plotting
+                            flowPlot <- ggplot() +
+                                    geom_line(
+                                            data=sampleDs,
+                                            aes(x=x, y=y, group=Data, color = Data)
+                                            )+
+                                    ylab("Counts")+
+                                    xlab(xVariable)+
+                                    scale_color_manual(values=flowColours)+
+                                    theme_bw()
+                    }
+                    
+            }
         
-      }
-      
+        }
+    }else{
+            if(!flowControl %in% list.files(flowDir)){
+                    errorMsg<-paste0("The flow frame ",flowControl," is not in
+                                        the folder, check on the spelling of
+                                        flowName and/or make sure you selected
+                                        the proper folder")
+                    stop(errorMsg)
+                    rm(errorMsg)
+            }
+            ##control dataset
+            xpectr::suppress_mw(
+                    flowNameControl <- flowCore::read.FCS(
+                            paste0(flowDir, "/", flowControl),
+                            transformation=FALSE
+                    ) 
+            )
+            
+            ##Checking to see if the user input the correct X variable
+            if(!xVariable %in% flowNameControl@parameters@data$name){
+                    stop("Your X variable is not in the dataset")
+            }
+            
+            controlDs <- .smoothData(flowNameControl, xVariable, 5)
+            controlDs$Data <- flowControl
+            
+            ##plotting
+            flowPlot <- ggplot() +
+                    geom_line(
+                            data=controlDs,
+                            aes(x=x, y=y, group=2),
+                            size = 1,
+                            color='black'
+                    )+
+                    ylab("Counts")+
+                    xlab(xVariable)+
+                    theme_bw()
     }
-  }else{
-    if(!flowControl %in% list.files(flowDir)){
-      stop(paste0("The flow frame ",flowControl," is not in the folder, check on the spelling of flowName and/or make sure you selected the proper folder"))
-    }
-    ##control dataset
-    xpectr::suppress_mw(
-      flowNameControl <- flowCore::read.FCS(
-        paste0(flowDir, "/", flowControl), transformation=FALSE
-      ) 
-    )
     
-    ##Checking to see if the user input the correct X variable
-    if(!xVariable %in% flowNameControl@parameters@data$name){
-      stop("Your X variable is not in the dataset")
-    }
     
-    controlDs <- smoothData(flowNameControl, xVariable, 5)
-    controlDs$Data <- flowControl
-    
-    ##plotting
-    flowPlot <- ggplot() +
-      geom_line(data=controlDs, aes(x=x, y=y, group=2), size = 1, color='black')+
-      ylab("Counts")+
-      xlab(xVariable)+
-      theme_bw()
-  }
-  
-  
-  return(flowPlot)
+    return(flowPlot)
 }
-
+.smoothData = function(flowDs, xVariable, smoothLevel){
+    
+    ##Get counts and breaks from histogram
+    histData <- hist(flowDs@exprs[, xVariable], breaks=256, plot=FALSE)
+    
+    ##Data that will be smoothed
+    data <- histData$counts
+    ##Apply smoothing to the counts with 'smoothLevel'
+    smoothedDs <- zoo::rollmean(data, k=smoothLevel, fill=0)
+    
+    ##Create data frame with smoothed data
+    ds <- data.frame(
+            x=histData$breaks,
+            y=c(0, smoothedDs)
+    )
+    return(ds)
+}
 

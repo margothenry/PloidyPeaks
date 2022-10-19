@@ -37,7 +37,7 @@ rectGateFlowFrame(
 data - by default TRUE}
 }
 \value{
-A .fcs of the gated data
+A .fcs of the gated data and plots of gated data
 }
 \description{
 This function will gate your raw .fcs file and save your gated data, a plot
