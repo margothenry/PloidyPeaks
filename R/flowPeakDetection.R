@@ -3097,7 +3097,7 @@ flowPeakDetection = function(
         }
         
 }
-
+ 
 ## popConfidenceInitial
 .popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
     
