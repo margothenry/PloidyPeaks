@@ -34,13 +34,11 @@ different flow frame, and the black line represents the control sample used
 for comparison (control sample is indicated by the user).
 }
 \examples{
-\dontrun{
  flowLineGraph(
-  flowControl = "FH-B11",
-  flowSamples = c("T1-D08","FH-B08", "T1-D10", "A13-E10"),
+  flowControl = "A01-A01",
+  flowSamples = c("A07-G12","A13-E06", "A02-B10", "T1-D08"),
   flowColours = c("green","blue", "red", "orange"),
   xVariable = "FITC-A",
-  flowDir = "FlowData/gated_data"
+  flowDir = paste0(system.file(package = "PloidyPeaks"), "/gated_data/")
  )
- }
 }

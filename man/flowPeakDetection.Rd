@@ -47,17 +47,15 @@ as well as a “for review” and doublet indicator. In addition a statistical
 measure of confidence for the number of sub-populations (RSE).
 }
 \examples{
-\dontrun{
 flowPeakDetection(
- xVariable = "FL1-A",
- flowDir = here("vignettes/data/gated_data"),
+ xVariable = "FITC-A",
+ flowDir = paste0(system.file(package = "PloidyPeaks"), "/gated_data/"),
  doublet = FALSE,
  saveGraph = TRUE,
  singleThreshold = 8,
  usedCellsThreshold = 86,
- maxDoubletHeight = 50,
- subsetDs = c("A01-A01", "A01-A02")
+ maxDoubletHeight = NA,
+ subsetDs = c("A01-A01", "A04-D12", "A07-G12", "A09-A02", "T1-D08")
  )
- }
-
+ 
 }

@@ -12,14 +12,12 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' peakCorrection(
 #'  xVariable = "FITC-A",
-#'  flowDir = NA,
-#'  sampleName = "A01-A01",
+#'  flowDir = paste0(system.file(package = "PloidyPeaks"), "/gated_data/"),
+#'  sampleName = "A02-B10",
 #'  numSubPop = 2
 #'  )
-#'  }
 #'
 peakCorrection = function(
     xVariable,
@@ -256,8 +254,8 @@ peakCorrection = function(
         UL = x*UL
     )
     ##Finding the peaks that are in the in (LL, UL)
-    ##These are the possible peaks that will be considered for their G1/G2 pairing
-    ##If there is more than one peak identified, we pick the tallest
+    ##These are the possible peaks that will be considered for their G1/G2 
+    ##pairing. If there is more than one peak identified, we pick the tallest
     ##of those peaks
     findingPairsDs$possiblePairX <- NA
     findingPairsDs$possiblePairY <- NA
@@ -2047,7 +2045,7 @@ peakCorrection = function(
                     abs(
                         doubletG1G2RightFlowData$y-flowDataMeans$sdG1G2Count
                     ) == min(
-                        abs(doubletG1G2RightFlowData$y-flowDataMeans$sdG1G2Count)
+                    abs(doubletG1G2RightFlowData$y-flowDataMeans$sdG1G2Count)
                     )
                 ),
             ]
@@ -3085,12 +3083,13 @@ peakCorrection = function(
                     (A + B*x + C*(x^2))*
                     (1/(sqrt(2*pi)*g1SD*(x/g1Mean))*exp(-((x-g1Mean)^2)/
                     (2*(g1SD*(x/g1Mean))^2)))+
-                    (pop1N2/(sqrt(2*pi)*g2SD)* exp(-((x-g2Mean)^2)/(2*g2SD^2)))+
+                    (pop1N2/(sqrt(2*pi)*g2SD)*exp(-((x-g2Mean)^2)/(2*g2SD^2)))+
                     (A2 + B2*x + C2*(x^2))*
                     (1/(sqrt(2*pi)*g2SD2*(x/g1Mean2))*exp(-((x-g2Mean2)^2)/
-                    (2*(g2SD2*(x/g2Mean2))^2)))+
-                    (pop2N1/(sqrt(2*pi)*g1SD2)*exp(-((x-g1Mean2)^2)/(2*g1SD2^2)))+
-                    (pop2N2/(sqrt(2*pi)*g2SD2)*exp(-((x-g2Mean2)^2)/(2*g2SD2^2))),
+                    (2*(g2SD2*(x/g2Mean2))^2)))+(pop2N1/(sqrt(2*pi)*g1SD2)*
+                    exp(-((x-g1Mean2)^2)/(2*g1SD2^2)))+
+                    (pop2N2/(sqrt(2*pi)*g2SD2)*
+                    exp(-((x-g2Mean2)^2)/(2*g2SD2^2))),
                     data=flowData,
                     start=c(
                         pop1N1=flowDataMeans01$pop1NumG1,
@@ -3646,8 +3645,8 @@ peakCorrection = function(
                 paste0(plotOutFile, "/", flowNameDs[k], '.png'),
                 width=600, height=400
             )
-          print(nlsGraph)
-          dev.off()
+            print(nlsGraph)
+            dev.off()
         }
         
         flowDataMeans01$residual3Pop <- summary(multiPopNLS)[["sigma"]]
@@ -3656,7 +3655,6 @@ peakCorrection = function(
             residualMultiDs,
             flowDataMeans01
         )
-      }
-      
-      return(residualMultiDs)
+    }
+        return(residualMultiDs)
 }

@@ -18,17 +18,17 @@ rectGateFlowSet(
 \arguments{
 \item{rawDir}{The directory of the raw .fcs data}
 
-\item{xVariable}{The fluorescence channel on the x axis - by default "FL1-A"}
+\item{xVariable}{The fluorescence channel on the x axis}
 
-\item{yVariable}{The fluorescence channel on the y axis - by default "SSC-A"}
+\item{yVariable}{The fluorescence channel on the y axis}
 
-\item{xMinValue}{The lower bound x value for the gate - by default 10000}
+\item{xMinValue}{The lower bound x value for the gate}
 
-\item{xMaxValue}{The upper bound x value for the gate - by default 900000}
+\item{xMaxValue}{The upper bound x value for the gate}
 
-\item{yMinValue}{The lower bound y value for the gate - by default 10000}
+\item{yMinValue}{The lower bound y value for the gate}
 
-\item{yMaxValue}{The upper bound y value for the gate - by default 900000}
+\item{yMaxValue}{The upper bound y value for the gate}
 
 \item{savePlot}{A side by side graph comparison the raw data and the gated
 data - by default TRUE}
@@ -42,16 +42,16 @@ This function will gate your raw flow set and save your gated data, a plot
 of your gated data, and a plot of the original data
 }
 \examples{
-\dontrun{
+\donttest{
 rectGateFlowSet(
- rawDir = NA,
- xVariable = "FL1-A",
+ rawDir = paste0(system.file(package = "PloidyPeaks"), "/raw_data"),
+ xVariable = "FITC-A",
  yVariable = "SSC-A",
- xMinValue = 10000,
- xMaxValue = 900000,
- yMinValue = 10000,
- yMaxValue = 900000,
- savePlot = TRUE
+ xMinValue = 50,
+ xMaxValue = 850,
+ yMinValue = 50,
+ yMaxValue = 850,
+ savePlot = FALSE
 )
 }
 }

@@ -34,19 +34,17 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' flowPeakDetection(
-#'  xVariable = "FL1-A",
-#'  flowDir = here("vignettes/data/gated_data"),
+#'  xVariable = "FITC-A",
+#'  flowDir = paste0(system.file(package = "PloidyPeaks"), "/gated_data/"),
 #'  doublet = FALSE,
 #'  saveGraph = TRUE,
 #'  singleThreshold = 8,
 #'  usedCellsThreshold = 86,
-#'  maxDoubletHeight = 50,
-#'  subsetDs = c("A01-A01", "A01-A02")
+#'  maxDoubletHeight = NA,
+#'  subsetDs = c("A01-A01", "A04-D12", "A07-G12", "A09-A02", "T1-D08")
 #'  )
-#'  }
-#'
+#'  
 flowPeakDetection = function(
     xVariable,
     flowDir = NA,
@@ -68,77 +66,77 @@ flowPeakDetection = function(
     ##a window will open and ask the user to pick their directory.
     ##This should be where the data is located
     if(is.na(flowDir)){
-            getwd()
-            flowDir <- tclvalue(tkchooseDirectory())
+        getwd()
+        flowDir <- tclvalue(tkchooseDirectory())
     }
     
     if(TRUE %in% is.na(subsetDs)){
-            flowSet <- list.files(flowDir)
+        flowSet <- list.files(flowDir)
     }else{
-            flowSet <- subset(
-                    list.files(flowDir),
-                    list.files(flowDir) %in% subsetDs
-            )
+        flowSet <- subset(
+            list.files(flowDir),
+            list.files(flowDir) %in% subsetDs
+        )
     }
     
     
     ##Creating a log that will be saved in the global environment
     ##This will tell you which algorithm ran and which flow frames were included
-    ##as well as an indicator of success/failure. If the algorithm fails, the user
-    ##will know which algorithm and flow framed caused it to fail
+    ##as well as an indicator of success/failure. If the algorithm fails, the
+    ##user will know which algorithm and flow framed caused it to fail
     .GlobalEnv$logDs <- data.frame(
-            matrix(nrow=0, ncol=3)
+        matrix(nrow=0, ncol=3)
     )
     colnames(logDs) <- c("Algorithm", "Data", "Success")
     
     ##Running first peak algorithm
     peakAlg1 <- .peakAlgorithm1(
-            flowDir,
-            flowSet,
-            xVariable,
-            singleThreshold
+        flowDir,
+        flowSet,
+        xVariable,
+        singleThreshold
     )
     
     ##Getting the flagged flow frames that will be passed to the next algorithm
     if(length(peakAlg1) == 2){
-            singleData <- peakAlg1[2]
-            flaggedData <- as.data.frame(peakAlg1[[1]])
-            names(flaggedData)[1] <- "data"
+        singleData <- peakAlg1[2]
+        flaggedData <- as.data.frame(peakAlg1[[1]])
+        names(flaggedData)[1] <- "data"
     }else if( length(as.data.frame(peakAlg1[[1]])) == 1){
-            singleData <- NULL
-            flaggedData <- as.data.frame(peakAlg1[[1]])
-            names(flaggedData)[1] <- "data"
+        singleData <- NULL
+        flaggedData <- as.data.frame(peakAlg1[[1]])
+        names(flaggedData)[1] <- "data"
     }else{
-            flaggedData <- NULL
-            singleData <- as.data.frame(peakAlg1[[1]])
+        flaggedData <- NULL
+        singleData <- as.data.frame(peakAlg1[[1]])
     }
     
     
     ##update progress bar
     setTxtProgressBar(pb, 1)
     
-    ##Checking if there are any flagged flow frames from the first peak algorithm
-    ##If so, the second peak algorithm will run
+    ##Checking if there are any flagged flow frames from the first peak 
+    ##algorithm. If so, the second peak algorithm will run
     if( !is.null(flaggedData) ){
             peakAlg2 <- .peakAlgorithm2(
-                    flowDir,
-                    flaggedData,
-                    xVariable,
-                    usedCellsThreshold,
-                    maxDoubletHeight
+                flowDir,
+                flaggedData,
+                xVariable,
+                usedCellsThreshold,
+                maxDoubletHeight
             )
             
             if(length(peakAlg2) == 2){
-                    finishedData <- peakAlg2[2]
-                    flaggedData <- as.data.frame(peakAlg2[[1]])
-                    names(flaggedData)[1] <- "data"
+                finishedData <- peakAlg2[2]
+                flaggedData <- as.data.frame(peakAlg2[[1]])
+                names(flaggedData)[1] <- "data"
             }else if( length(as.data.frame(peakAlg2[[1]])) == 1){
-                    finishedData <- NULL
-                    flaggedData<-as.data.frame(peakAlg2[[1]])
-                    names(flaggedData)[1] <- "data"
+                finishedData <- NULL
+                flaggedData<-as.data.frame(peakAlg2[[1]])
+                names(flaggedData)[1] <- "data"
             }else{
-                    flaggedData <- NULL
-                    finishedData<-peakAlg2[[1]]
+                flaggedData <- NULL
+                finishedData<-peakAlg2[[1]]
             }
             
             ##update progress bar
@@ -148,42 +146,42 @@ flowPeakDetection = function(
             finishedData <- NULL
             investigateData <- NULL
             .outputData(
-                    flowDir,
-                    singleData,
-                    finishedData,
-                    investigateData,
-                    xVariable,
-                    doublet,
-                    saveGraph
+                flowDir,
+                singleData,
+                finishedData,
+                investigateData,
+                xVariable,
+                doublet,
+                saveGraph
             )
             setTxtProgressBar(pb, 7)
             print("Done! - Check 'analysis' folder for results")
     }
     
     
-    ##Checking if there are any flagged flow frames from the second peak algorithm
-    ##If so, the third peak algorithm will run
+    ##Checking if there are any flagged flow frames from the second peak 
+    ##algorithm. If so, the third peak algorithm will run
     if( !is.null(flaggedData) ){
             peakAlg3 <- .peakAlgorithm3(
-                    flowDir,
-                    flaggedData,
-                    xVariable,
-                    finishedData,
-                    usedCellsThreshold,
-                    maxDoubletHeight
+                flowDir,
+                flaggedData,
+                xVariable,
+                finishedData,
+                usedCellsThreshold,
+                maxDoubletHeight
             )
             
             if(length(peakAlg3) == 2){
-                    finishedData <- peakAlg3[2]
-                    flaggedData <- as.data.frame(peakAlg3[[1]])
-                    names(flaggedData)[1] <- "data"
+                finishedData <- peakAlg3[2]
+                flaggedData <- as.data.frame(peakAlg3[[1]])
+                names(flaggedData)[1] <- "data"
             }else if( length(as.data.frame(peakAlg3[[1]])) == 1){
-                    finishedData <- finishedData
-                    flaggedData<-as.data.frame(peakAlg3[[1]])
-                    names(flaggedData)[1] <- "data"
+                finishedData <- finishedData
+                flaggedData<-as.data.frame(peakAlg3[[1]])
+                names(flaggedData)[1] <- "data"
             }else{
-                    flaggedData <- NULL
-                    finishedData<-peakAlg3[[1]]
+                flaggedData <- NULL
+                finishedData<-peakAlg3[[1]]
             }
             ##update progress bar
             setTxtProgressBar(pb, 3)
@@ -192,42 +190,42 @@ flowPeakDetection = function(
             ##update progress bar
             setTxtProgressBar(pb, 7)
             .outputData(
-                    flowDir,
-                    singleData,
-                    finishedData,
-                    investigateData,
-                    xVariable,
-                    doublet,
-                    saveGraph
+                flowDir,
+                singleData,
+                finishedData,
+                investigateData,
+                xVariable,
+                doublet,
+                saveGraph
             )
             print("Done! - Check 'analysis' folder for results")
     }
     
-    ##Checking if there are any flagged flow frames from the third peak algorithm
-    ##If so, the forth peak algorithm will run
+    ##Checking if there are any flagged flow frames from the third peak 
+    ##algorithm. If so, the forth peak algorithm will run
     if( !is.null(flaggedData) ){
             peakAlg4 <- .peakAlgorithm4(
-                    flowDir,
-                    flaggedData,
-                    xVariable,
-                    finishedData,
-                    usedCellsThreshold,
-                    maxDoubletHeight
+                flowDir,
+                flaggedData,
+                xVariable,
+                finishedData,
+                usedCellsThreshold,
+                maxDoubletHeight
             )
             if(length(peakAlg4) == 2){
-                    flaggedData <- as.data.frame(peakAlg4[[1]])
-                    investigateDataNoNA <- flaggedData %>% dplyr::filter(!is.na(x))
-                    investigateDataNoNA <- investigateDataNoNA %>%
-                            dplyr::select(-propCellsUsed)
-                    finishedData <- peakAlg4[2]
+                flaggedData <- as.data.frame(peakAlg4[[1]])
+                investigateDataNoNA <- flaggedData %>% dplyr::filter(!is.na(x))
+                investigateDataNoNA <- investigateDataNoNA %>%
+                    dplyr::select(-propCellsUsed)
+                finishedData <- peakAlg4[2]
             }else if( length(as.data.frame(peakAlg4[[1]])) == 1){
-                    finishedData <- finishedData
-                    flaggedData<-as.data.frame(peakAlg4[[1]])
-                    names(flaggedData)[1] <- "data"
+                finishedData <- finishedData
+                flaggedData<-as.data.frame(peakAlg4[[1]])
+                names(flaggedData)[1] <- "data"
             }else{
-                    flaggedData <- NULL
-                    investigateDataNoNA <- NULL
-                    finishedData <- peakAlg4[[1]]
+                flaggedData <- NULL
+                investigateDataNoNA <- NULL
+                finishedData <- peakAlg4[[1]]
             }
             
             ##update progress bar
@@ -236,13 +234,13 @@ flowPeakDetection = function(
             investigateData <- NULL
             ##update progress bar
             .outputData(
-                    flowDir,
-                    singleData,
-                    finishedData,
-                    investigateData,
-                    xVariable,
-                    doublet,
-                    saveGraph
+                flowDir,
+                singleData,
+                finishedData,
+                investigateData,
+                xVariable,
+                doublet,
+                saveGraph
             )
             setTxtProgressBar(pb, 7)
             print("Done! - Check 'analysis' folder for results")
@@ -252,35 +250,35 @@ flowPeakDetection = function(
     ##If so, the last peak algorithm will run
     if(TRUE %in% is.na(flaggedData$x)){
             peakAlg5 <- .peakAlgorithm5(
-                    flowDir,
-                    flaggedData,
-                    xVariable,
-                    investigateDataNoNA
+                flowDir,
+                flaggedData,
+                xVariable,
+                investigateDataNoNA
             )
             investigateData <- peakAlg5
     }else{
             investigateData <- investigateDataNoNA
             .outputData(
-                    flowDir,
-                    singleData,
-                    finishedData,
-                    investigateData,
-                    xVariable,
-                    doublet,
-                    saveGraph
+                flowDir,
+                singleData,
+                finishedData,
+                investigateData,
+                xVariable,
+                doublet,
+                saveGraph
             )
             setTxtProgressBar(pb, 7)
     }
     setTxtProgressBar(pb, 5)
     ##Making the dataset
     .outputData(
-            flowDir,
-            singleData,
-            finishedData,
-            investigateData,
-            xVariable,
-            doublet,
-            saveGraph
+        flowDir,
+        singleData,
+        finishedData,
+        investigateData,
+        xVariable,
+        doublet,
+        saveGraph
     )
     ##update progress bar
     print("Done! - Check 'analysis' folder for results")
@@ -362,16 +360,17 @@ flowPeakDetection = function(
                 
                 if(nrow(possiblePeaks2) == 0){
                         possiblePeaks2 <- possiblePeaks[
-                                which(possiblePeaks$y > quantile(flowData$y)[4]),
+                            which(possiblePeaks$y > quantile(flowData$y)[4]),
                         ]
                 }
                 
                 possiblePeaks3 <- .findTruePeaks(possiblePeaks2, 40, xVarMax)
                 
                 ##Ordering the peaks
-                possiblePeaks4 <- possiblePeaks3[order(possiblePeaks3$x, decreasing=FALSE),]
-                ##Removing the peaks that are identified at the extreme right side of the
-                ##Histogram
+                possiblePeaks4 <- possiblePeaks3[
+                    order(possiblePeaks3$x, decreasing=FALSE),]
+                ##Removing the peaks that are identified at the extreme
+                ## right side of the histogram
                 possiblePeaks4 <- possiblePeaks4[
                         which(possiblePeaks4$x < quantile(flowData$x)[4]), ]
                 peaksFix <- possiblePeaks4
@@ -608,7 +607,8 @@ flowPeakDetection = function(
             dplyr::filter(
                 possiblePairY > quantile(flowData$y)[4]
             )
-        possiblePeaks5 <- possiblePeaks4[!duplicated(possiblePeaks4$possiblePairY),]
+        possiblePeaks5 <- possiblePeaks4[
+            !duplicated(possiblePeaks4$possiblePairY),]
         
         if(nrow(possiblePeaks5) > 1){
             tempDs<-possiblePeaks5
@@ -1652,8 +1652,8 @@ flowPeakDetection = function(
         UL = x*UL
     )
     ##Finding the peaks that are in the in (LL, UL)
-    ##These are the possible peaks that will be considered for their G1/G2 pairing
-    ##If there is more than one peak identified, we pick the tallest
+    ##These are the possible peaks that will be considered for their G1/G2 
+    ##pairing if there is more than one peak identified, we pick the tallest
     ##of those peaks
     findingPairsDs$possiblePairX <- NA
     findingPairsDs$possiblePairY <- NA
@@ -1843,7 +1843,8 @@ flowPeakDetection = function(
             }
             midPointX = which(midPoint$x == flowData$x)
             if(xPeak2+10 > nrow(flowData) & xPeak2-10 < midPointX){
-                peakRowSmoothedRange <- flowData[seq(midPointX, nrow(flowData), 1), ]
+                peakRowSmoothedRange <- flowData[
+                    seq(midPointX, nrow(flowData), 1), ]
             }else if(xPeak2+10 > nrow(flowData) & xPeak2-10 >= midPointX){
                 peakRowSmoothedRange <- flowData[
                     seq(xPeak2-10, nrow(flowData), 1),
@@ -2136,7 +2137,10 @@ flowPeakDetection = function(
         dir.create(file.path(dirname(getwd()), subDir), showWarnings=FALSE)
         write.csv(
             finalData6,
-            paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv")
+            paste0(
+                file.path(dirname(getwd()), subDir),
+                "/ploidyPeaksOutput.csv"
+            )
         )
         
     }else if(
@@ -2385,7 +2389,7 @@ flowPeakDetection = function(
         ##algorithm
         
         ##Formatting the data from the other peak algorithms
-        finalData1<-finishedDs %>% data.frame() %>%
+        finalPart1<-finishedDs %>% data.frame() %>%
             dplyr::select(
                 -c(
                     "g3LL",
@@ -2467,7 +2471,9 @@ flowPeakDetection = function(
         ##Making wide dataset
         finalData2=finalDataG1G2 %>%
             dplyr::mutate(id=rowid(data)) %>%
-            tidyr::pivot_wider(names_from=id, values_from=c(G1, G1Count, G2, G2Count))
+            tidyr::pivot_wider(
+                names_from=id, values_from=c(G1, G1Count, G2, G2Count)
+            )
         
         ##Merging data together
         finalData3=merge(finalData2, finalDataFlags, by="data")
@@ -2769,7 +2775,7 @@ flowPeakDetection = function(
                 c(
                     subset(
                         ., 
-                            select=c(residual, residualDoublet, residualMultiple)
+                        select=c(residual, residualDoublet, residualMultiple)
                     ), na.rm=TRUE
                 )
             )
@@ -3091,13 +3097,16 @@ flowPeakDetection = function(
         dir.create(file.path(dirname(getwd()), subDir), showWarnings=FALSE)
         write.csv(
             finalData6,
-            paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv")
+            paste0(
+                file.path(dirname(getwd()), subDir),
+                "/ploidyPeaksOutput.csv"
+            )
         )
         
         }
         
 }
- 
+
 ## popConfidenceInitial
 .popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
     
@@ -3595,7 +3604,10 @@ flowPeakDetection = function(
                     abs(
                         doubletG1G2RightFlowData$y-flowDataMeans$sdG1G2Count
                     ) == min(
-                        abs(doubletG1G2RightFlowData$y-flowDataMeans$sdG1G2Count)
+                        abs(
+                            doubletG1G2RightFlowData$y-
+                            flowDataMeans$sdG1G2Count
+                        )
                         )
                 ),
             ]
@@ -3991,7 +4003,8 @@ flowPeakDetection = function(
                 ]
                 
                 if(nrow(midPointDoublet2)>1){
-                    midPointDoublet2 <- midPointDoublet2[nrow(midPointDoublet2), ]
+                    midPointDoublet2 <- midPointDoublet2[
+                        nrow(midPointDoublet2), ]
                 }
                 
                 doubletG1G2LeftFlowData <- flowData[
@@ -4359,9 +4372,12 @@ flowPeakDetection = function(
         }
         midPointLeft <- flowData[
             which(
-                abs(flowData$x-mean(c(flowDataMeans$G2_1, flowDataMeans$G1_2))) == 
-                min(
-                    abs(flowData$x-mean(c(flowDataMeans$G2_1,flowDataMeans$G1_2)))
+                abs(
+                    flowData$x-mean(c(flowDataMeans$G2_1, flowDataMeans$G1_2))
+                ) == min(
+                abs(
+                    flowData$x-mean(c(flowDataMeans$G2_1,flowDataMeans$G1_2))
+                    )
                 )
             ),
         ]
@@ -4372,9 +4388,13 @@ flowPeakDetection = function(
         
         midPointRight <- flowData[
             which(
-                abs(flowData$x-mean(c(flowDataMeans$G2_1, flowDataMeans$G2_2))) == 
-                min(
-                    abs(flowData$x-mean(c(flowDataMeans$G2_1,flowDataMeans$G2_2)))
+                abs(
+                    flowData$x-mean(c(flowDataMeans$G2_1, flowDataMeans$G2_2))
+                    ) == min(
+                    abs(
+                        flowData$x-
+                        mean(c(flowDataMeans$G2_1,flowDataMeans$G2_2))
+                    )
                 )
             ),
         ]
@@ -4609,7 +4629,8 @@ flowPeakDetection = function(
                     (A2 + B2*x + C2*(x^2))*
                     (1/(sqrt(2*pi)*g2SD2*(x/g1Mean2))*exp(-((x-g2Mean2)^2)/
                     (2*(g2SD2*(x/g2Mean2))^2)))+
-                    (pop2N2/(sqrt(2*pi)*g2SD2)* exp(-((x-g2Mean2)^2)/(2*g2SD2^2))),
+                    (pop2N2/(sqrt(2*pi)*g2SD2)*
+                    exp(-((x-g2Mean2)^2)/(2*g2SD2^2))),
                     data=flowData,
                     start=c(
                         pop1N1=flowDataMeans01$pop1NumG1,
@@ -4632,9 +4653,10 @@ flowPeakDetection = function(
                     (pop1N2/(sqrt(2*pi)*g2SD)* exp(-((x-g2Mean)^2)/(2*g2SD^2)))+
                     (A2 + B2*x + C2*(x^2))*
                     (1/(sqrt(2*pi)*g2SD2*(x/g1Mean2))*exp(-((x-g2Mean2)^2)/
-                    (2*(g2SD2*(x/g2Mean2))^2)))+
-                    (pop2N1/(sqrt(2*pi)*g1SD2)*exp(-((x-g1Mean2)^2)/(2*g1SD2^2)))+
-                    (pop2N2/(sqrt(2*pi)*g2SD2)*exp(-((x-g2Mean2)^2)/(2*g2SD2^2))),
+                    (2*(g2SD2*(x/g2Mean2))^2)))+(pop2N1/(sqrt(2*pi)*g1SD2)*
+                    exp(-((x-g1Mean2)^2)/(2*g1SD2^2)))+
+                    (pop2N2/(sqrt(2*pi)*g2SD2)*
+                    exp(-((x-g2Mean2)^2)/(2*g2SD2^2))),
                     data=flowData,
                     start=c(
                         pop1N1=flowDataMeans01$pop1NumG1,

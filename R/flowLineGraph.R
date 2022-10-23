@@ -17,15 +17,13 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #'  flowLineGraph(
-#'   flowControl = "FH-B11",
-#'   flowSamples = c("T1-D08","FH-B08", "T1-D10", "A13-E10"),
+#'   flowControl = "A01-A01",
+#'   flowSamples = c("A07-G12","A13-E06", "A02-B10", "T1-D08"),
 #'   flowColours = c("green","blue", "red", "orange"),
 #'   xVariable = "FITC-A",
-#'   flowDir = "FlowData/gated_data"
+#'   flowDir = paste0(system.file(package = "PloidyPeaks"), "/gated_data/")
 #'  )
-#'  }
 
 
 flowLineGraph = function(
@@ -55,8 +53,8 @@ flowLineGraph = function(
         for(k in seq_len(length(flowSamples))){
             if(!flowSamples[k] %in% list.files(flowDir)){
                     errorMsg<-paste0("The flow frame ",flowSamples[k]," is not
-                    in the folder, check on the spelling of flowName and/or make 
-                    sure you selected the proper folder")
+                    in the folder, check on the spelling of flowName and/or   
+                    make sure you selected the proper folder")
                     stop(errorMsg)
                     rm(errorMsg)
             }
@@ -141,82 +139,88 @@ flowLineGraph = function(
             }
             ##plotting
             flowPlot <- ggplot() +
-                    geom_line(
-                            data=controlDs,
-                            aes(x=x, y=y, group=2),
-                            size = 1,
-                            color='black'
+                geom_line(
+                    data=controlDs,
+                    aes(x=x, y=y, group=2),
+                    size = 1,
+                    color='black'
+                )+
+                geom_line(
+                    data=sampleDs,
+                    aes(x=x, y=y, group=Data, color = Data)
                     )+
-                    geom_line(
-                            data=sampleDs,
-                            aes(x=x, y=y, group=Data, color = Data)
-                            )+
-                    ylab("Counts")+
-                    xlab(xVariable)+
-                    scale_color_manual(values=flowColours)+
-                    theme_bw()
+                ylab("Counts")+
+                xlab(xVariable)+
+                scale_color_manual(values=flowColours)+
+                theme_bw()
         }
         
     }else{
             if(length(flowSamples) > 1){
                     if(is.na(flowColours[1])){
+                        ##plotting
+                        flowPlot <- ggplot() +
+                            geom_line(
+                                data=sampleDs,
+                                aes(x=x, y=y, group=Data, color = Data)
+                            )+
+                            ylab("Counts")+
+                            xlab(xVariable)+
+                            theme_bw()
+                    }else{
+                        if(
+                            length(flowColours) != length(unique(sampleDs$Data))
+                        ){
+                            stop("'flowColours' vector length does not
+                                match the number of unique samples in
+                                'flowSamples'")
+                        }
+                        ##plotting
+                        flowPlot <- ggplot() +
+                            geom_line(
+                                data=sampleDs,
+                                aes(x=x, y=y, group=Data, color = Data)
+                            )+
+                            ylab("Counts")+
+                            xlab(xVariable)+
+                            scale_color_manual(values=flowColours)+
+                            theme_bw()
+                    }
+                                
+            }else if(length(flowSamples) == 1){
+                    if(is.na(flowColours[1])){
+                        ##plotting
+                        flowPlot <- ggplot() +
+                            geom_line(
+                                data=sampleDs,
+                                aes(x=x, y=y),
+                                size = 1,
+                                color='black'
+                            )+
+                            ylab("Counts")+
+                            xlab(xVariable)+
+                            theme_bw()
+                    }else{
+                            if(length(flowColours) != 
+                                    length(unique(sampleDs$Data))
+                            ){
+                                stop("'flowColours' vector length does not 
+                                        match the number of unique samples 
+                                            in 'flowSamples'")
+                            }
                             ##plotting
                             flowPlot <- ggplot() +
                                 geom_line(
-                                        data=sampleDs,
-                                        aes(x=x, y=y, group=Data, color = Data)
-                                        )+
-                                ylab("Counts")+
-                                xlab(xVariable)+
-                                theme_bw()
-                    }else{
-                            if(length(flowColours) != length(unique(sampleDs$Data))){
-                                    stop("'flowColours' vector length does not match the number of
-                                    unique samples in 'flowSamples'")
-                            }
-                        ##plotting
-                        flowPlot <- ggplot() +
-                                geom_line(
-                                        data=sampleDs,
-                                        aes(x=x, y=y, group=Data, color = Data)
+                                    data=sampleDs,
+                                    aes(
+                                        x=x, y=y,
+                                        group=Data, color = Data
+                                    )
                                 )+
                                 ylab("Counts")+
                                 xlab(xVariable)+
                                 scale_color_manual(values=flowColours)+
                                 theme_bw()
-                    }
-                                
-            }else if(length(flowSamples) == 1){
-                    if(is.na(flowColours[1])){
-                            ##plotting
-                            flowPlot <- ggplot() +
-                                geom_line(
-                                        data=sampleDs,
-                                        aes(x=x, y=y),
-                                        size = 1,
-                                        color='black'
-                                        )+
-                                ylab("Counts")+
-                                xlab(xVariable)+
-                                theme_bw()
-                    }else{
-                            if(length(flowColours) != 
-                                    length(unique(sampleDs$Data))
-                            ){
-                                    stop("'flowColours' vector length does not 
-                                            match the number of unique samples 
-                                                in 'flowSamples'")
-                            }
-                            ##plotting
-                            flowPlot <- ggplot() +
-                                    geom_line(
-                                            data=sampleDs,
-                                            aes(x=x, y=y, group=Data, color = Data)
-                                            )+
-                                    ylab("Counts")+
-                                    xlab(xVariable)+
-                                    scale_color_manual(values=flowColours)+
-                                    theme_bw()
                     }
                     
             }

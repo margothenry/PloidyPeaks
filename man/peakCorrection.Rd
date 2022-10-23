@@ -24,13 +24,11 @@ peakCorrection is a function created for the user to rerun the analysis on
 a sample with a certain number of subpopulations.
 }
 \examples{
-\dontrun{
 peakCorrection(
  xVariable = "FITC-A",
- flowDir = NA,
- sampleName = "A01-A01",
+ flowDir = paste0(system.file(package = "PloidyPeaks"), "/gated_data/"),
+ sampleName = "A02-B10",
  numSubPop = 2
  )
- }
 
 }

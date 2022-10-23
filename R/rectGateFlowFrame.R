@@ -5,12 +5,12 @@
 #'
 #' @param rawDir The directory of the raw .fcs data
 #' @param flowName The name of the .fcs file
-#' @param xVariable The fluorescence channel on the x axis - by default "FL1-A"
-#' @param yVariable The fluorescence channel on the y axis - by default "SSC-A"
-#' @param xMinValue The lower bound x value for the gate - by default 10000
-#' @param xMaxValue The upper bound x value for the gate - by default 900000
-#' @param yMinValue The lower bound y value for the gate - by default 10000
-#' @param yMaxValue The upper bound y value for the gate - by default 900000
+#' @param xVariable The fluorescence channel on the x axis
+#' @param yVariable The fluorescence channel on the y axis
+#' @param xMinValue The lower bound x value for the gate
+#' @param xMaxValue The upper bound x value for the gate
+#' @param yMinValue The lower bound y value for the gate
+#' @param yMaxValue The upper bound y value for the gate
 #' @param savePlot A side by side graph comparison the raw data and the gated
 #'  data - by default TRUE
 #'
@@ -22,19 +22,17 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' rectGateFlowFrame(
-#'  rawDir = NA,
-#'  flowName = "A10-t0.fcs",
-#'  xVariable = "FL1-A",
+#'  rawDir = paste0(system.file(package = "PloidyPeaks"), "/raw_data/"),
+#'  flowName = "A01-A01",
+#'  xVariable = "FITC-A",
 #'  yVariable = "SSC-A",
-#'  xMinValue = 10000,
-#'  xMaxValue = 900000,
-#'  yMinValue = 10000,
-#'  yMaxValue = 900000,
+#'  xMinValue = 50,
+#'  xMaxValue = 850,
+#'  yMinValue = 50,
+#'  yMaxValue = 850,
 #'  savePlot = TRUE
 #')
-#'}
 #
 rectGateFlowFrame = function(
     rawDir = NA,
@@ -62,13 +60,14 @@ rectGateFlowFrame = function(
     
     if(!flowName %in% list.files(rawDir)){
         errorMsg<-paste0(
-          "The flow frame ",flowName," is not in the folder, check on the spelling
-          of flowName and/or make sure you selected the proper folder"
-          )
+            "The flow frame ",flowName," is not in the folder, check on the
+            spelling of flowName and/or make sure you selected the proper
+            folder"
+        )
         stop(errorMsg)
         rm(errorMsg)
     }
-  
+    
     ##Reading in flow data
     xpectr::suppress_mw(
         flowData <- flowCore::read.FCS(
@@ -104,15 +103,15 @@ rectGateFlowFrame = function(
     
     if(yMaxValue > max(flowData@exprs[,yVariable])){
         stop(
-           "Your yMaxValue exceeds the range of the flow frame, consider
-           a new value"
+            "Your yMaxValue exceeds the range of the flow frame, consider
+            a new value"
         )
     }
     
     if(yMinValue < min(flowData@exprs[,yVariable])){
         stop(
-           "Your yMinValue exceeds the range of the flow frame, consider
-           a new value"
+            "Your yMinValue exceeds the range of the flow frame, consider
+            a new value"
         )
     }
     
@@ -120,12 +119,12 @@ rectGateFlowFrame = function(
     ##Creating the gate
     autoGate <- paste0(
         'rectGate <- flowCore::rectangleGate(
-              filterId=\"Fluorescence Region\",\"',
+        filterId=\"Fluorescence Region\",\"',
         xVariable,'\" = c(',xMinValue,',', xMaxValue,'),\"',
         yVariable, '\" = c(',yMinValue,',', yMaxValue,')
-            )'
+        )'
     )
-  
+    
     eval(parse(text=autoGate))
     
     ##Subsetting the data that is in the gate
@@ -135,7 +134,7 @@ rectGateFlowFrame = function(
         100 - (
         length(gatedFlowData@exprs[, xVariable]) /
         length(flowData@exprs[, xVariable]))*100, 1
-      )
+    )
     print( paste0(numCellsGatedOut, "% of the cells were gated out") )
     ##Creating directories to save the data
     setwd(rawDir)
@@ -150,26 +149,38 @@ rectGateFlowFrame = function(
         gatePlotDir <- "plotted_data"
         dir.create(file.path(dirname(rawDir), gatePlotDir), showWarnings=FALSE)
         plotOutFile <- file.path(dirname(rawDir), gatePlotDir)
-    
+        
         flowData@description[["GUID"]] <- "Raw data"
         rawDataPlot <- ggcyto::autoplot(
-            flowData, xVariable, yVariable, bins=64
-          ) + ggcyto::geom_gate(rectGate) + 
-          ggcyto::ggcyto_par_set(limits="data")
+            flowData, xVariable, yVariable, bins=64) + 
+            ggcyto::geom_gate(rectGate) + 
+            ggcyto::ggcyto_par_set(limits="data")
         gatedFlowData@description[["GUID"]] <- "Gated data"
         gatedDataPlot <- xpectr::suppress_mw(
-            ggcyto::autoplot(
-                gatedFlowData, xVariable, yVariable,  bins=64
-            ) + ggcyto::ggcyto_par_set(limits="instrument")
+            ggcyto::autoplot(gatedFlowData, xVariable, yVariable,  bins=64) + 
+            ggcyto::ggcyto_par_set(limits="instrument")
         )
         combinedPlot <- ggcyto::as.ggplot(rawDataPlot) + 
-          ggcyto::as.ggplot(gatedDataPlot)
+            ggcyto::as.ggplot(gatedDataPlot)
     
         gatedFlowData@description[["GUID"]] <- flowName
         png(paste0(plotOutFile, "/", flowName, '.png'), width=600, height=400)
         print(combinedPlot)
         dev.off()
-  
+        
+    }else{
+        flowData@description[["GUID"]] <- "Raw data"
+        rawDataPlot <- ggcyto::autoplot(
+            flowData, xVariable, yVariable, bins=64) + 
+            ggcyto::geom_gate(rectGate) + 
+            ggcyto::ggcyto_par_set(limits="data")
+        gatedFlowData@description[["GUID"]] <- "Gated data"
+        gatedDataPlot <- xpectr::suppress_mw(
+            ggcyto::autoplot(gatedFlowData, xVariable, yVariable,  bins=64) + 
+                ggcyto::ggcyto_par_set(limits="instrument")
+        )
+        combinedPlot <- ggcyto::as.ggplot(rawDataPlot) + 
+            ggcyto::as.ggplot(gatedDataPlot)
     }
-  return(combinedPlot)
+    return(combinedPlot)
 }
