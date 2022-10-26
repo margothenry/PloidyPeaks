@@ -88,7 +88,7 @@ peakCorrection = function(
         while(!nrow(possiblePeaks5) == numSubPop){
             range_increase = range_increase + range_increase_val
             
-            flowData <- .smoothData( flowName, xVariable, 4)
+            flowData <- .smoothData( flowName, xVariable, 5)
             
             
             localPeaks <- detect_localmaxima(flowData$y, 3)
@@ -97,7 +97,6 @@ peakCorrection = function(
             possiblePeaks2 <- possiblePeaks[
                 which(possiblePeaks$y > max(possiblePeaks$y)/20),
             ]
-            
             plot(flowData, type = "l", main = "Local Peaks")
             points(possiblePeaks2$x, possiblePeaks2$y, col = "red", pch = 19)
             
@@ -128,7 +127,7 @@ peakCorrection = function(
         possiblePeaks5,
         possiblePeaks,
         10*multiplier,
-        15*multiplier
+        10*multiplier
     )
     
     tempDs<-possiblePeaks6
