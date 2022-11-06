@@ -2021,7 +2021,10 @@ flowPeakDetection = function(
             )
         }
         
-        if(TRUE %in% grepl("_2", names(finalData3))){
+        if(
+            TRUE %in% grepl("_2", names(finalData3)) & 
+            !TRUE %in% grepl("_3", names(finalData3))
+        ){
             twoPopRSE<-.popConfidence2Pop(
                 flowDir, ds=finalData3, xVariable, saveGraph
             )
@@ -2092,6 +2095,17 @@ flowPeakDetection = function(
                 finalData5[i,]$investigate = 1
             }
             
+        }
+        
+        ##Flagging to investigate if the RSE is considered an outlier       
+        outlierRSE = as.numeric(
+            quantile(finalData5$finalRSE)[4]+1.5*IQR(finalData5$finalRSE)
+        )
+        
+        for(i in seq_len(nrow(finalData5))){
+            if( finalData5$finalRSE[i] >= outlierRSE ){
+                finalData5[i,]$investigate = 1
+            }
         }
         
         ##adding which algorithm analyzed the flow frame
@@ -2256,7 +2270,10 @@ flowPeakDetection = function(
             )
         }
         
-        if(TRUE %in% grepl("_2", names(finalData3))){
+        if(
+            TRUE %in% grepl("_2", names(finalData3)) & 
+            !TRUE %in% grepl("_3", names(finalData3))
+        ){
             twoPopRSE<-.popConfidence2Pop(
                 flowDir, ds=finalData3, xVariable, saveGraph
             )
@@ -2330,6 +2347,17 @@ flowPeakDetection = function(
                 finalData5[i,]$investigate = 1
             }
             
+        }
+        
+        ##Flagging to investigate if the RSE is considered an outlier       
+        outlierRSE = as.numeric(
+            quantile(finalData5$finalRSE)[4]+1.5*IQR(finalData5$finalRSE)
+        )
+        
+        for(i in seq_len(nrow(finalData5))){
+            if( finalData5$finalRSE[i] >= outlierRSE ){
+                finalData5[i,]$investigate = 1
+            }
         }
         
         ##adding which algorithm analyzed the flow frame
@@ -2501,7 +2529,10 @@ flowPeakDetection = function(
             )
         }
         
-        if(TRUE %in% grepl("_2", names(finalData3))){
+        if(
+            TRUE %in% grepl("_2", names(finalData3)) & 
+            !TRUE %in% grepl("_3", names(finalData3))
+        ){
             twoPopRSE<-.popConfidence2Pop(
                 flowDir, ds=finalData3, xVariable, saveGraph
             )
@@ -2576,6 +2607,17 @@ flowPeakDetection = function(
                 finalData5[i,]$investigate = 1
             }
             
+        }
+        
+        ##Flagging to investigate if the RSE is considered an outlier       
+        outlierRSE = as.numeric(
+            quantile(finalData5$finalRSE)[4]+1.5*IQR(finalData5$finalRSE)
+        )
+        
+        for(i in seq_len(nrow(finalData5))){
+            if( finalData5$finalRSE[i] >= outlierRSE ){
+                finalData5[i,]$investigate = 1
+            }
         }
         
         ##adding which algorithm analyzed the flow frame
@@ -2724,7 +2766,10 @@ flowPeakDetection = function(
             )
         }
         
-        if(TRUE %in% grepl("_2", names(finalData3))){
+        if(
+            TRUE %in% grepl("_2", names(finalData3)) & 
+            !TRUE %in% grepl("_3", names(finalData3))
+        ){
             twoPopRSE<-.popConfidence2Pop(
                 flowDir, ds=finalData3, xVariable, saveGraph
             )
@@ -2797,6 +2842,17 @@ flowPeakDetection = function(
                 finalData5[i,]$investigate = 1
             }
             
+        }
+        
+        ##Flagging to investigate if the RSE is considered an outlier       
+        outlierRSE = as.numeric(
+            quantile(finalData5$finalRSE)[4]+1.5*IQR(finalData5$finalRSE)
+        )
+        
+        for(i in seq_len(nrow(finalData5))){
+            if( finalData5$finalRSE[i] >= outlierRSE ){
+                finalData5[i,]$investigate = 1
+            }
         }
         
         ##adding which algorithm analyzed the flow frame
@@ -2977,7 +3033,10 @@ flowPeakDetection = function(
             )
         }
         
-        if(TRUE %in% grepl("_2", names(finalData3))){
+        if(
+            TRUE %in% grepl("_2", names(finalData3)) & 
+            !TRUE %in% grepl("_3", names(finalData3))
+        ){
             twoPopRSE<-.popConfidence2Pop(
                 flowDir, ds=finalData3, xVariable, saveGraph
             )
@@ -3050,6 +3109,17 @@ flowPeakDetection = function(
                 finalData5[i,]$investigate = 1
             }
             
+        }
+        
+        ##Flagging to investigate if the RSE is considered an outlier       
+        outlierRSE = as.numeric(
+            quantile(finalData5$finalRSE)[4]+1.5*IQR(finalData5$finalRSE)
+        )
+        
+        for(i in seq_len(nrow(finalData5))){
+            if( finalData5$finalRSE[i] >= outlierRSE ){
+                finalData5[i,]$investigate = 1
+            }
         }
         
         ##adding which algorithm analyzed the flow frame
