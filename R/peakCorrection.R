@@ -86,36 +86,39 @@ peakCorrection = function(
         range_increase<-0
         range_increase_val = 0.2
         while(!nrow(possiblePeaks5) == numSubPop){
-            range_increase = range_increase + range_increase_val
-            
+            range_increase <- range_increase + range_increase_val
             flowData <- .smoothData( flowName, xVariable, 5)
-            
-            
-            localPeaks <- detect_localmaxima(flowData$y, 3)
-            possiblePeaks <- flowData[localPeaks, ]
-            
+                
             possiblePeaks2 <- possiblePeaks[
                 which(possiblePeaks$y > max(possiblePeaks$y)/20),
             ]
-            plot(flowData, type = "l", main = "Local Peaks")
-            points(possiblePeaks2$x, possiblePeaks2$y, col = "red", pch = 19)
             
             possiblePeaks3 <- .findTruePeaks(possiblePeaks2, 40, xVarMax)
-            
-            plot(flowData, type = "l", main = "Local Peaks")
-            points(possiblePeaks3$x, possiblePeaks3$y, col = "red", pch = 19)
-            
             possiblePeaks4 <- .findPairs(
                 possiblePeaks3, 
                 possiblePeaks3, 
                 1.75-range_increase, 
                 2.2+range_increase
             )
-            possiblePeaks4 <- possiblePeaks4 %>%
+            
+            possiblePeaks5 <- possiblePeaks4 %>%
                 tidyr::drop_na() 
-            possiblePeaks5 <- possiblePeaks4[
-                !duplicated(possiblePeaks4$possiblePairY),
+            possiblePeaks5 <- possiblePeaks5[
+                !duplicated(possiblePeaks5$possiblePairY),
             ]
+            
+            if(
+                possiblePeaks4$LL[1] < min(flowData$x) | 
+                possiblePeaks4$UL[1] > max(flowData$x)
+            ){
+                errorMsg<-paste0(
+                    "Could not find ",
+                    numSubPop,
+                    " subpopulations in this sample")
+                stop(errorMsg)
+                rm(errorMsg)
+            }
+            
         }
     }else if(nrow(possiblePeaks5) > numSubPop){
         possiblePeaks5<-possiblePeaks5[seq_len(numSubPop), ] 
