@@ -8,7 +8,7 @@
 #' @param sampleName the name of the sample the user wants to analyze
 #' @param numSubPop the number of subpopulations the user wants
 #'  the algorithm to identify
-#' @return a .csv with information abour each sample and nls graphs
+#' @return a .csv with information about each sample and nls graphs
 #' @export
 #'
 #' @examples
@@ -553,7 +553,8 @@ peakCorrection = function(
     
     ##Flagging to investigate if the RSE is considered an outlier       
     outlierRSE = as.numeric(
-        quantile(finalData5$finalRSE)[4]+1.5*IQR(finalData5$finalRSE)
+        quantile(finalData5$finalRSE)[4]+
+        1.5*stats::IQR(finalData5$finalRSE)
     )
     
     for(i in seq_len(nrow(finalData5))){
@@ -769,7 +770,7 @@ peakCorrection = function(
     )
     
     finalData5<-finalData4 %>% dplyr::mutate(
-        finalRSE=do.callSS(
+        finalRSE=do.call(
             pmin, 
             c(
                 subset(.,
@@ -802,7 +803,8 @@ peakCorrection = function(
     
     ##Flagging to investigate if the RSE is considered an outlier       
     outlierRSE = as.numeric(
-        quantile(finalData5$finalRSE)[4]+1.5*IQR(finalData5$finalRSE)
+        quantile(finalData5$finalRSE)[4]+
+        1.5*stats::IQR(finalData5$finalRSE)
     )
     
     for(i in seq_len(nrow(finalData5))){
@@ -1062,7 +1064,8 @@ peakCorrection = function(
     
     ##Flagging to investigate if the RSE is considered an outlier       
     outlierRSE = as.numeric(
-        quantile(finalData5$finalRSE)[4]+1.5*IQR(finalData5$finalRSE)
+        quantile(finalData5$finalRSE)[4]+
+        1.5*stats::IQR(finalData5$finalRSE)
     )
     
     for(i in seq_len(nrow(finalData5))){
@@ -1295,7 +1298,8 @@ peakCorrection = function(
     
     ##Flagging to investigate if the RSE is considered an outlier       
     outlierRSE = as.numeric(
-        quantile(finalData5$finalRSE)[4]+1.5*IQR(finalData5$finalRSE)
+        quantile(finalData5$finalRSE)[4]+
+        1.5*stats::IQR(finalData5$finalRSE)
     )
     
     for(i in seq_len(nrow(finalData5))){
@@ -1559,7 +1563,8 @@ peakCorrection = function(
     
     ##Flagging to investigate if the RSE is considered an outlier       
     outlierRSE = as.numeric(
-        quantile(finalData5$finalRSE)[4]+1.5*IQR(finalData5$finalRSE)
+        quantile(finalData5$finalRSE)[4]+
+        1.5*stats::IQR(finalData5$finalRSE)
     )
     
     for(i in seq_len(nrow(finalData5))){

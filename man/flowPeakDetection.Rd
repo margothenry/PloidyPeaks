@@ -36,7 +36,7 @@ the algorithm will find a value based on the other peaks}
 do not want to analyse the full dataset. Default value is NA}
 }
 \value{
-a .csv with information abour each sample and nls graphs
+a .csv with information about each sample and nls graphs
 }
 \description{
 The wrapper function flowPeakDetection is the main function that consists of

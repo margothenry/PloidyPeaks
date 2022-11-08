@@ -17,7 +17,7 @@ peakCorrection(xVariable, flowDir = NA, sampleName, numSubPop = 2)
 the algorithm to identify}
 }
 \value{
-a .csv with information abour each sample and nls graphs
+a .csv with information about each sample and nls graphs
 }
 \description{
 peakCorrection is a function created for the user to rerun the analysis on
