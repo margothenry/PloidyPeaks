@@ -161,6 +161,8 @@ rectGateFlowSet = function(
             )
             print(combinedPlot)
             dev.off()
+        }else{
+            gatedFlowData@description[["GUID"]] <- frameName
         }
         setTxtProgressBar(pb, i)
     }

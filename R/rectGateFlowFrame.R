@@ -129,6 +129,7 @@ rectGateFlowFrame = function(
     
     ##Subsetting the data that is in the gate
     gatedFlowData <- flowCore::Subset(flowData, rectGate)
+    gatedFlowData@description[["GUID"]] <- flowName
     ##Finding the % of cells gated out
     numCellsGatedOut <-  round(
         100 - (
@@ -181,6 +182,7 @@ rectGateFlowFrame = function(
         )
         combinedPlot <- ggcyto::as.ggplot(rawDataPlot) + 
             ggcyto::as.ggplot(gatedDataPlot)
+        gatedFlowData@description[["GUID"]] <- flowName
     }
     return(combinedPlot)
 }

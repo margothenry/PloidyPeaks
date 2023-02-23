@@ -63,7 +63,7 @@ peakCorrection = function(
     }
     
     # Smoothing Data
-    flowData<-.smoothData( flowName, xVariable, 5)
+    flowData<-.smoothData( flowName, xVariable, 4)
     
     # Applying peak algorithm
     localPeaks<-detect_localmaxima(flowData$y, 3)
@@ -74,7 +74,7 @@ peakCorrection = function(
     ]
     
     xVarMax <- max(flowData$x)
-    possiblePeaks3<-.findTruePeaks(possiblePeaks2, 40, xVarMax)
+    possiblePeaks3<-.findTruePeaks(possiblePeaks2, 50, xVarMax)
     
     possiblePeaks4<-.findPairs(possiblePeaks3, possiblePeaks3, 1.75, 2.2)
     possiblePeaks4<-possiblePeaks4 %>%
@@ -87,13 +87,13 @@ peakCorrection = function(
         range_increase_val = 0.2
         while(!nrow(possiblePeaks5) == numSubPop){
             range_increase <- range_increase + range_increase_val
-            flowData <- .smoothData( flowName, xVariable, 5)
+            flowData <- .smoothData( flowName, xVariable, 3)
                 
             possiblePeaks2 <- possiblePeaks[
                 which(possiblePeaks$y > max(possiblePeaks$y)/20),
             ]
             
-            possiblePeaks3 <- .findTruePeaks(possiblePeaks2, 40, xVarMax)
+            possiblePeaks3 <- .findTruePeaks(possiblePeaks2, 50, xVarMax)
             possiblePeaks4 <- .findPairs(
                 possiblePeaks3, 
                 possiblePeaks3, 

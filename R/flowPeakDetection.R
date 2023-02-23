@@ -1340,7 +1340,7 @@ flowPeakDetection = function(
         }
 
         if(
-            possiblePeaks8$propCellsUsed[1] >= 80 &
+            possiblePeaks8$propCellsUsed[1] >= 75 &
             !is.na(possiblePeaks8$propCellsUsed[1])
         ){
             possiblePeaks9 <- possiblePeaks8 %>% dplyr::mutate(
@@ -2021,17 +2021,22 @@ flowPeakDetection = function(
             )
         }
         
-        if(
-            TRUE %in% grepl("_2", names(finalData3)) & 
-            !TRUE %in% grepl("_3", names(finalData3))
-        ){
-            twoPopRSE<-.popConfidence2Pop(
-                flowDir, ds=finalData3, xVariable, saveGraph
-            )
-        }else{
-            twoPopRSE<-finalData3 %>% dplyr::mutate(
-                residual2Pop=NA
-            )
+        if(TRUE %in% grepl("_2", names(finalData3))){
+            if(TRUE %in% grepl("_3", names(finalData3))){
+                ds1<-finalData3 %>% dplyr::filter(is.na(G1_3))    
+            }else{
+                ds1<-finalData3
+            }
+            
+            if(TRUE %in% !is.na(ds1$G1_2)){
+                twoPopRSE<-.popConfidence2Pop(
+                    flowDir, ds=ds1, xVariable, saveGraph
+                )
+            }else{
+                twoPopRSE<-finalData3 %>% dplyr::mutate(
+                    residual2Pop=NA
+                )
+            }
         }
         
         if(TRUE %in% grepl("_3", names(finalData3))){
@@ -2271,17 +2276,22 @@ flowPeakDetection = function(
             )
         }
         
-        if(
-            TRUE %in% grepl("_2", names(finalData3)) & 
-            !TRUE %in% grepl("_3", names(finalData3))
-        ){
-            twoPopRSE<-.popConfidence2Pop(
-                flowDir, ds=finalData3, xVariable, saveGraph
-            )
-        }else{
-            twoPopRSE<-finalData3 %>% dplyr::mutate(
-                residual2Pop=NA
-            )
+        if(TRUE %in% grepl("_2", names(finalData3))){
+            if(TRUE %in% grepl("_3", names(finalData3))){
+                ds1<-finalData3 %>% dplyr::filter(is.na(G1_3))    
+            }else{
+                ds1<-finalData3
+            }
+            
+            if(TRUE %in% !is.na(ds1$G1_2)){
+                twoPopRSE<-.popConfidence2Pop(
+                    flowDir, ds=ds1, xVariable, saveGraph
+                )
+            }else{
+                twoPopRSE<-finalData3 %>% dplyr::mutate(
+                    residual2Pop=NA
+                )
+            }
         }
         
         if(TRUE %in% grepl("_3", names(finalData3))){
@@ -2531,17 +2541,22 @@ flowPeakDetection = function(
             )
         }
         
-        if(
-            TRUE %in% grepl("_2", names(finalData3)) & 
-            !TRUE %in% grepl("_3", names(finalData3))
-        ){
-            twoPopRSE<-.popConfidence2Pop(
-                flowDir, ds=finalData3, xVariable, saveGraph
-            )
-        }else{
-            twoPopRSE<-finalData3 %>% dplyr::mutate(
-                residual2Pop=NA
-            )
+        if(TRUE %in% grepl("_2", names(finalData3))){
+            if(TRUE %in% grepl("_3", names(finalData3))){
+                ds1<-finalData3 %>% dplyr::filter(is.na(G1_3))    
+            }else{
+                ds1<-finalData3
+            }
+            
+            if(TRUE %in% !is.na(ds1$G1_2)){
+                twoPopRSE<-.popConfidence2Pop(
+                    flowDir, ds=ds1, xVariable, saveGraph
+                )
+            }else{
+                twoPopRSE<-finalData3 %>% dplyr::mutate(
+                    residual2Pop=NA
+                )
+            }
         }
         
         if(TRUE %in% grepl("_3", names(finalData3))){
@@ -2769,19 +2784,23 @@ flowPeakDetection = function(
             )
         }
         
-        if(
-            TRUE %in% grepl("_2", names(finalData3)) & 
-            !TRUE %in% grepl("_3", names(finalData3))
-        ){
-            twoPopRSE<-.popConfidence2Pop(
-                flowDir, ds=finalData3, xVariable, saveGraph
-            )
-        }else{
-            twoPopRSE<-finalData3 %>% dplyr::mutate(
-                residual2Pop=NA
-            )
-        }
-        
+        if(TRUE %in% grepl("_2", names(finalData3))){
+            if(TRUE %in% grepl("_3", names(finalData3))){
+                ds1<-finalData3 %>% dplyr::filter(is.na(G1_3))    
+            }else{
+                ds1<-finalData3
+            }
+            
+            if(TRUE %in% !is.na(ds1$G1_2)){
+                twoPopRSE<-.popConfidence2Pop(
+                    flowDir, ds=ds1, xVariable, saveGraph
+                )
+            }else{
+                twoPopRSE<-finalData3 %>% dplyr::mutate(
+                    residual2Pop=NA
+                )
+            }
+        }  
         if(TRUE %in% grepl("_3", names(finalData3))){
             threePopRSE<-.popConfidence3Pop(
                 flowDir, ds=finalData3, xVariable, saveGraph
@@ -3037,17 +3056,22 @@ flowPeakDetection = function(
             )
         }
         
-        if(
-            TRUE %in% grepl("_2", names(finalData3)) & 
-            !TRUE %in% grepl("_3", names(finalData3))
-        ){
-            twoPopRSE<-.popConfidence2Pop(
-                flowDir, ds=finalData3, xVariable, saveGraph
-            )
-        }else{
-            twoPopRSE<-finalData3 %>% dplyr::mutate(
-                residual2Pop=NA
-            )
+        if(TRUE %in% grepl("_2", names(finalData3))){
+            if(TRUE %in% grepl("_3", names(finalData3))){
+                ds1<-finalData3 %>% dplyr::filter(is.na(G1_3))    
+            }else{
+                ds1<-finalData3
+            }
+            
+            if(TRUE %in% !is.na(ds1$G1_2)){
+                twoPopRSE<-.popConfidence2Pop(
+                    flowDir, ds=ds1, xVariable, saveGraph
+                )
+            }else{
+                twoPopRSE<-finalData3 %>% dplyr::mutate(
+                    residual2Pop=NA
+                )
+            }
         }
         
         if(TRUE %in% grepl("_3", names(finalData3))){
@@ -4319,12 +4343,6 @@ flowPeakDetection = function(
     ##Removing NOTE 'no visible binding for global variable'
     G1_1<-G2_1<-G1Count_1<-G2Count_1<-x<-y<-NULL
     G1_2<-G2_2<-G1_3<-G1Count_2<-G2Count_2<-NULL
-    
-    if(TRUE %in% grepl("_3", names(ds))){
-        ds1<-ds %>% dplyr::filter(is.na(G1_3))    
-    }else{
-        ds1<-ds
-    }
     
     modelData <- ds1 %>% dplyr::select(
         data,
