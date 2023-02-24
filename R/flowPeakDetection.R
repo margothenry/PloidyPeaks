@@ -99,7 +99,7 @@ flowPeakDetection = function(
     
     ##Getting the flagged flow frames that will be passed to the next algorithm
     if(length(peakAlg1) == 2){
-        singleData <- peakAlg1[2]
+        singleData <- peakAlg1[[2]]
         flaggedData <- as.data.frame(peakAlg1[[1]])
         names(flaggedData)[1] <- "data"
     }else if( length(as.data.frame(peakAlg1[[1]])) == 1){
@@ -127,7 +127,7 @@ flowPeakDetection = function(
             )
             
             if(length(peakAlg2) == 2){
-                finishedData <- peakAlg2[2]
+                finishedData <- peakAlg2[[2]]
                 flaggedData <- as.data.frame(peakAlg2[[1]])
                 names(flaggedData)[1] <- "data"
             }else if( length(as.data.frame(peakAlg2[[1]])) == 1){
@@ -172,7 +172,7 @@ flowPeakDetection = function(
             )
             
             if(length(peakAlg3) == 2){
-                finishedData <- peakAlg3[2]
+                finishedData <- peakAlg3[[2]]
                 flaggedData <- as.data.frame(peakAlg3[[1]])
                 names(flaggedData)[1] <- "data"
             }else if( length(as.data.frame(peakAlg3[[1]])) == 1){
@@ -217,7 +217,7 @@ flowPeakDetection = function(
                 investigateDataNoNA <- flaggedData %>% dplyr::filter(!is.na(x))
                 investigateDataNoNA <- investigateDataNoNA %>%
                     dplyr::select(-propCellsUsed)
-                finishedData <- peakAlg4[2]
+                finishedData <- peakAlg4[[2]]
             }else if( length(as.data.frame(peakAlg4[[1]])) == 1){
                 finishedData <- finishedData
                 flaggedData<-as.data.frame(peakAlg4[[1]])
@@ -2037,6 +2037,10 @@ flowPeakDetection = function(
                     residual2Pop=NA
                 )
             }
+        }else{
+            twoPopRSE<-finalData3 %>% dplyr::mutate(
+                residual2Pop=NA
+            )
         }
         
         if(TRUE %in% grepl("_3", names(finalData3))){
@@ -2292,6 +2296,10 @@ flowPeakDetection = function(
                     residual2Pop=NA
                 )
             }
+        }else{
+            twoPopRSE<-finalData3 %>% dplyr::mutate(
+                residual2Pop=NA
+            )
         }
         
         if(TRUE %in% grepl("_3", names(finalData3))){
@@ -2557,6 +2565,10 @@ flowPeakDetection = function(
                     residual2Pop=NA
                 )
             }
+        }else{
+            twoPopRSE<-finalData3 %>% dplyr::mutate(
+                residual2Pop=NA
+            )
         }
         
         if(TRUE %in% grepl("_3", names(finalData3))){
@@ -2800,6 +2812,10 @@ flowPeakDetection = function(
                     residual2Pop=NA
                 )
             }
+        }else{
+            twoPopRSE<-finalData3 %>% dplyr::mutate(
+                residual2Pop=NA
+            )
         }  
         if(TRUE %in% grepl("_3", names(finalData3))){
             threePopRSE<-.popConfidence3Pop(
@@ -3072,6 +3088,10 @@ flowPeakDetection = function(
                     residual2Pop=NA
                 )
             }
+        }else{
+            twoPopRSE<-finalData3 %>% dplyr::mutate(
+                residual2Pop=NA
+            )
         }
         
         if(TRUE %in% grepl("_3", names(finalData3))){
