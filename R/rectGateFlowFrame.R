@@ -158,8 +158,8 @@ rectGateFlowFrame = function(
             ggcyto::ggcyto_par_set(limits="data")
         gatedFlowData@description[["GUID"]] <- "Gated data"
         gatedDataPlot <- xpectr::suppress_mw(
-            ggcyto::autoplot(gatedFlowData, xVariable, yVariable,  bins=64) + 
-            ggcyto::ggcyto_par_set(limits="instrument")
+            ggcyto::autoplot(gatedFlowData, xVariable, yVariable,  bins=64)
+            # + ggcyto::ggcyto_par_set(limits="instrument")
         )
         combinedPlot <- ggcyto::as.ggplot(rawDataPlot) + 
             ggcyto::as.ggplot(gatedDataPlot)
