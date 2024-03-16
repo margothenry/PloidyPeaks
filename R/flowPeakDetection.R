@@ -181,7 +181,8 @@ flowPeakDetection = function(
       investigateData,
       PACheck,
       xVariable,
-      doublet
+      doublet,
+      saveGraph
     )
     setTxtProgressBar(pb, 7)
     print("Done! - Check 'analysis' folder for results")
@@ -234,7 +235,8 @@ flowPeakDetection = function(
       investigateData,
       PACheck,
       xVariable,
-      doublet
+      doublet,
+      saveGraph
     )
     print("Done! - Check 'analysis' folder for results")
   }
@@ -278,7 +280,8 @@ flowPeakDetection = function(
       investigateData,
       PACheck,
       xVariable,
-      doublet
+      doublet,
+      saveGraph
     )
     setTxtProgressBar(pb, 7)
     print("Done! - Check 'analysis' folder for results")
@@ -303,7 +306,8 @@ flowPeakDetection = function(
       investigateData,
       PACheck,
       xVariable,
-      doublet
+      doublet,
+      saveGraph
     )
     setTxtProgressBar(pb, 7)
   }
@@ -316,7 +320,8 @@ flowPeakDetection = function(
     investigateData,
     PACheck,
     xVariable,
-    doublet
+    doublet,
+    saveGraph
   )
   ##update progress bar
   print("Done! - Check 'analysis' folder for results")
@@ -2011,7 +2016,8 @@ flowPeakDetection = function(
   investigateDs,
   peak1Check,
   xVariable,
-  doubletFlag
+  doubletFlag,
+  saveGraph
 ){
   ##Removing NOTE 'no visible binding for global variable'
   x<-y<-.<-possiblePairX<-possiblePairY<-G1<-G1Count<-G2<-G2Count<-id<-NULL
