@@ -273,16 +273,18 @@ flowPeakDetection = function(
   }else{
     investigateData <- NULL
     ##update progress bar
-    .outputData(
-      flowDir,
-      singleData,
-      finishedData,
-      investigateData,
-      PACheck,
-      xVariable,
-      doublet,
-      saveGraph
-    )
+    R.utils::doCall(
+      .outputData(
+        flowDir,
+        singleData,
+        finishedData,
+        investigateData,
+        PACheck,
+        xVariable,
+        doublet,
+        saveGraph
+      )
+    ) 
     setTxtProgressBar(pb, 7)
     print("Done! - Check 'analysis' folder for results")
   }
