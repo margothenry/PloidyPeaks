@@ -79,42 +79,33 @@ rectGateFlowFrame = function(
     
     ##Checking to see if the user input the correct X and Y variable
     if(!xVariable %in% flowData@parameters@data$name){
-        stop("Your X variable is not in the dataset")
+      stop("Your X variable is not in the dataset")
     }
     
     if(!yVariable %in% flowData@parameters@data$name){
-        stop("Your Y variable is not in the dataset")
+      stop("Your Y variable is not in the dataset")
     }
     
     ##Checking the gating parameters are in the dataset
     if(xMaxValue > max(flowData@exprs[,xVariable])){
-        stop(
-            "Your xMaxValue exceeds the range of the flow frame, consider a 
-            new value"
-        )
+      warning("Your xMaxValue exceeds the range of the flow frame. You may want
+              to consider a new value")
     }
     
     if(xMinValue < min(flowData@exprs[,xVariable])){
-        stop(
-            "Your xMinValue exceeds the range of the flow frame, consider
-            a new value"
-        )
+      warning("Your xMinValue is less than the range of the flow frame. You may
+              want to consider a new value")
     }
     
     if(yMaxValue > max(flowData@exprs[,yVariable])){
-        stop(
-            "Your yMaxValue exceeds the range of the flow frame, consider
-            a new value"
-        )
+      warning("Your yMaxValue exceeds the range of the flow frame. You may want
+              to consider a new value")
     }
     
     if(yMinValue < min(flowData@exprs[,yVariable])){
-        stop(
-            "Your yMinValue exceeds the range of the flow frame, consider
-            a new value"
-        )
+      warning("Your yMinValue is less than the range of the flow frame. You may
+              want to consider a new value")
     }
-    
     
     ##Creating the gate
     autoGate <- paste0(
@@ -141,7 +132,7 @@ rectGateFlowFrame = function(
     setwd(rawDir)
     subDir <- "gated_data"
     dir.create(file.path(dirname(rawDir), subDir), showWarnings=FALSE)
-    ##Saving the gated data intob a folder
+    ##Saving the gated data into a folder
     outFile <- file.path(dirname(rawDir), subDir, flowName)
     flowCore::write.FCS(gatedFlowData, outFile)
     ##If TRUE plots will be created for the user and saved in a folder

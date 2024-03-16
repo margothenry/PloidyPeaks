@@ -98,13 +98,23 @@ rectGateFlowSet = function(
         
         ##Checking the gating parameters are in the dataset
         if(xMaxValue > max(flowData@exprs[,xVariable])){
-            stop("Your xMaxValue exceeds the range of the flow frame,
-                    consider a new value")
+          warning("Your xMaxValue exceeds the range of the flow frame. You may
+                  want to consider a new value")
+        }
+        
+        if(xMinValue < min(flowData@exprs[,xVariable])){
+          warning("Your xMinValue is less than the range of the flow frame. You 
+                  may want to consider a new value")
         }
         
         if(yMaxValue > max(flowData@exprs[,yVariable])){
-            stop("Your yMaxValue exceeds the range of the flow frame,
-                    consider a new value")
+          warning("Your yMaxValue exceeds the range of the flow frame. You may
+                  want to consider a new value")
+        }
+        
+        if(yMinValue < min(flowData@exprs[,yVariable])){
+          warning("Your yMinValue is less than the range of the flow frame. You
+                  may want to consider a new value")
         }
         
         ##Creating the gate
@@ -166,9 +176,13 @@ rectGateFlowSet = function(
         }
         setTxtProgressBar(pb, i)
     }
+    # Note that basename(dirname(getwd())) gives the folder name for the experiment
+    experimentName <- basename(dirname(getwd()))
+    experimentName <- sub(" ", "_", experimentName)   # replaces spaces with an underscore
     write.csv(
         gatedCellsOut,
-        paste0(dirname(getwd()), "/ProportionOfCellsGatedOut.csv")
+        paste0(dirname(getwd()), "/", experimentName, "_ProportionOfCellsGatedOut.csv"),
+        row.names = FALSE
     )
     close(pb)
 }

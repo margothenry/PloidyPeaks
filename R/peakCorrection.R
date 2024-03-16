@@ -20,7 +20,7 @@
 #'  )
 #'
 peakCorrection = function(
-    xVariable,
+    xVariable = "FL1-A",
     flowDir = NA,
     sampleName,
     numSubPop = 2
@@ -606,7 +606,8 @@ peakCorrection = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings=FALSE)
     write.csv(
         finalData6,
-        paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv")
+        paste0(file.path(dirname(getwd()), subDir), "/", sampleName, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
+        row.names = FALSE
     )
     
     }else if(
@@ -857,7 +858,8 @@ peakCorrection = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
     write.csv(
         finalData6,
-        paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv")
+        paste0(file.path(dirname(getwd()), subDir), "/", sampleName, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
+        row.names = FALSE
     )
     
     }else if(
@@ -1118,7 +1120,8 @@ peakCorrection = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
     write.csv(
         finalData6,
-        paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv")
+        paste0(file.path(dirname(getwd()), subDir), "/", sampleName, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
+        row.names = FALSE
     )
     
     }else if(
@@ -1352,7 +1355,8 @@ peakCorrection = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
     write.csv(
         finalData6,
-        paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv")
+        paste0(file.path(dirname(getwd()), subDir), "/", sampleName, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
+        row.names = FALSE
     )
     }else{
     ##Formatting the diploid data from the first peak algorithm
@@ -1618,7 +1622,8 @@ peakCorrection = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings=FALSE)
     write.csv(
         finalData6,
-        paste0(file.path(dirname(getwd()), subDir), "/ploidyPeaksOutput.csv")
+        paste0(file.path(dirname(getwd()), subDir), "/", sampleName, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
+        row.names = FALSE
     )
     
     }
