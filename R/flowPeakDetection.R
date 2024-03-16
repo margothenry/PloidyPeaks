@@ -392,7 +392,7 @@ flowPeakDetection = function(
     )
     
     ##Finding local peaks
-    localPeaks <- scorepeak::detect_localmaxima(flowData$y, 3)
+    localPeaks <- detect_localmaxima(flowData$y, 3)
     possiblePeaks <- flowData[localPeaks, ]
     
     ##Removing the peaks that are identified at the base of the
@@ -674,7 +674,7 @@ flowPeakDetection = function(
       logFlow
     )
     
-    localPeaks <- scorepeak::detect_localmaxima(flowData$y, 3)
+    localPeaks <- detect_localmaxima(flowData$y, 3)
     possiblePeaks <- flowData[localPeaks, ]
     
     possiblePeaks2 <- possiblePeaks[
@@ -929,7 +929,7 @@ flowPeakDetection = function(
       logFlow
     )
     
-    localPeaks <- scorepeak::detect_localmaxima(flowData$y, 5)
+    localPeaks <- detect_localmaxima(flowData$y, 5)
     possiblePeaks <- flowData[localPeaks, ]
     
     possiblePeaks1 <- possiblePeaks[
@@ -1213,7 +1213,7 @@ flowPeakDetection = function(
       logFlow
     )
     
-    localPeaks <- scorepeak::detect_localmaxima(flowData$y, 3)
+    localPeaks <- detect_localmaxima(flowData$y, 3)
     possiblePeaks <- flowData[localPeaks, ]
     
     possiblePeaks1 <- possiblePeaks[
@@ -1507,7 +1507,7 @@ flowPeakDetection = function(
       logFlow
     )
     
-    localPeaks <- scorepeak::detect_localmaxima(flowData$y, 3)
+    localPeaks <- detect_localmaxima(flowData$y, 3)
     possiblePeaks <- flowData[localPeaks, ]
     
     possiblePeaks1 <- possiblePeaks[
@@ -2017,7 +2017,7 @@ flowPeakDetection = function(
   peak1Check,
   xVariable,
   doubletFlag,
-  saveGraph = TRUE
+  saveGraph
 ){
   ##Removing NOTE 'no visible binding for global variable'
   x<-y<-.<-possiblePairX<-possiblePairY<-G1<-G1Count<-G2<-G2Count<-id<-NULL
