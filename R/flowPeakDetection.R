@@ -2017,7 +2017,7 @@ flowPeakDetection = function(
   peak1Check,
   xVariable,
   doubletFlag,
-  saveGraph
+  saveGraph = TRUE
 ){
   ##Removing NOTE 'no visible binding for global variable'
   x<-y<-.<-possiblePairX<-possiblePairY<-G1<-G1Count<-G2<-G2Count<-id<-NULL
