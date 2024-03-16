@@ -5,7 +5,7 @@
 \title{flowPeakDetection}
 \usage{
 flowPeakDetection(
-  xVariable = "FL1-A",
+  xVariable,
   flowDir = NA,
   doublet = FALSE,
   saveGraph = TRUE,

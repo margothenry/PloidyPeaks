@@ -4,7 +4,7 @@
 \alias{peakCorrection}
 \title{peakCorrection}
 \usage{
-peakCorrection(xVariable = "FL1-A", flowDir = NA, sampleName, numSubPop = 2)
+peakCorrection(xVariable, flowDir = NA, sampleName, numSubPop = 2)
 }
 \arguments{
 \item{xVariable}{The fluorescence channel on the x axis}
