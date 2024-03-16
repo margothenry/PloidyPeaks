@@ -57,7 +57,7 @@ RSEOutlierDetection = function(
   data <- read.csv(filePath)
   
   # compute skew
-  skewed <- skewness(data$finalRSE)
+  skewed <- moments::skewness(data$finalRSE)
   
   # plot RSE values as a histogram w/ skew value
   RSEHist <- ggplot(data, aes(x = finalRSE)) +
