@@ -135,9 +135,9 @@ flowPeakDetection = function(
       flaggedData <- NULL
       PACheck <- as.data.frame(peakAlg1[[1]])
     }else{
-    flaggedData <- NULL
-    singleData <- as.data.frame(peakAlg1[[1]])
-    PACheck <- NULL
+      flaggedData <- NULL
+      singleData <- as.data.frame(peakAlg1[[1]])
+      PACheck <- NULL
     }
   }
   
@@ -2017,8 +2017,7 @@ flowPeakDetection = function(
   peak1Check,
   xVariable,
   doubletFlag,
-  ...
-  #saveGraph
+  saveOutputGraph
 ){
   ##Removing NOTE 'no visible binding for global variable'
   x<-y<-.<-possiblePairX<-possiblePairY<-G1<-G1Count<-G2<-G2Count<-id<-NULL
@@ -3348,7 +3347,7 @@ flowPeakDetection = function(
 
 
 ## popConfidenceInitial
-.popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph = TRUE){
+.popConfidenceInitial = function(flowDir, ds, xVariable, saveGraph){
   
   ##Removing NOTE 'no visible binding for global variable'
   G1_1<-G2_1<-G1Count_1<-G2Count_1<-x<-y<-NULL
@@ -3644,7 +3643,7 @@ flowPeakDetection = function(
 }
 
 ## popConfidenceDoublet
-.popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph = TRUE){
+.popConfidenceDoublet = function(flowDir, ds, xVariable, saveGraph){
   ##Removing NOTE 'no visible binding for global variable'
   doublet<-G1_1<-G2_1<-`doublet G1+G2`<-`doublet G2+G2`<-G1Count_1<-NULL
   G2Count_1<-`doublet G1+G2 count`<-`doublet G2+G2 count`<-x<-y<-NULL
@@ -4479,7 +4478,7 @@ flowPeakDetection = function(
 }
 
 ## popConfidence2Pop
-.popConfidence2Pop = function(flowDir, ds, xVariable, saveGraph = TRUE){
+.popConfidence2Pop = function(flowDir, ds, xVariable, saveGraph){
   
   ##Removing NOTE 'no visible binding for global variable'
   G1_1<-G2_1<-G1Count_1<-G2Count_1<-x<-y<-NULL
@@ -4942,7 +4941,7 @@ flowPeakDetection = function(
 }
 
 ## popConfidence3Pop
-.popConfidence3Pop = function(flowDir, ds, xVariable, saveGraph = TRUE){
+.popConfidence3Pop = function(flowDir, ds, xVariable, saveGraph){
   
   ##Removing NOTE 'no visible binding for global variable'
   G1_1<-G2_1<-G1Count_1<-G2Count_1<-x<-y<-NULL
