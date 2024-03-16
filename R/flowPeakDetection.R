@@ -49,12 +49,13 @@ flowPeakDetection = function(
   xVariable = "FL1-A",
   flowDir = NA,
   doublet = FALSE,
-  saveGraph = TRUE,
+  saveOuputGraph = TRUE,
   singleThreshold = 8,
   usedCellsThreshold = 86,
   maxDoubletHeight = NA,
   subsetDs = NA
 ){
+  saveGraph = saveOuputGraph
   ##Removing NOTE 'no visible binding for global variable'
   x<-propCellsUsed<-NULL
   ##Progress bar iterations
@@ -135,9 +136,9 @@ flowPeakDetection = function(
       flaggedData <- NULL
       PACheck <- as.data.frame(peakAlg1[[1]])
     }else{
-      flaggedData <- NULL
-      singleData <- as.data.frame(peakAlg1[[1]])
-      PACheck <- NULL
+    flaggedData <- NULL
+    singleData <- as.data.frame(peakAlg1[[1]])
+    PACheck <- NULL
     }
   }
   
@@ -2017,7 +2018,7 @@ flowPeakDetection = function(
   peak1Check,
   xVariable,
   doubletFlag,
-  saveOutputGraph
+  saveGraph
 ){
   ##Removing NOTE 'no visible binding for global variable'
   x<-y<-.<-possiblePairX<-possiblePairY<-G1<-G1Count<-G2<-G2Count<-id<-NULL
