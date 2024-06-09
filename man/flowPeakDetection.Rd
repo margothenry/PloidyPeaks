@@ -23,6 +23,8 @@ flowPeakDetection(
 \item{doublet}{T/F for having the information about doublets in the output
 dataset - by default FALSE}
 
+\item{saveOuputGraph}{T/F for saving the graphs as an output of the NLS}
+
 \item{singleThreshold}{threshold for classifying single populations}
 
 \item{usedCellsThreshold}{threshold for classifying multiple populations}
@@ -32,8 +34,6 @@ the algorithm will find a value based on the other peaks}
 
 \item{subsetDs}{A vector of samples that the user wants to analyze if they
 do not want to analyse the full dataset. Default value is NA}
-
-\item{saveGraph}{T/F for saving the graphs as an output of the NLS}
 }
 \value{
 a .csv with information about each sample and nls graphs
@@ -51,7 +51,7 @@ flowPeakDetection(
  xVariable = "FITC-A",
  flowDir = paste0(system.file(package = "PloidyPeaks"), "/gated_data/"),
  doublet = FALSE,
- saveGraph = FALSE,
+ saveOuputGraph = FALSE,
  singleThreshold = 8,
  usedCellsThreshold = 86,
  maxDoubletHeight = NA,

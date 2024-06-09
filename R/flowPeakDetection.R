@@ -11,7 +11,7 @@
 #' @param flowDir The directory of the gated .fcs data
 #' @param doublet T/F for having the information about doublets in the output
 #'  dataset - by default FALSE
-#' @param saveGraph T/F for saving the graphs as an output of the NLS
+#' @param saveOuputGraph T/F for saving the graphs as an output of the NLS
 #' @param singleThreshold threshold for classifying single populations
 #' @param usedCellsThreshold threshold for classifying multiple populations
 #' @param maxDoubletHeight The maximum height a doublet can be. If left as NA
@@ -38,7 +38,7 @@
 #'  xVariable = "FITC-A",
 #'  flowDir = paste0(system.file(package = "PloidyPeaks"), "/gated_data/"),
 #'  doublet = FALSE,
-#'  saveGraph = FALSE,
+#'  saveOuputGraph = FALSE,
 #'  singleThreshold = 8,
 #'  usedCellsThreshold = 86,
 #'  maxDoubletHeight = NA,
@@ -55,7 +55,6 @@ flowPeakDetection = function(
   maxDoubletHeight = NA,
   subsetDs = NA
 ){
-  saveGraph = saveOuputGraph
   ##Removing NOTE 'no visible binding for global variable'
   x<-propCellsUsed<-NULL
   ##Progress bar iterations
@@ -183,7 +182,7 @@ flowPeakDetection = function(
       PACheck,
       xVariable,
       doublet,
-      saveGraph
+      saveOuputGraph
     )
     setTxtProgressBar(pb, 7)
     print("Done! - Check 'analysis' folder for results")
@@ -237,7 +236,7 @@ flowPeakDetection = function(
       PACheck,
       xVariable,
       doublet,
-      saveGraph
+      saveOuputGraph
     )
     print("Done! - Check 'analysis' folder for results")
   }
@@ -282,7 +281,7 @@ flowPeakDetection = function(
       PACheck,
       xVariable,
       doublet,
-      saveGraph
+      saveOuputGraph
     )
     setTxtProgressBar(pb, 7)
     print("Done! - Check 'analysis' folder for results")
@@ -308,7 +307,7 @@ flowPeakDetection = function(
       PACheck,
       xVariable,
       doublet,
-      saveGraph
+      saveOuputGraph
     )
     setTxtProgressBar(pb, 7)
   }
@@ -322,7 +321,7 @@ flowPeakDetection = function(
     PACheck,
     xVariable,
     doublet,
-    saveGraph
+    saveOuputGraph
   )
   ##update progress bar
   print("Done! - Check 'analysis' folder for results")
