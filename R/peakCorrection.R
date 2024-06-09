@@ -179,7 +179,7 @@ peakCorrection = function(
         investigateData<- NULL
     }
     
-    .outputData(
+    .outputDataCorrection(
         flowDir,
         singleData,
         finishedData,
@@ -375,12 +375,11 @@ peakCorrection = function(
 
 
 ## outputData
-.outputData = function(
+.outputDataCorrection = function(
     flowDir,
     singleDs,
     finishedDs,
     investigateDs,
-    peak1Check = NA,
     xVariable,
     doubletFlag,
     saveGraph
