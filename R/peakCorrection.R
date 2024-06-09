@@ -186,7 +186,8 @@ peakCorrection = function(
         investigateData,
         xVariable,
         doubletFlag = FALSE,
-        saveGraph = TRUE
+        saveGraph = TRUE,
+        sampleName
     )
     print("Done! - Check 'analysis' folder for results")
 }
@@ -382,7 +383,8 @@ peakCorrection = function(
     investigateDs,
     xVariable,
     doubletFlag,
-    saveGraph
+    saveGraph,
+    sampleNameOutput
 ){
     ##Removing NOTE 'no visible binding for global variable'
     x<-y<-.<-possiblePairX<-possiblePairY<-G1<-G1Count<-G2<-G2Count<-id<-NULL
@@ -606,7 +608,7 @@ peakCorrection = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings=FALSE)
     write.csv(
         finalData6,
-        paste0(file.path(dirname(getwd()), subDir), "/", sampleName, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
+        paste0(file.path(dirname(getwd()), subDir), "/", sampleNameOutput, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
         row.names = FALSE
     )
     
@@ -858,7 +860,7 @@ peakCorrection = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
     write.csv(
         finalData6,
-        paste0(file.path(dirname(getwd()), subDir), "/", sampleName, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
+        paste0(file.path(dirname(getwd()), subDir), "/", sampleNameOutput, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
         row.names = FALSE
     )
     
@@ -1120,7 +1122,7 @@ peakCorrection = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
     write.csv(
         finalData6,
-        paste0(file.path(dirname(getwd()), subDir), "/", sampleName, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
+        paste0(file.path(dirname(getwd()), subDir), "/", sampleNameOutput, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
         row.names = FALSE
     )
     
@@ -1355,7 +1357,7 @@ peakCorrection = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings = FALSE)
     write.csv(
         finalData6,
-        paste0(file.path(dirname(getwd()), subDir), "/", sampleName, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
+        paste0(file.path(dirname(getwd()), subDir), "/", sampleNameOutput, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
         row.names = FALSE
     )
     }else{
@@ -1622,7 +1624,7 @@ peakCorrection = function(
     dir.create(file.path(dirname(getwd()), subDir), showWarnings=FALSE)
     write.csv(
         finalData6,
-        paste0(file.path(dirname(getwd()), subDir), "/", sampleName, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
+        paste0(file.path(dirname(getwd()), subDir), "/", sampleNameOutput, "_ploidyPeaksOutput.csv"),   # includes sample name in file to prevent overwriting
         row.names = FALSE
     )
     
