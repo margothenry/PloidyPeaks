@@ -380,6 +380,7 @@ peakCorrection = function(
     singleDs,
     finishedDs,
     investigateDs,
+    peak1Check = NA,
     xVariable,
     doubletFlag,
     saveGraph

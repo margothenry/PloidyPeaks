@@ -1,6 +1,6 @@
 Package: PloidyPeaks
 Title: Peak Detection Algorithm For Flow Cytometry Data
-Version: 0.97.0
+Version: 0.98.0
 Authors@R: c(
     person("Margot", "Henry", email="margothenry@live.com", role = c("aut", "cre")),
     person("Aleeza", "Gerstein", email="aleeza.gerstein@umanitoba.ca", role=c("aut", "ths")),
