@@ -311,7 +311,7 @@ flowPeakDetection = function(
     )
     setTxtProgressBar(pb, 7)
   }
-  print("We got here")
+
   setTxtProgressBar(pb, 5)
   ##Making the dataset
   .outputData(
