@@ -88,9 +88,8 @@ flowLineGraph = function(
     }
     
     ##Checking if samplePeaks was filled & FLG was called directly
-    if (!is.null(samplePeaks) && "samplePeaks" %in% names(match.call()) &&
-        !identical(match.call()[["RSEOutlierDetection"]],
-                   quote(RSEOutlierDetection))) {
+    calledByRSE <- any(sapply(sys.calls(), function(call){deparse(call)[[1]] == "RSEOutlierDetection"}))
+    if (!is.null(samplePeaks) && "samplePeaks" %in% names(match.call()) && calledByRSE){#!identical(match.call()[["RSEOutlierDetection"]], quote(RSEOutlierDetection))) {
       warning("Parameter 'samplePeaks' should not be filled when calling
               flowLineGraph directly. Setting it to NA.")
       samplePeaks <- NA
@@ -187,9 +186,9 @@ flowLineGraph = function(
               }
             }else{    # grid function w/ control
               if(TRUE %in% !is.na(annotations)){    # annotations != NA
-                if(length(annotations) != (length(unique(sampleDs$Data)) + 1)){
+                if(length(annotations) != (length(flowSamples) + 1)){
                   stop("'annotations' vector length does not match the number of
-                       unique samples in 'flowSamples' + 1")
+                       samples in 'flowSamples' + 1")
                 }else{   # length is good, check for first string
                   if(!is.character(annotations[1])){
                     stop("First item in 'annotations' vector is not a string")
@@ -262,9 +261,9 @@ flowLineGraph = function(
               }
             }else{   # grid function w/out control
               if(TRUE %in% !is.na(annotations)){    # annotations != NA
-                if(length(annotations) != (length(unique(sampleDs$Data)) + 1)){
+                if(length(annotations) != (length(flowSamples) + 1)){
                   stop("'annotations' vector length does not match the number of
-                       unique samples in 'flowSamples' + 1")
+                       samples in 'flowSamples' + 1")
                 }else{   # length is good, check for first string
                   if(!is.character(annotations[1])){
                     stop("First item in 'annotations' vector is not a string")
@@ -392,7 +391,7 @@ flowLineGraph = function(
               labs(x = xVariable, y = "Counts", title = sampName) +
               theme_bw() +
               annotate("text", x = (max(temp$x) * 0.85), y = yVal,
-                       label = paste(paste(annotations[1], ":"),
+                       label = paste0(paste0(annotations[1], ":"),
                                      annotations[slot + 1]), colour = "#DF536B",
                        size = 3) 
             P[[slot]] <- ggplot_gtable(ggplot_build(p))
@@ -413,7 +412,7 @@ flowLineGraph = function(
               labs(x = xVariable, y = "Counts", title = sampName) +
               theme_bw() +
               annotate("text", x = (max(temp$x) * 0.85), y = yVal,
-                       label = paste(paste(annotations[1], ":"),
+                       label = paste0(paste0(annotations[1], ":"),
                                      annotations[slot + 1]), colour = "#DF536B",
                        size = 3) 
             P[[slot]] <- ggplot_gtable(ggplot_build(p))
@@ -432,7 +431,7 @@ flowLineGraph = function(
               labs(x = xVariable, y = "Counts", title = sampName) +
               theme_bw() +
               annotate("text", x = (max(temp$x) * 0.85), y = yVal,
-                       label = paste(paste(annotations[1], ":"),
+                       label = paste0(paste0(annotations[1], ":"),
                                      annotations[slot + 1]), colour = "#DF536B",
                        size = 3) 
             P[[slot]] <- ggplot_gtable(ggplot_build(p))
@@ -506,7 +505,7 @@ flowLineGraph = function(
               labs(x = xVariable, y = "Counts", title = sampName) +
               theme_bw() +
               annotate("text", x = (max(temp$x) * 0.85), y = (max(temp$y) * 0.9),
-                       label = paste(paste(annotations[1], ":"),
+                       label = paste0(paste0(annotations[1], ":"),
                                      annotations[slot + 1]), colour = "#DF536B",
                        size = 3) 
             P[[slot]] <- ggplot_gtable(ggplot_build(p))
@@ -525,7 +524,7 @@ flowLineGraph = function(
               labs(x = xVariable, y = "Counts", title = sampName) +
               theme_bw() +
               annotate("text", x = (max(temp$x) * 0.85), y = (max(temp$y) * 0.9),
-                       label = paste(paste(annotations[1], ":"),
+                       label = paste0(paste0(annotations[1], ":"),
                                      annotations[slot + 1]), colour = "#DF536B",
                        size = 3) 
             P[[slot]] <- ggplot_gtable(ggplot_build(p))
@@ -549,7 +548,7 @@ flowLineGraph = function(
                 scale_colour_identity() + 
                 theme_bw() +
                 annotate("text", x = (max(temp$x) * 0.85), y = (max(temp$y) * 0.9),
-                         label = paste(paste(annotations[1], ":"),
+                         label = paste0(paste0(annotations[1], ":"),
                                        annotations[slot + 1]), colour = "#DF536B",
                          size = 3) 
               P[[slot]] <- ggplot_gtable(ggplot_build(p))
@@ -565,7 +564,7 @@ flowLineGraph = function(
                 labs(x = xVariable, y = "Counts", title = sampName) +
                 theme_bw() +
                 annotate("text", x = (max(temp$x) * 0.85), y = (max(temp$y) * 0.9),
-                         label = paste(paste(annotations[1], ":"),
+                         label = paste0(paste0(annotations[1], ":"),
                                        annotations[slot + 1]), colour = "#DF536B",
                          size = 3) 
               P[[slot]] <- ggplot_gtable(ggplot_build(p))
@@ -638,7 +637,7 @@ flowLineGraph = function(
           theme_bw() +
           annotate("text", x = (max(control$x) * 0.85),
                    y = (max(control$y) * 0.9),
-                   label = paste(paste(annotations[1], ":"), annotations[2]),
+                   label = paste0(paste0(annotations[1], ":"), annotations[2]),
                    colour = "#DF536B", size = 3)
       }else if(TRUE %in% !is.na(vertLine1)){                    # one vertical line
         controlName <- .splitString(unique(control$Data), "[.]")       # cleans up file name
@@ -651,7 +650,7 @@ flowLineGraph = function(
           theme_bw() +
           annotate("text", x = (max(control$x) * 0.85),
                    y = (max(control$y) * 0.9),
-                   label = paste(paste(annotations[1], ":"), annotations[2]),
+                   label = paste0(paste0(annotations[1], ":"), annotations[2]),
                    colour = "#DF536B", size = 3)
       }else{                                          # no vertical lines
         controlName <- .splitString(unique(control$Data), "[.]")       # cleans up file name
@@ -662,7 +661,7 @@ flowLineGraph = function(
           theme_bw() +
           annotate("text", x = (max(control$x) * 0.85),
                    y = (max(control$y) * 0.9),
-                   label = paste(paste(annotations[1], ":"), annotations[2]),
+                   label = paste0(paste0(annotations[1], ":"), annotations[2]),
                    colour = "#DF536B", size = 3)
       }
     }else{                     # no annotations

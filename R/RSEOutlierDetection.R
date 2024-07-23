@@ -23,7 +23,8 @@
 #' 
 #' @return a .csv with an added column for outlier RSE about each sample, a
 #' histogram to show the distribution of RSE values, and a PDF file of plotted
-#' samples that were identified as outliers.
+#' samples that were identified as outliers. Note: only the histogram is saved
+#' if the skewness is less than zero.
 #' @export
 #'
 #' @examples
@@ -33,7 +34,7 @@
 #'  filePath = paste0(system.file(package = "PloidyPeaks"), "/analysis/"),
 #'  fileName = "gatedDataRSE",
 #'  alpha = 0.05
-#'  )
+#' )
 
 RSEOutlierDetection = function(
     xVariable = "FL1-A",
@@ -63,9 +64,9 @@ RSEOutlierDetection = function(
   RSEHist <- ggplot(data, aes(x = finalRSE)) +
     stat_function(fun = dnorm, args = list(mean = mean(data$finalRSE),
                                            sd = sd(data$finalRSE))) +
-    geom_vline(aes(xintercept = mean(data$finalRSE), linetype = 'mean'),
+    geom_vline(aes(xintercept = mean(data$finalRSE), linetype = 'Mean'),
                col = "red") +
-    geom_vline(aes(xintercept = median(data$finalRSE), linetype = 'median'),
+    geom_vline(aes(xintercept = median(data$finalRSE), linetype = 'Median'),
                col = "blue") +
     scale_linetype_manual(name = 'Lines', values = c('Mean' = 1, 'Median' = 1),
                           guide = guide_legend(override.aes = list(colour =
@@ -104,6 +105,8 @@ RSEOutlierDetection = function(
     
     # save csv file
     write.csv(data, filePath, row.names = FALSE)
+  }else{
+    print("The skewness is less than zero. Only the histogram will be saved.")
   }
   
   fileName <- sub(" ", "_", fileName)  # clean up (no white space)

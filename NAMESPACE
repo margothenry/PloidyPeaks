@@ -3,6 +3,7 @@
 export(RSEOutlierDetection)
 export(flowLineGraph)
 export(flowPeakDetection)
+export(massFlowGraph)
 export(peakCorrection)
 export(rectGateFlowFrame)
 export(rectGateFlowSet)

@@ -26,7 +26,8 @@ RSEOutlierDetection(
 \value{
 a .csv with an added column for outlier RSE about each sample, a
 histogram to show the distribution of RSE values, and a PDF file of plotted
-samples that were identified as outliers.
+samples that were identified as outliers. Note: only the histogram is saved
+if the skewness is less than zero.
 }
 \description{
 A function that permits the user to analyze the RSE values provided by the
@@ -44,5 +45,5 @@ RSEOutlierDetection(
  filePath = paste0(system.file(package = "PloidyPeaks"), "/analysis/"),
  fileName = "gatedDataRSE",
  alpha = 0.05
- )
+)
 }
